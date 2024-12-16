@@ -218,7 +218,7 @@ ImGuiInputText(bool* p_open)
 
     ImGui::PopFont();
 
-    // 将输入框中的数据拷贝到 controler.processing_data 中
+    // 将输入框中的数据拷贝到 controller.processing_data 中
     controler.processing_data.train_id = train_id;
 
     controler.processing_data.train_number = train_number[0] == '\0' ? "UNKNOWN" : train_number;
