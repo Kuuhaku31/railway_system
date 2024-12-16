@@ -23,7 +23,7 @@ public:
 public:
     // 插入或修改数据
     // 根据 id 值，如果该 id 已存在则修改，否则插入
-    int32_t RailwaySystemInsertTrainData(const TrainData& train_data);
+    int32_t RailwaySystemInsertTrainData();
 
     // 删除数据，根据传入id
     int32_t RailwaySystemDelTrainData(int32_t train_data_id);

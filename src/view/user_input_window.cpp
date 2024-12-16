@@ -80,6 +80,7 @@ ImGuiInputText(bool* p_open)
     static ImVec4 active_color  = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // 按下颜色
     static ImVec4 disable_color = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // 禁用颜色
 
+    static bool is_selected_new = false;
 
     if(p_open && !*p_open) return;
 
@@ -91,7 +92,12 @@ ImGuiInputText(bool* p_open)
     bool is_del    = false;
     bool is_update = false;
 
-    controler.SelectTrainData(view.selected_id);
+    if(is_selected_new)
+    {
+        // 如果选中了新的车次，将该车次的数据显示在输入框中
+        controler.SelectTrainData(view.selected_id);
+        is_selected_new = false;
+    }
 
     // 将数据拷贝到输入框中
     train_id = controler.processing_data.train_id;
@@ -131,7 +137,11 @@ ImGuiInputText(bool* p_open)
     ImGui::Begin("Input Text", p_open, window_flags);
     ImGui::Text("processing data:");
 
-    ImGui::InputScalar("Train ID", ImGuiDataType_S32, &train_id);
+    // 如果选中了某个车次，将该车次的数据显示在输入框中
+    if(ImGui::InputScalar("Train ID", ImGuiDataType_S32, &train_id))
+    {
+        is_selected_new = true;
+    }
     ImGui::InputText("Train Number", train_number, MAX_SIZE);
 
     ImGui::InputText("Start Station", train_start_station, MAX_SIZE);
@@ -224,4 +234,9 @@ ImGuiInputText(bool* p_open)
     controler.processing_data.train_status = train_status;
 
     view.selected_id = train_id;
+
+    if(is_insert)
+    {
+        controler.RailwaySystemInsertTrainData();
+    }
 }

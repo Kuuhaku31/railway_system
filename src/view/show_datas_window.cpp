@@ -117,7 +117,18 @@ ImGuiWindowTrainDatas(bool* p_open)
             ImGui::Text("%.2f", train_data->train_ticket_price);
             // 是否有效
             ImGui::TableNextColumn();
-            ImGui::Text("%s", parse_train_status(train_data->train_status).c_str());
+
+            ImVec4 color = ImVec4(0, 255, 0, 255);
+
+            switch(train_data->train_status)
+            {
+            case TrainStatus::NORMAL: color = ImVec4(0, 255, 0, 255); break;
+            case TrainStatus::DELAY: color = ImVec4(255, 255, 0, 255); break;
+            case TrainStatus::STOP: color = ImVec4(255, 0, 0, 255); break;
+            case TrainStatus::OTHER: color = ImVec4(0, 0, 255, 255); break;
+            default: break;
+            }
+            ImGui::TextColored(color, "%s", parse_train_status(train_data->train_status).c_str());
 
             // 如果是选中的行，改变背景颜色
             if(view.selected_id == train_data->train_id)
