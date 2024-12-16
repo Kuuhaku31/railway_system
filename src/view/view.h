@@ -13,9 +13,6 @@
 class View
 {
 public:
-    typedef std::vector<TrainData*> TrainDatas;
-
-public:
     static View& Instance();
 
 public:
@@ -32,7 +29,8 @@ public:
     Color clear_color = { 0x33, 0x33, 0x33, 0xff };
 
 public:
-    TrainDatas train_datas;
+    ImFont* font_default = nullptr;
+    ImFont* font_chinese = nullptr;
 
 private:
     View() {}

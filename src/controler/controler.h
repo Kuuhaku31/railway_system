@@ -12,6 +12,9 @@
 class Controler
 {
 public:
+    typedef std::vector<TrainData*> TrainDatas;
+
+public:
     static Controler& Instance();
 
 public:
@@ -26,6 +29,10 @@ public:
     // 将结果存储到容器中
     // flag=0时代表全部查询
     int32_t RailwaySystemSearchTrainData(std::vector<TrainData*>& train_data, int32_t flag = 0);
+
+public:
+    TrainDatas train_datas;
+    TrainData  processing_data; // 用户正在处理的数据
 
 private:
     Controler()                            = default;

@@ -1,26 +1,28 @@
 
+#include "controler.h"
 #include "view.h"
+
 
 static ImGui_setup& imgui_setup = ImGui_setup::Instance();
 
-static View& view = View::Instance();
+static View&      view      = View::Instance();
+static Controler& controler = Controler::Instance();
 
 TrainData train_datas[10];
 
 void
-get_train_datas(View::TrainDatas* view_train_datas)
+get_train_datas(Controler::TrainDatas* view_train_datas)
 {
-    train_datas[0] = { 1, 100, 100.0, 1000, 2000, "G1001", "Beijing", "Shanghai", true };
-    train_datas[1] = { 2, 200, 200.0, 2000, 3000, "G1002", "Shanghai", "Beijing", true };
-    train_datas[2] = { 3, 300, 300.0, 3000, 4000, "G1003", "Beijing", "Shanghai", true };
-    train_datas[3] = { 4, 400, 400.0, 4000, 5000, "G1004", "Shanghai", "Beijing", true };
-    train_datas[4] = { 5, 500, 500.0, 5000, 6000, "G1005", "Beijing", "Shanghai", true };
-    train_datas[5] = { 6, 600, 600.0, 6000, 7000, "G1006", "Shanghai", "Beijing", true };
-    train_datas[6] = { 7, 700, 700.0, 7000, 8000, "G1007", "Beijing", "Shanghai", true };
-    train_datas[7] = { 8, 800, 800.0, 8000, 9000, "G1008", "Shanghai", "Beijing", true };
-    train_datas[8] = { 9, 900, 900.0, 9000, 10000, "G1009", "Beijing", "Shanghai", true };
-    train_datas[9] = { 10, 1000, 1000.0, 10000, 11000, "G1010", "Shanghai", "Beijing", true };
-
+    train_datas[0] = { 1, "G1234", "北京", "上海", { 2021, 1, 1, 8, 0, 0 }, { 2021, 1, 1, 12, 0, 0 }, 100, 100.0f, TrainStatus::DELAY };
+    train_datas[1] = { 2, "G1235", "北京", "上海", { 2021, 1, 1, 8, 0, 0 }, { 2021, 1, 1, 12, 0, 0 }, 100, 100.0f, TrainStatus::DELAY };
+    train_datas[2] = { 3, "G1236", "北京", "上海", { 2021, 1, 1, 8, 0, 0 }, { 2021, 1, 1, 12, 0, 0 }, 100, 100.0f, TrainStatus::DELAY };
+    train_datas[3] = { 4, "G1237", "北京", "上海", { 2021, 1, 1, 8, 0, 0 }, { 2021, 1, 1, 12, 0, 0 }, 100, 100.0f, TrainStatus::DELAY };
+    train_datas[4] = { 5, "G1238", "北京", "上海", { 2021, 1, 1, 8, 0, 0 }, { 2021, 1, 1, 12, 0, 0 }, 100, 100.0f, TrainStatus::DELAY };
+    train_datas[5] = { 6, "G1239", "北京", "上海", { 2021, 1, 1, 8, 0, 0 }, { 2021, 1, 1, 12, 0, 0 }, 100, 100.0f, TrainStatus::DELAY };
+    train_datas[6] = { 7, "G1240", "北京", "上海", { 2021, 1, 1, 8, 0, 0 }, { 2021, 1, 1, 12, 0, 0 }, 100, 100.0f, TrainStatus::DELAY };
+    train_datas[7] = { 8, "G1241", "北京", "上海", { 2021, 1, 1, 8, 0, 0 }, { 2021, 1, 1, 12, 0, 0 }, 100, 100.0f, TrainStatus::DELAY };
+    train_datas[8] = { 9, "G1242", "北京", "上海", { 2021, 1, 1, 8, 0, 0 }, { 2021, 1, 1, 12, 0, 0 }, 100, 100.0f, TrainStatus::DELAY };
+    train_datas[9] = { 10, "G1243", "北京", "上海", { 2021, 1, 1, 8, 0, 0 }, { 2021, 1, 1, 12, 0, 0 }, 100, 100.0f, TrainStatus::DELAY };
 
     for(auto& train_data : train_datas)
     {
@@ -31,9 +33,12 @@ get_train_datas(View::TrainDatas* view_train_datas)
 int
 main()
 {
+    // utf8
+    SetConsoleOutputCP(CP_UTF8);
+
     printf("Hello, test!\n");
 
-    get_train_datas(&view.train_datas);
+    get_train_datas(&controler.train_datas);
 
     view.ViewInit();
 

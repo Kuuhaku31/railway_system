@@ -4,11 +4,13 @@ project(main_project)
 include_directories(./)
 include_directories(./view)
 include_directories(./entity)
+include_directories(./controler)
 
 # 添加源文件
 aux_source_directory(./ SRC_FILES)
 aux_source_directory(./view SRC_FILES)
 aux_source_directory(./entity SRC_FILES)
+aux_source_directory(./controler SRC_FILES)
 
 aux_source_directory(../lib SRC_FILES)
 
