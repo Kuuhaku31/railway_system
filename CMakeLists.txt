@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(KH_Game_Editor)
+project(RailwaySystem)
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 23)

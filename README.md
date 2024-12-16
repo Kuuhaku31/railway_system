@@ -31,3 +31,15 @@ Course Design of C Programming Language
 # 前端
 
 # 后端
+
+- test
+- lib
+
+* src
+  - entity
+  - view
+  - controler
+  - model
+  - main.c
+
+- CMakeLists.txt
