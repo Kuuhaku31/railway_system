@@ -18,7 +18,8 @@ View::Instance()
 void
 View::ViewInit()
 {
-    imgui_setup.Init("view", { 30, 40, 800, 600 }, false);
+    static Rect window_rect = { 30, 40, 1200, 900 };
+    imgui_setup.Init("view", window_rect, false);
 }
 
 void

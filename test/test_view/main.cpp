@@ -33,7 +33,7 @@ main()
 {
     printf("Hello, test!\n");
 
-    get_train_datas(&view.GetTrainDatas());
+    get_train_datas(&view.train_datas);
 
     view.ViewInit();
 

@@ -29,12 +29,9 @@ public:
     bool is_show_train_datas = true;
 
 public:
-    Color clear_color = { 0xcc, 0xcc, 0xcc, 0xff };
+    Color clear_color = { 0x33, 0x33, 0x33, 0xff };
 
 public:
-    TrainDatas& GetTrainDatas() { return train_datas; }
-
-private:
     TrainDatas train_datas;
 
 private:
