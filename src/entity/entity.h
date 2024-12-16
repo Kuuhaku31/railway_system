@@ -29,8 +29,8 @@ enum class TrainStatus
 // 车次结构体
 struct TrainData
 {
-    uint32_t    train_id;     // 唯一 ID
-    std::string train_number; // 车次
+    int         train_id = -1; // 唯一 ID
+    std::string train_number;  // 车次
 
     std::string train_start_station;  // 始发站
     std::string train_arrive_station; // 到达站
@@ -38,8 +38,14 @@ struct TrainData
     Date train_start_time;  // 出发时间
     Date train_arrive_time; // 到达时间
 
-    uint32_t train_ticket_count; // 票数
-    float    train_ticket_price; // 价格
+    int   train_ticket_count = 0;    // 票数
+    float train_ticket_price = 0.0f; // 价格
 
-    TrainStatus train_status; // 车次状态
+    TrainStatus train_status = TrainStatus::OTHER; // 是否有效
 };
+
+std::string
+date_to_string(const Date& date);
+
+std::string
+parse_train_status(TrainStatus status);

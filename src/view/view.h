@@ -5,7 +5,7 @@
 
 #include "imgui_setup.h"
 
-#include "train_data.h"
+#include "entity.h"
 
 #include <vector>
 
@@ -22,8 +22,11 @@ public:
     void ViewShowWindows();
 
 public:
-    bool is_show_demo_window = true;
+    bool is_show_demo_window = false;
     bool is_show_train_datas = true;
+
+public:
+    int selected_id = -1;
 
 public:
     Color clear_color = { 0x33, 0x33, 0x33, 0xff };
