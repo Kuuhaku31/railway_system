@@ -4,7 +4,8 @@ project(main_project)
 aux_source_directory(./ SRC_FILES)
 aux_source_directory(./view SRC_FILES)
 
-# aux_source_directory(./lib SRC_FILES)
+aux_source_directory(../lib SRC_FILES)
+
 message(STATUS "Source files: ${SRC_FILES}")
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
