@@ -1,18 +1,20 @@
 project(main_project)
 
+# 添加头文件
+include_directories(./)
+include_directories(./view)
+include_directories(./entity)
+
 # 添加源文件
 aux_source_directory(./ SRC_FILES)
 aux_source_directory(./view SRC_FILES)
+aux_source_directory(./entity SRC_FILES)
 
 aux_source_directory(../lib SRC_FILES)
 
 message(STATUS "Source files: ${SRC_FILES}")
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
-
-# 添加头文件
-include_directories(./)
-include_directories(./view)
 
 # 添加imgui_setup库
 include_directories(${IMGUISETUP_INCLUDE_DIRS})

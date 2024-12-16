@@ -5,9 +5,16 @@
 
 #include "imgui_setup.h"
 
+#include "train_data.h"
+
+#include <vector>
+
 // 单例模式
 class View
 {
+public:
+    typedef std::vector<TrainData*> TrainDatas;
+
 public:
     static View& Instance();
 
@@ -23,6 +30,12 @@ public:
 
 public:
     Color clear_color = { 0xcc, 0xcc, 0xcc, 0xff };
+
+public:
+    TrainDatas& GetTrainDatas() { return train_datas; }
+
+private:
+    TrainDatas train_datas;
 
 private:
     View() {}
