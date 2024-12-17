@@ -14,9 +14,9 @@ extern "C"{
 #include "train.h"
 #include "error.h"
 
-void analyzeCondition(TrainQuery *condition, char *buffer);
+void analyzeCondition(TrainQuery *condition, char *buffer, int bufferSize);
 
-void analyzeChange(TrainChange *condition, char *buffer);
+void analyzeChange(TrainChange *condition, char *buffer, int bufferSize);
 
 // 添加
 int addTrain(TrainData *train);

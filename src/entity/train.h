@@ -26,12 +26,12 @@ typedef struct {
 
 enum condition{
     IGNORE_THIS=0,
-    GREATER,
-    SMALLER,
-    NO_GREATER,
-    NO_SMALLER,
-    EQUAL,
-    NOT_EQUAL
+    GREATER=1,
+    SMALLER=2,
+    NO_GREATER=3,
+    NO_SMALLER=4,
+    EQUAL=5,
+    NOT_EQUAL=6
 };
 typedef struct {
 

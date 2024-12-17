@@ -51,6 +51,7 @@ set(UTILS_SRC
         ../src/utils/utils.h
         ../src/utils/utils.c
         )
+file(COPY ../lib/sqlite3/sqlite3.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 add_executable(test_model ${MODEL_SRC} ${ENTITY_SRC} ${UTILS_SRC}
         test_model/test_train_model.cpp)
 set(HEADER_DIR ../src ../src/view ../src/model ../src/entity ../src/controller ../src/utils)
@@ -59,4 +60,4 @@ target_include_directories(test_model PUBLIC
         ../lib/sqlite3 ../lib/imgui
         ${HEADER_DIR}
 )
-target_link_libraries(test_model PUBLIC sqlite3)
+target_link_libraries(test_model PUBLIC sqlite3 "-lstdc++exp")
