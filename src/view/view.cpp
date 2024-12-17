@@ -39,6 +39,8 @@ View::ViewQuit()
 void
 View::ViewShowWindows()
 {
+    update_view_layout();
+
     show_config_window();
 
     show_train_datas_window(&is_show_train_datas);
@@ -87,4 +89,23 @@ View::show_config_window(bool* p_open)
     }
 
     ImGui::End();
+}
+
+void
+View::update_view_layout()
+{
+    // 应用程序显示大小
+    ImVec2 display_size = ImGui::GetIO().DisplaySize;
+
+    // 数据窗口位置和大小
+    data_window_pos  = ImVec2(0, 0);
+    data_window_size = ImVec2(display_size.x, display_size.y * data_window_height);
+
+    // 用户输入窗口位置和大小
+    input_window_pos  = ImVec2(0, display_size.y * data_window_height);
+    input_window_size = ImVec2(display_size.x * inuput_window_width, display_size.y * (1 - data_window_height));
+
+    // 控制台窗口位置和大小
+    console_window_pos  = ImVec2(display_size.x * inuput_window_width, display_size.y * data_window_height);
+    console_window_size = ImVec2(display_size.x * (1 - inuput_window_width), display_size.y * (1 - data_window_height));
 }

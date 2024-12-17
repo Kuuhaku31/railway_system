@@ -30,20 +30,35 @@ private:
     void show_train_datas_window(bool* p_open = nullptr); // 显示车次信息
     void show_user_input_window(bool* p_open = nullptr);  // 获取用户输入的字符串
 
+
+public: // 窗口布局相关配置
+    bool is_show_demo_window = false;
+    bool is_show_train_datas = true;
+
+    // 背景颜色
+    Color clear_color = { 0x33, 0x33, 0x33, 0xff };
+
 private:
     // 布局比例
     float data_window_height  = 0.65f;
     float inuput_window_width = 0.65f;
 
-public:
-    bool is_show_demo_window = false;
-    bool is_show_train_datas = true;
+    // 车次数据窗口位置和大小
+    ImVec2 data_window_pos;
+    ImVec2 data_window_size;
+
+    // 用户输入窗口位置和大小
+    ImVec2 input_window_pos;
+    ImVec2 input_window_size;
+
+    // 控制台窗口位置和大小
+    ImVec2 console_window_pos;
+    ImVec2 console_window_size;
+
+    void update_view_layout(); // 更新窗口布局
 
 public:
     int selected_id = -1;
-
-public:
-    Color clear_color = { 0x33, 0x33, 0x33, 0xff };
 
 public:
     ImFont* font_default = nullptr;

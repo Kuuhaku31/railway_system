@@ -20,17 +20,9 @@ View::show_train_datas_window(bool* p_open)
     window_flags |= ImGuiWindowFlags_NoDocking;             // 无法Dock
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus; // 保持在最后
 
-    // 位置在左上角（只一次有效）
-    ImGui::SetNextWindowPos(ImVec2(0, 0));
-
-    ImVec2 window_size = ImGui::GetIO().DisplaySize;
-    window_size.y *= data_window_height;
-
-    // 设置宽度为程序窗口宽度
-    ImGui::SetNextWindowSize(window_size, ImGuiCond_Always);
-
-    // 中文显示
-    ImGui::PushFont(font_chinese);
+    ImGui::PushFont(font_chinese); // 中文显示
+    ImGui::SetNextWindowPos(data_window_pos);
+    ImGui::SetNextWindowSize(data_window_size);
     ImGui::Begin("Train Datas", p_open, window_flags);
 
     // 临时修改样式变量，取消表格和窗口的间距

@@ -18,15 +18,7 @@ View::ViewConsoleAddLog(const char* fmt, ...)
 void
 View::ViewConsoleShowLog(bool* p_open)
 {
-    ImVec2 display_size = ImGui::GetIO().DisplaySize;
-    ImVec2 window_pos;
-    ImVec2 window_size = display_size;
-
-    window_pos.x = display_size.x * inuput_window_width;
-    window_pos.y = display_size.y * data_window_height;
-
-    window_size.x *= (1 - inuput_window_width);
-    window_size.y *= (1 - data_window_height);
+    if(p_open && !*p_open) return;
 
     uint32_t window_flags = 0;
     window_flags |= ImGuiWindowFlags_NoTitleBar;
@@ -35,11 +27,10 @@ View::ViewConsoleShowLog(bool* p_open)
     window_flags |= ImGuiWindowFlags_NoDocking;
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 
-    ImGui::SetNextWindowPos(window_pos);
-    ImGui::SetNextWindowSize(window_size);
-
     // 中文显示
     ImGui::PushFont(font_chinese);
+    ImGui::SetNextWindowPos(console_window_pos);
+    ImGui::SetNextWindowSize(console_window_size);
     ImGui::Begin("log window", p_open, window_flags);
 
     if(ImGui::Button("Clear")) logs.clear();

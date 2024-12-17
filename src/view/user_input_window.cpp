@@ -127,27 +127,17 @@ View::show_user_input_window(bool* p_open)
 
     train_status = controler.processing_data.train_status;
 
-    ImVec2 display_size = ImGui::GetIO().DisplaySize;
-    ImVec2 window_pos;
-    ImVec2 window_size = display_size;
-
-    window_pos.y = display_size.y * data_window_height;
-    window_size.x *= inuput_window_width;
-    window_size.y *= (1 - data_window_height);
 
     uint32_t window_flags = 0;
-
     window_flags |= ImGuiWindowFlags_NoTitleBar;
     window_flags |= ImGuiWindowFlags_NoResize;
     window_flags |= ImGuiWindowFlags_NoMove;
     window_flags |= ImGuiWindowFlags_NoDocking;
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 
-    // 使用中文字体
-    ImGui::PushFont(font_chinese);
-
-    ImGui::SetNextWindowPos(window_pos);
-    ImGui::SetNextWindowSize(window_size);
+    ImGui::PushFont(font_chinese); // 使用中文字体
+    ImGui::SetNextWindowPos(input_window_pos);
+    ImGui::SetNextWindowSize(input_window_size);
     ImGui::Begin("Input Text", p_open, window_flags);
     ImGui::Text("processing data:");
 
@@ -228,7 +218,6 @@ View::show_user_input_window(bool* p_open)
     }
 
     ImGui::End();
-
     ImGui::PopFont();
 
     // 将输入框中的数据拷贝到 controler.processing_data 中
