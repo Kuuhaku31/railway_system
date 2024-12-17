@@ -58,16 +58,16 @@ View::show_user_input_window(bool* p_open)
 {
     static const int MAX_SIZE = 256;
 
-    static uint32_t train_id = 0;           // 车次 ID
-    static char     train_number[MAX_SIZE]; // 车次
+    static int  train_id = 0;           // 车次 ID
+    static char train_number[MAX_SIZE]; // 车次
 
     static char train_start_station[MAX_SIZE];  // 始发站
     static char train_arrive_station[MAX_SIZE]; // 到达站
     static Date train_start_time;               // 出发时间
     static Date train_arrive_time;              // 到达时间
 
-    static uint32_t train_ticket_count = 0;    // 票数
-    static float    train_ticket_price = 0.0f; // 价格
+    static int   train_ticket_count = 0;    // 票数
+    static float train_ticket_price = 0.0f; // 价格
 
     static TrainStatus train_status = TrainStatus::OTHER; // 是否有效
 
@@ -77,23 +77,39 @@ View::show_user_input_window(bool* p_open)
     static ImVec4 active_color  = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // 按下颜色
     static ImVec4 disable_color = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // 禁用颜色
 
-    static bool is_selected_new = false;
+    static bool unable_insert = false;
+    static bool unable_del    = false;
+    static bool unable_update = true;
 
     if(p_open && !*p_open) return;
-
-    bool unable_insert = false;
-    bool unable_del    = false;
-    bool unable_update = true;
 
     bool is_insert = false;
     bool is_del    = false;
     bool is_update = false;
 
-    if(is_selected_new)
+    if(is_selected_new) // 如果选中了新的车次
     {
-        // 如果选中了新的车次，将该车次的数据显示在输入框中
-        controler.SelectTrainData(selected_id);
         is_selected_new = false;
+
+        controler.RailwaySystemSearchTrainData();
+
+        // 如果选中了新的车次，将该车次的数据显示在输入框中
+        if(controler.SelectTrainData(selected_id))
+        {
+            // 如果存在该车次，禁用插入按钮，启用删除和更新按钮
+            unable_insert = true;
+            unable_del    = false;
+            unable_update = false;
+
+            table_to_selected = true;
+        }
+        else
+        {
+            // 如果不存在该车次，启用插入按钮，禁用删除和更新按钮
+            unable_insert = false;
+            unable_del    = true;
+            unable_update = true;
+        }
     }
 
     // 将数据拷贝到输入框中
@@ -211,7 +227,6 @@ View::show_user_input_window(bool* p_open)
         is_update = ImGui::Button("Update", ImVec2(100, 0));
     }
 
-
     ImGui::End();
 
     ImGui::PopFont();
@@ -236,5 +251,65 @@ View::show_user_input_window(bool* p_open)
     if(is_insert)
     {
         controler.RailwaySystemInsertTrainData();
+
+        unable_insert = true;
+        unable_del    = false;
+        unable_update = false;
+
+        is_selected_new = true;
+
+        // 日志
+        ViewConsoleAddLog("Insert train data: %d, %s, %s, %s, %s, %d, %.2f, %s",
+            train_id,
+            train_number,
+            train_start_station,
+            train_arrive_station,
+            date_to_string(train_start_time).c_str(),
+            train_ticket_count,
+            train_ticket_price,
+            parse_train_status(train_status).c_str());
+        console_scroll_to_bottom = true;
+    }
+
+    if(is_del)
+    {
+        controler.RailwaySystemDelTrainData(selected_id);
+
+        unable_insert = false;
+        unable_del    = true;
+        unable_update = true;
+
+        is_selected_new = true;
+
+        // 日志
+        ViewConsoleAddLog("Delete train data: %d, %s, %s, %s, %s, %d, %.2f, %s",
+            train_id,
+            train_number,
+            train_start_station,
+            train_arrive_station,
+            date_to_string(train_start_time).c_str(),
+            train_ticket_count,
+            train_ticket_price,
+            parse_train_status(train_status).c_str());
+        console_scroll_to_bottom = true;
+    }
+
+    if(is_update)
+    {
+        controler.RailwaySystemInsertTrainData();
+
+        is_selected_new = true;
+
+        // 日志
+        ViewConsoleAddLog("Update train data: %d, %s, %s, %s, %s, %d, %.2f, %s",
+            train_id,
+            train_number,
+            train_start_station,
+            train_arrive_station,
+            date_to_string(train_start_time).c_str(),
+            train_ticket_count,
+            train_ticket_price,
+            parse_train_status(train_status).c_str());
+        console_scroll_to_bottom = true;
     }
 }

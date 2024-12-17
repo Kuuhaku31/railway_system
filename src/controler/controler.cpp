@@ -88,6 +88,16 @@ Controler::RailwaySystemInsertTrainData()
 }
 
 int32_t
+Controler::RailwaySystemDelTrainData(int32_t train_data_id)
+{
+    auto new_end = std::remove_if(database.begin(), database.end(), [train_data_id](const TrainData& data) { return data.train_id == train_data_id; });
+
+    database.erase(new_end, database.end());
+
+    return 0;
+}
+
+int32_t
 Controler::RailwaySystemSearchTrainData(int32_t flag)
 {
     train_datas.clear();
@@ -125,7 +135,7 @@ Controler::RailwaySystemArrangeTrainData()
     return 0;
 }
 
-void
+bool
 Controler::SelectTrainData(int train_data_id)
 {
     for(auto& train_data : train_datas)
@@ -133,7 +143,9 @@ Controler::SelectTrainData(int train_data_id)
         if(train_data->train_id == train_data_id)
         {
             processing_data = *train_data;
-            break;
+            return true;
         }
     }
+
+    return false;
 }

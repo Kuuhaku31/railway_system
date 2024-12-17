@@ -39,11 +39,12 @@ public:
     int32_t RailwaySystemArrangeTrainData();
 
     // 将指定 id 的数据k拷贝到 processing_data 中
-    void SelectTrainData(int train_data_id);
+    // 返回是否找到对应数据
+    bool SelectTrainData(int train_data_id);
 
 public:
     TrainDatas train_datas;     // 从数据库中查询到的数据
-    TrainData  processing_data; // 用户正在处理的数据
+    TrainData  processing_data; // 用户正在编辑的数据
 
 private:
     std::vector<TrainData> database;

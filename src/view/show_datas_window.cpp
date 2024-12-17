@@ -12,21 +12,13 @@ View::show_train_datas_window(bool* p_open)
     if(p_open && !*p_open) return;
 
     uint32_t window_flags = 0;
-
-    // 不显示标题栏
-    window_flags |= ImGuiWindowFlags_NoTitleBar;
-    // 无法调整宽度
-    window_flags |= ImGuiWindowFlags_NoResize;
-    // 无法移动
-    window_flags |= ImGuiWindowFlags_NoMove;
-    // 无法滚动
-    window_flags |= ImGuiWindowFlags_NoScrollbar;
-    // 无法滚动
-    window_flags |= ImGuiWindowFlags_NoScrollWithMouse;
-    // 无法Dock
-    window_flags |= ImGuiWindowFlags_NoDocking;
-    // 保持在最后
-    window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+    window_flags |= ImGuiWindowFlags_NoTitleBar;            // 不显示标题栏
+    window_flags |= ImGuiWindowFlags_NoResize;              // 无法调整宽度
+    window_flags |= ImGuiWindowFlags_NoMove;                // 无法移动
+    window_flags |= ImGuiWindowFlags_NoScrollbar;           // 没有滚动条
+    window_flags |= ImGuiWindowFlags_NoScrollWithMouse;     // 无法滚动
+    window_flags |= ImGuiWindowFlags_NoDocking;             // 无法Dock
+    window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus; // 保持在最后
 
     // 位置在左上角（只一次有效）
     ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -74,7 +66,7 @@ View::show_train_datas_window(bool* p_open)
         ImGui::TableSetupColumn("Arrive Time", ImGuiTableColumnFlags_WidthFixed, 100.0f);
         ImGui::TableSetupColumn("Ticket Count", ImGuiTableColumnFlags_WidthFixed, 100.0f);
         ImGui::TableSetupColumn("Ticket Price", ImGuiTableColumnFlags_WidthFixed, 100.0f);
-        ImGui::TableSetupColumn("Is Running", ImGuiTableColumnFlags_WidthFixed, 100.0f);
+        ImGui::TableSetupColumn("Train Status", ImGuiTableColumnFlags_WidthFixed, 100.0f);
 
         ImGui::TableHeadersRow();
 
@@ -85,9 +77,27 @@ View::show_train_datas_window(bool* p_open)
 
             ImGui::TableNextRow();
 
-            // 序号
-            ImGui::TableSetColumnIndex(0);
-            ImGui::Text("%d", index);
+            // 如果是选中的行
+            if(selected_id == train_data->train_id)
+            {
+                // 改变背景颜色
+                ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, IM_COL32(0x77, 0, 0, 255));
+
+                // 如果是新选中的行，滚动到该行
+                if(table_to_selected)
+                {
+                    ImGui::SetScrollHereY();
+                    table_to_selected = false;
+                }
+            }
+
+            // 检测鼠标点击事件
+            if(ImGui::TableNextColumn() && ImGui::Selectable(std::to_string(index).c_str(), selected_id == index, ImGuiSelectableFlags_SpanAllColumns))
+            {
+                selected_id     = index;
+                is_selected_new = true;
+            }
+
             // 车次 ID
             ImGui::TableNextColumn();
             ImGui::Text("%d", train_data->train_id);
@@ -126,12 +136,6 @@ View::show_train_datas_window(bool* p_open)
             default: break;
             }
             ImGui::TextColored(color, "%s", parse_train_status(train_data->train_status).c_str());
-
-            // 如果是选中的行，改变背景颜色
-            if(selected_id == train_data->train_id)
-            {
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, IM_COL32(255, 0, 0, 255));
-            }
         }
 
         ImGui::EndTable();

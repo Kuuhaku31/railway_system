@@ -37,6 +37,9 @@ View::ViewConsoleShowLog(bool* p_open)
 
     ImGui::SetNextWindowPos(window_pos);
     ImGui::SetNextWindowSize(window_size);
+
+    // 中文显示
+    ImGui::PushFont(font_chinese);
     ImGui::Begin("log window", p_open, window_flags);
 
     if(ImGui::Button("Clear")) logs.clear();
@@ -45,7 +48,7 @@ View::ViewConsoleShowLog(bool* p_open)
     bool copy_to_clipboard = ImGui::Button("Copy");
 
     ImGui::SameLine();
-    scroll_to_bottom = ImGui::Button("Scroll to bottom");
+    console_scroll_to_bottom = ImGui::Button("Scroll to bottom");
 
     ImGui::Separator(); // 分割线
 
@@ -59,16 +62,18 @@ View::ViewConsoleShowLog(bool* p_open)
         ImGui::TextUnformatted(log.c_str());
     }
 
-    if(scroll_to_bottom) ImGui::SetScrollHereY(1.0f);
-    scroll_to_bottom = false;
+    if(console_scroll_to_bottom) ImGui::SetScrollHereY(1.0f);
+    console_scroll_to_bottom = false;
 
     ImGui::EndChild();
 
     ImGui::End();
+
+    ImGui::PopFont();
 }
 
 void
 View::ViewScrollToBottom()
 {
-    scroll_to_bottom = true;
+    console_scroll_to_bottom = true;
 }

@@ -52,7 +52,10 @@ public:
 private:
     std::vector<std::string> logs;
 
-    bool scroll_to_bottom = false;
+    bool is_selected_new = false;
+
+    bool console_scroll_to_bottom = false;
+    bool table_to_selected        = false;
 
 private:
     View()                       = default;
