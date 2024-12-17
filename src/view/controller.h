@@ -28,21 +28,15 @@ public:
 public:
     void ControlerInit();
 
-    void Getdata(); // 获取数据
+    void Getdata(); // 获取数据，获取所有数据
+
+    void InsertData(); // 插入数据，插入当前数据
+
+    void UpdateData(); // 更新数据，更新当前数据
+
+    void DeleteData(); // 删除数据，根据当前数据的id删除
 
 public:
-    // 插入或修改数据
-    // 根据 id 值，如果该 id 已存在则修改，否则插入
-    int32_t RailwaySystemInsertTrainData();
-
-    // 删除数据，根据传入id
-    int32_t RailwaySystemDelTrainData(int32_t train_data_id);
-
-    // 整理数据
-    // 将数据按照id排序
-    // 删除无效数据
-    int32_t RailwaySystemArrangeTrainData();
-
     // 将指定 id 的数据k拷贝到 processing_data 中
     // 返回是否找到对应数据
     bool SelectTrainData(int train_data_id);

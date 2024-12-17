@@ -56,58 +56,35 @@ Controller::Getdata()
     RailwaySystemSearchTrainData(train_datas.data(), train_datas.size(), nullptr);
 }
 
-int32_t
-Controller::RailwaySystemInsertTrainData()
+void
+Controller::InsertData()
 {
-    // for(auto& data : database)
-    // {
-    //     if(data.train_id == processing_data.train_id)
-    //     {
-    //         data = processing_data;
-    //         return 0;
-    //     }
-    // }
-
-    // database.push_back(processing_data);
-
-    return 0;
+    RailwaySystemInsertTrainData(processing_data);
 }
 
-int32_t
-Controller::RailwaySystemDelTrainData(int32_t train_data_id)
+void
+Controller::UpdateData()
 {
-    // auto new_end = std::remove_if(database.begin(), database.end(), [train_data_id](const TrainData& data) { return data.train_id == train_data_id; });
-
-    // database.erase(new_end, database.end());
-
-    return 0;
+    RailwaySystemUpdateTrainData(processing_data);
 }
 
-int32_t
-Controller::RailwaySystemArrangeTrainData()
+void
+Controller::DeleteData()
 {
-    // std::sort(database.begin(), database.end(), [](const TrainData& a, const TrainData& b) { return a.train_id < b.train_id; });
-
-    // // 使用 std::remove 将所有匹配的元素移到末尾，并返回新的末尾迭代器
-    // auto new_end = std::remove_if(database.begin(), database.end(), [](const TrainData& data) { return data.train_id < 0; });
-
-    // // 使用 erase 删除无效数据
-    // database.erase(new_end, database.end());
-
-    return 0;
+    RailwaySystemDelTrainData(processing_data.id);
 }
 
 bool
 Controller::SelectTrainData(int train_data_id)
 {
-    // for(auto& train_data : train_datas)
-    // {
-    //     if(train_data->train_id == train_data_id)
-    //     {
-    //         processing_data = *train_data;
-    //         return true;
-    //     }
-    // }
+    for(auto& train_data : train_datas)
+    {
+        if(train_data.id == train_data_id)
+        {
+            processing_data = train_data;
+            return true;
+        }
+    }
 
     return false;
 }

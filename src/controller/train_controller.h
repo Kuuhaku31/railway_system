@@ -54,4 +54,19 @@ RailwaySystemSearchTrainData(TrainData* train_data, uint32_t num, const SearchRe
 // 或者 search_request 的 flag 的最低位为 1
 // 查询数据库中所有车次信息
 
+// 插入数据
+// 插入数据到数据库中
+// 如果数据库中不存在该车次信息，更新失败，返回负数
+int32_t
+RailwaySystemInsertTrainData(TrainData train_data);
+
+// 修改数据
+// 根据 id 值
+int32_t
+RailwaySystemUpdateTrainData(TrainData train_data);
+
+// 删除数据，根据传入id
+int32_t
+RailwaySystemDelTrainData(int32_t train_data_id);
+
 #endif // RAILWAYSYSTEM_CONTROLLER_H

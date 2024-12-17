@@ -7,12 +7,12 @@
 
 typedef struct
 {
-    uint8_t year;
-    uint8_t month;
-    uint8_t day;
-    uint8_t hour;
-    uint8_t minute;
-    uint8_t second;
+    uint16_t year;
+    uint8_t  month;
+    uint8_t  day;
+    uint8_t  hour;
+    uint8_t  minute;
+    uint8_t  second;
 } Date;
 
 // 将uint64_t类型的时间转换为Date类型

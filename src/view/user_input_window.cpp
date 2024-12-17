@@ -16,7 +16,7 @@ DrawTimeInput(const char* label, Date* time)
     ImGui::Text(label);
     ImGui::PushItemWidth(100);
     // 输入年
-    ImGui::InputScalar((std::string("年##") + label).c_str(), ImGuiDataType_U8, &time->year), ImGui::SameLine();
+    ImGui::InputScalar((std::string("年##") + label).c_str(), ImGuiDataType_U16, &time->year), ImGui::SameLine();
     // 输入月
     ImGui::InputScalar((std::string("月##") + label).c_str(), ImGuiDataType_U8, &time->month), ImGui::SameLine();
     // 输入日
@@ -179,7 +179,7 @@ View::show_user_input_window(bool* p_open)
 
     if(is_insert)
     {
-        controller.RailwaySystemInsertTrainData();
+        controller.InsertData();
 
         unable_insert = true;
         unable_del    = false;
@@ -194,7 +194,7 @@ View::show_user_input_window(bool* p_open)
 
     if(is_del)
     {
-        controller.RailwaySystemDelTrainData(selected_id);
+        controller.DeleteData();
 
         unable_insert = false;
         unable_del    = true;
@@ -209,7 +209,7 @@ View::show_user_input_window(bool* p_open)
 
     if(is_update)
     {
-        controller.RailwaySystemInsertTrainData();
+        controller.UpdateData();
 
         is_selected_new = true;
 
