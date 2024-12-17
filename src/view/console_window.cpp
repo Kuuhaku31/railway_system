@@ -4,18 +4,6 @@
 #include "view.h"
 
 void
-View::ViewConsoleAddLog(const char* fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    char buf[1024];
-    vsnprintf(buf, sizeof(buf), fmt, args);
-    buf[sizeof(buf) - 1] = 0;
-    va_end(args);
-    logs.push_back(std::string(buf));
-}
-
-void
 View::ViewConsoleShowLog(bool* p_open)
 {
     if(p_open && !*p_open) return;
@@ -61,10 +49,4 @@ View::ViewConsoleShowLog(bool* p_open)
     ImGui::End();
 
     ImGui::PopFont();
-}
-
-void
-View::ViewScrollToBottom()
-{
-    console_scroll_to_bottom = true;
 }

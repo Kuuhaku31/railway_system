@@ -11,25 +11,27 @@ extern "C"{
 #include <stdint.h>
 
 enum TrainStatus {
-    TRAIN_STATUS_RUNNING = 0,
-    TRAIN_STATUS_STOPPED = 1,
-    TRAIN_STATUS_DELAYED = 2,
-    TRAIN_STATUS_CANCELLED = 3,
+    TRAIN_STATUS_RUNNING = 0,//正常
+    TRAIN_STATUS_STOPPED = 1,//停运
+    TRAIN_STATUS_DELAYED = 2,//延误
+    TRAIN_STATUS_CANCELLED = 3,//取消
+    TRAIN_STATUS_UNKNOWN = 4//未知
 };
 
 typedef struct {
     int32_t id; // 唯一 ID
 
-    int32_t ticket_remain; // 票数
-    float ticket_price; // 价格, 分为单位
-    int64_t start_time;   // 出发时间
-    int64_t arrive_time;  // 到达时间
-
     char number[16];         // 车次
     char start_station[64];  // 始发站
     char arrive_station[64]; // 到达站
 
-   enum TrainStatus train_status; // 列车状态
+    int64_t start_time;   // 出发时间
+    int64_t arrive_time;  // 到达时间
+
+    int32_t ticket_remain; // 票数
+    float ticket_price; // 价格, 分为单位
+
+    enum TrainStatus train_status; // 列车状态
 } TrainData;
 
 enum condition{

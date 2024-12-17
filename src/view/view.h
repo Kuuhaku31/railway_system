@@ -5,6 +5,8 @@
 
 #include "imgui_setup.h"
 
+#include "train.h"
+
 #include <string>
 #include <vector>
 
@@ -70,6 +72,8 @@ private:
 
     bool console_scroll_to_bottom = false;
     bool table_to_selected        = false;
+
+    void add_log(std::string label, const TrainData& train_data);
 
 private:
     View()                       = default;

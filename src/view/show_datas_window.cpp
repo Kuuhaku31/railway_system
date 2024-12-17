@@ -5,6 +5,20 @@
 #include "controller.h"
 #include "view.h"
 
+ImVec4
+parse_train_status_color(TrainStatus status)
+{
+    switch(status)
+    {
+    case TRAIN_STATUS_RUNNING: return ImVec4(0, 255, 0, 255);       // 绿色
+    case TRAIN_STATUS_DELAYED: return ImVec4(255, 255, 0, 255);     // 黄色
+    case TRAIN_STATUS_STOPPED: return ImVec4(255, 0, 0, 255);       // 红色
+    case TRAIN_STATUS_CANCELLED: return ImVec4(128, 128, 128, 255); // 灰色
+    default:                                                        // 未知状态
+    case TRAIN_STATUS_UNKNOWN: return ImVec4(0, 0, 255, 255);       // 蓝色
+    }
+}
+
 static Controller& controller = Controller::Instance();
 
 void
@@ -71,7 +85,7 @@ View::show_train_datas_window(bool* p_open)
             ImGui::TableNextRow();
 
             // 如果是选中的行
-            if(selected_id == train_data->train_id && table_to_selected)
+            if(selected_id == train_data.id && table_to_selected)
             {
                 ImGui::SetScrollHereY();
                 table_to_selected = false;
@@ -86,42 +100,31 @@ View::show_train_datas_window(bool* p_open)
 
             // 车次 ID
             ImGui::TableNextColumn();
-            ImGui::Text("%d", train_data->train_id);
+            ImGui::Text("%d", train_data.id);
             // 车次
             ImGui::TableNextColumn();
-            ImGui::Text("%s", train_data->train_number.c_str());
+            ImGui::Text("%s", train_data.number);
             // 始发站
             ImGui::TableNextColumn();
-            ImGui::Text("%s", train_data->train_start_station.c_str());
+            ImGui::Text("%s", train_data.start_station);
             // 到达站
             ImGui::TableNextColumn();
-            ImGui::Text("%s", train_data->train_arrive_station.c_str());
+            ImGui::Text("%s", train_data.arrive_station);
             // 出发时间
             ImGui::TableNextColumn();
-            ImGui::Text("%s", date_to_string(train_data->train_start_time).c_str());
+            ImGui::Text("%s", date_to_string(uint64_time_to_date(train_data.start_time)).c_str());
             // 到达时间
             ImGui::TableNextColumn();
-            ImGui::Text("%s", date_to_string(train_data->train_arrive_time).c_str());
+            ImGui::Text("%s", date_to_string(uint64_time_to_date(train_data.arrive_time)).c_str());
             // 票数
             ImGui::TableNextColumn();
-            ImGui::Text("%d", train_data->train_ticket_count);
+            ImGui::Text("%d", train_data.ticket_remain);
             // 价格
             ImGui::TableNextColumn();
-            ImGui::Text("%.2f", train_data->train_ticket_price);
+            ImGui::Text("%.2f", train_data.ticket_price);
             // 是否有效
             ImGui::TableNextColumn();
-
-            ImVec4 color = ImVec4(0, 255, 0, 255);
-
-            switch(train_data->train_status)
-            {
-            case TrainStatus::NORMAL: color = ImVec4(0, 255, 0, 255); break;
-            case TrainStatus::DELAY: color = ImVec4(255, 255, 0, 255); break;
-            case TrainStatus::STOP: color = ImVec4(255, 0, 0, 255); break;
-            case TrainStatus::OTHER: color = ImVec4(0, 0, 255, 255); break;
-            default: break;
-            }
-            ImGui::TextColored(color, "%s", parse_train_status(train_data->train_status).c_str());
+            ImGui::TextColored(parse_train_status_color(train_data.train_status), "%s", parse_train_status(train_data.train_status).c_str());
         }
 
         ImGui::EndTable();

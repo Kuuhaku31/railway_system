@@ -2,53 +2,31 @@
 // user_input_window.cpp
 
 // #include "train_controller.h"
-#include "controller.h"
 #include "view.h"
+
+#include "controller.h"
+
+#include "date.h"
 
 #define MAX_SIZE 128
 
 void
-DrawTimeInput(const char* label, Date& time)
+DrawTimeInput(const char* label, Date* time)
 {
     ImGui::Text(label);
     ImGui::PushItemWidth(100);
-
     // 输入年
-    ImGui::InputScalar((std::string("年##") + label).c_str(), ImGuiDataType_U32, &time.year);
-    if(time.year <= 0) time.year = 1;
-
-    ImGui::SameLine();
-
+    ImGui::InputScalar((std::string("年##") + label).c_str(), ImGuiDataType_U8, &time->year), ImGui::SameLine();
     // 输入月
-    ImGui::InputScalar((std::string("月##") + label).c_str(), ImGuiDataType_U32, &time.month);
-    if(time.month <= 0) time.month = 12;
-    if(time.month > 12) time.month = 1;
-
-    ImGui::SameLine();
-
+    ImGui::InputScalar((std::string("月##") + label).c_str(), ImGuiDataType_U8, &time->month), ImGui::SameLine();
     // 输入日
-    ImGui::InputScalar((std::string("日##") + label).c_str(), ImGuiDataType_U32, &time.day);
-    if(time.day <= 0) time.day = 31;
-    if(time.day > 31) time.day = 1;
-
+    ImGui::InputScalar((std::string("日##") + label).c_str(), ImGuiDataType_U8, &time->day);
     // 输入小时
-    ImGui::InputScalar((std::string("时##") + label).c_str(), ImGuiDataType_U32, &time.hour);
-    if(time.hour < 0) time.hour = 23;
-    if(time.hour > 23) time.hour = 0;
-
-    ImGui::SameLine();
-
+    ImGui::InputScalar((std::string("时##") + label).c_str(), ImGuiDataType_U8, &time->hour), ImGui::SameLine();
     // 输入分钟
-    ImGui::InputScalar((std::string("分##") + label).c_str(), ImGuiDataType_U32, &time.minute);
-    if(time.minute < 0) time.minute = 59;
-    if(time.minute > 59) time.minute = 0;
-
-    ImGui::SameLine();
-
+    ImGui::InputScalar((std::string("分##") + label).c_str(), ImGuiDataType_U8, &time->minute), ImGui::SameLine();
     // 输入秒
-    ImGui::InputScalar((std::string("秒##") + label).c_str(), ImGuiDataType_U32, &time.second);
-    if(time.second < 0) time.second = 59;
-
+    ImGui::InputScalar((std::string("秒##") + label).c_str(), ImGuiDataType_U8, &time->second);
     ImGui::PopItemWidth();
 }
 
@@ -57,19 +35,6 @@ static Controller& controller = Controller::Instance();
 void
 View::show_user_input_window(bool* p_open)
 {
-    static int  train_id = 0;           // 车次 ID
-    static char train_number[MAX_SIZE]; // 车次
-
-    static char train_start_station[MAX_SIZE];  // 始发站
-    static char train_arrive_station[MAX_SIZE]; // 到达站
-    static Date train_start_time;               // 出发时间
-    static Date train_arrive_time;              // 到达时间
-
-    static int   train_ticket_count = 0;    // 票数
-    static float train_ticket_price = 0.0f; // 价格
-
-    static TrainStatus train_status = TrainStatus::OTHER; // 是否有效
-
     // 设置按钮的颜色
     static ImVec4 normal_color  = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); // 正常颜色
     static ImVec4 hovered_color = ImVec4(0.7f, 0.7f, 0.7f, 1.0f); // 悬停颜色
@@ -90,7 +55,7 @@ View::show_user_input_window(bool* p_open)
     {
         is_selected_new = false;
 
-        controller.RailwaySystemSearchTrainData();
+        controller.Getdata();
 
         // 如果选中了新的车次，将该车次的数据显示在输入框中
         if(controller.SelectTrainData(selected_id))
@@ -111,21 +76,8 @@ View::show_user_input_window(bool* p_open)
         }
     }
 
-    // 将数据拷贝到输入框中
-    train_id = controller.processing_data.train_id;
-    strncpy(train_number, controller.processing_data.train_number.c_str(), MAX_SIZE);
-
-    strncpy(train_start_station, controller.processing_data.train_start_station.c_str(), MAX_SIZE);
-    strncpy(train_arrive_station, controller.processing_data.train_arrive_station.c_str(), MAX_SIZE);
-
-    train_start_time  = controller.processing_data.train_start_time;
-    train_arrive_time = controller.processing_data.train_arrive_time;
-
-    train_ticket_count = controller.processing_data.train_ticket_count;
-    train_ticket_price = controller.processing_data.train_ticket_price;
-
-    train_status = controller.processing_data.train_status;
-
+    // 引用控制器中的数据
+    TrainData& train_data = controller.processing_data;
 
     uint32_t window_flags = 0;
     window_flags |= ImGuiWindowFlags_NoTitleBar;
@@ -141,27 +93,31 @@ View::show_user_input_window(bool* p_open)
     ImGui::Text("processing data:");
 
     // 如果选中了某个车次，将该车次的数据显示在输入框中
-    if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &train_id))
+    if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &train_data.id))
     {
         is_selected_new = true;
     }
-    ImGui::InputText("Train Number", train_number, MAX_SIZE);
+    ImGui::InputText("Train Number", train_data.number, MAX_SIZE);
 
-    ImGui::InputText("Start Station", train_start_station, MAX_SIZE);
-    ImGui::InputText("Arrive Station", train_arrive_station, MAX_SIZE);
+    ImGui::InputText("Start Station", train_data.start_station, MAX_SIZE);
+    ImGui::InputText("Arrive Station", train_data.arrive_station, MAX_SIZE);
 
     // 出发时间
-    DrawTimeInput("Start Time", train_start_time);
+    Date start_time = uint64_time_to_date(train_data.start_time);
+    DrawTimeInput("Start Time", &start_time);
+    train_data.start_time = date_to_uint64_time(start_time);
     // 到达时间
-    DrawTimeInput("Arrive Time", train_arrive_time);
+    Date arrive_time = uint64_time_to_date(train_data.arrive_time);
+    DrawTimeInput("Arrive Time", &arrive_time);
+    train_data.arrive_time = date_to_uint64_time(arrive_time);
 
-    ImGui::InputScalar("Ticket Count", ImGuiDataType_U32, &train_ticket_count);
-    ImGui::InputScalar("Ticket Price", ImGuiDataType_Float, &train_ticket_price);
+    ImGui::InputScalar("Ticket Count", ImGuiDataType_U32, &train_data.ticket_remain);
+    ImGui::InputScalar("Ticket Price", ImGuiDataType_Float, &train_data.ticket_price);
 
     // 下拉框选择车次状态
     ImGui::Text("Train Status");
-    const char* items[] = { "NORMAL", "DELAY", "STOP", "OTHER" };
-    ImGui::Combo("##Train Status", (int*)&train_status, items, IM_ARRAYSIZE(items));
+    const char* items[] = { "NORMAL", "DELAY", "STOP", "CANCEL", "OTHER" };
+    ImGui::Combo("##Train Status", (int*)&train_data.train_status, items, IM_ARRAYSIZE(items));
 
     // 分割线
     ImGui::Separator();
@@ -219,22 +175,7 @@ View::show_user_input_window(bool* p_open)
     ImGui::End();
     ImGui::PopFont();
 
-    // 将输入框中的数据拷贝到 controller.processing_data 中
-    controller.processing_data.train_id = train_id;
-
-    controller.processing_data.train_number = train_number[0] == '\0' ? "UNKNOWN" : train_number;
-
-    controller.processing_data.train_start_station  = train_start_station[0] == '\0' ? "UNKNOWN" : train_start_station;
-    controller.processing_data.train_arrive_station = train_arrive_station[0] == '\0' ? "UNKNOWN" : train_arrive_station;
-    controller.processing_data.train_start_time     = train_start_time;
-    controller.processing_data.train_arrive_time    = train_arrive_time;
-
-    controller.processing_data.train_ticket_count = train_ticket_count;
-    controller.processing_data.train_ticket_price = train_ticket_price;
-
-    controller.processing_data.train_status = train_status;
-
-    selected_id = train_id;
+    selected_id = train_data.id;
 
     if(is_insert)
     {
@@ -247,15 +188,7 @@ View::show_user_input_window(bool* p_open)
         is_selected_new = true;
 
         // 日志
-        ViewConsoleAddLog("Insert train data: %d, %s, %s, %s, %s, %d, %.2f, %s",
-            train_id,
-            train_number,
-            train_start_station,
-            train_arrive_station,
-            date_to_string(train_start_time).c_str(),
-            train_ticket_count,
-            train_ticket_price,
-            parse_train_status(train_status).c_str());
+        add_log("Insert: ", train_data);
         console_scroll_to_bottom = true;
     }
 
@@ -270,15 +203,7 @@ View::show_user_input_window(bool* p_open)
         is_selected_new = true;
 
         // 日志
-        ViewConsoleAddLog("Delete train data: %d, %s, %s, %s, %s, %d, %.2f, %s",
-            train_id,
-            train_number,
-            train_start_station,
-            train_arrive_station,
-            date_to_string(train_start_time).c_str(),
-            train_ticket_count,
-            train_ticket_price,
-            parse_train_status(train_status).c_str());
+        add_log("Delete: ", train_data);
         console_scroll_to_bottom = true;
     }
 
@@ -289,15 +214,7 @@ View::show_user_input_window(bool* p_open)
         is_selected_new = true;
 
         // 日志
-        ViewConsoleAddLog("Update train data: %d, %s, %s, %s, %s, %d, %.2f, %s",
-            train_id,
-            train_number,
-            train_start_station,
-            train_arrive_station,
-            date_to_string(train_start_time).c_str(),
-            train_ticket_count,
-            train_ticket_price,
-            parse_train_status(train_status).c_str());
+        add_log("Update: ", train_data);
         console_scroll_to_bottom = true;
     }
 }

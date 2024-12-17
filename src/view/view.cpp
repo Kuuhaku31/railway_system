@@ -5,39 +5,7 @@
 
 #include "controller.h"
 
-#include <chrono>
-
-std::string
-date_to_string(const Date& date)
-{
-    std::stringstream ss;
-    ss << date.year << "-"
-       << std::setw(2) << std::setfill('0') << date.month << "-"
-       << std::setw(2) << std::setfill('0') << date.day << " "
-       << std::setw(2) << std::setfill('0') << date.hour << ":"
-       << std::setw(2) << std::setfill('0') << date.minute << ":"
-       << std::setw(2) << std::setfill('0') << date.second;
-    return ss.str();
-}
-
-std::string
-parse_train_status(TrainStatus status)
-{
-    switch(status)
-    {
-    case TrainStatus::NORMAL:
-        return "NORMAL";
-    case TrainStatus::DELAY:
-        return "DELAY";
-    case TrainStatus::STOP:
-        return "STOP";
-    case TrainStatus::OTHER:
-        return "OTHER";
-    default:
-        return "UNKNOWN";
-    }
-}
-
+#include "date.h"
 
 static ImGui_setup& imgui_setup = ImGui_setup::Instance();
 static Controller&  controller  = Controller::Instance();
@@ -104,14 +72,14 @@ View::show_config_window(bool* p_open)
         TrainData& train_data = controller.processing_data;
 
         printf("processing data: \n");
-        printf("train_id: %d\n", train_data.train_id);
-        printf("train_number: %s\n", train_data.train_number.c_str());
-        printf("train_start_station: %s\n", train_data.train_start_station.c_str());
-        printf("train_arrive_station: %s\n", train_data.train_arrive_station.c_str());
-        printf("train_start_time: %s\n", date_to_string(train_data.train_start_time).c_str());
-        printf("train_arrive_time: %s\n", date_to_string(train_data.train_arrive_time).c_str());
-        printf("train_ticket_count: %d\n", train_data.train_ticket_count);
-        printf("train_ticket_price: %.2f\n", train_data.train_ticket_price);
+        printf("train_id: %d\n", train_data.id);
+        printf("ticket_remain: %d\n", train_data.ticket_remain);
+        printf("ticket_price: %.2f\n", train_data.ticket_price);
+        printf("start_time: %s\n", date_to_string(uint64_time_to_date(train_data.start_time)).c_str());
+        printf("arrive_time: %s\n", date_to_string(uint64_time_to_date(train_data.arrive_time)).c_str());
+        printf("number: %s\n", train_data.number);
+        printf("start_station: %s\n", train_data.start_station);
+        printf("arrive_station: %s\n", train_data.arrive_station);
         printf("train_status: %s\n", parse_train_status(train_data.train_status).c_str());
     }
 
@@ -119,7 +87,7 @@ View::show_config_window(bool* p_open)
     static int number = 0;
     if(ImGui::InputInt("input number", &number))
     {
-        controller.RailwaySystemSearchTrainData(number);
+        controller.Getdata();
     }
 
     ImGui::End();
@@ -142,4 +110,40 @@ View::update_view_layout()
     // 控制台窗口位置和大小
     console_window_pos  = ImVec2(display_size.x * inuput_window_width, display_size.y * data_window_height);
     console_window_size = ImVec2(display_size.x * (1 - inuput_window_width), display_size.y * (1 - data_window_height));
+}
+
+void
+View::ViewConsoleAddLog(const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    char buf[1024];
+    vsnprintf(buf, sizeof(buf), fmt, args);
+    buf[sizeof(buf) - 1] = 0;
+    va_end(args);
+    logs.push_back(std::string(buf));
+}
+
+
+void
+View::add_log(std::string label, const TrainData& train_data)
+{
+    std::string log =
+        label +
+        std::to_string(train_data.id) + " " +
+        std::string(train_data.number) + " " +
+        std::string(train_data.start_station) + " " +
+        std::string(train_data.arrive_station) + " " +
+        date_to_string(uint64_time_to_date(train_data.start_time)) + " " +
+        date_to_string(uint64_time_to_date(train_data.arrive_time)) + " " +
+        std::to_string(train_data.ticket_remain) + " " +
+        std::to_string(train_data.ticket_price) + " " +
+        parse_train_status(train_data.train_status);
+    ViewConsoleAddLog(log.c_str());
+}
+
+void
+View::ViewScrollToBottom()
+{
+    console_scroll_to_bottom = true;
 }
