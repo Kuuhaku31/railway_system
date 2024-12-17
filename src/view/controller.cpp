@@ -11,14 +11,9 @@
 std::string
 date_to_string(const Date& date)
 {
-    std::stringstream ss;
-    ss << date.year << "-"
-       << std::setw(2) << std::setfill('0') << date.month << "-"
-       << std::setw(2) << std::setfill('0') << date.day << " "
-       << std::setw(2) << std::setfill('0') << date.hour << ":"
-       << std::setw(2) << std::setfill('0') << date.minute << ":"
-       << std::setw(2) << std::setfill('0') << date.second;
-    return ss.str();
+    char buf[64];
+    snprintf(buf, sizeof(buf), "%04d-%02d-%02d %02d:%02d:%02d", date.year, date.month, date.day, date.hour, date.minute, date.second);
+    return std::string(buf);
 }
 
 std::string
@@ -26,7 +21,7 @@ parse_train_status(TrainStatus status)
 {
     switch(status)
     {
-    case TRAIN_STATUS_RUNNING: return "NORMAL";
+    case TRAIN_STATUS_NORMAL: return "NORMAL";
     case TRAIN_STATUS_DELAYED: return "DELAY";
     case TRAIN_STATUS_STOPPED: return "STOP";
     case TRAIN_STATUS_CANCELLED: return "CANCEL";
@@ -34,7 +29,6 @@ parse_train_status(TrainStatus status)
     case TRAIN_STATUS_UNKNOWN: return "UNKNOWN";
     }
 }
-
 
 Controller* Controller::instance = nullptr;
 Controller&
@@ -51,27 +45,49 @@ Controller::ControlerInit()
 }
 
 void
-Controller::Getdata()
+Controller::Getdatas()
 {
+    printf("Get datas...\n");
+
+    train_datas.resize(RailwaySystemGetTrainDataCount());
     RailwaySystemSearchTrainData(train_datas.data(), train_datas.size(), nullptr);
 }
 
 void
 Controller::InsertData()
 {
+    printf("Insert data...\n");
     RailwaySystemInsertTrainData(processing_data);
 }
 
 void
 Controller::UpdateData()
 {
+    printf("Update data...\n");
     RailwaySystemUpdateTrainData(processing_data);
 }
 
 void
 Controller::DeleteData()
 {
+    printf("Delete data...\n");
     RailwaySystemDelTrainData(processing_data.id);
+}
+
+bool
+Controller::UpdateProcessingData()
+{
+    printf("Update processing data...\n");
+    for(auto& train_data : train_datas)
+    {
+        if(train_data.id == processing_data.id)
+        {
+            processing_data = train_data;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool

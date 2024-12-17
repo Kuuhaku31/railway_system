@@ -21,7 +21,7 @@ View::Instance()
 void
 View::ViewInit()
 {
-    static Rect window_rect = { 30, 40, 1200, 900 };
+    static Rect window_rect = { 30, 40, 1100, 1400 };
     imgui_setup.Init("view", window_rect, false);
 
     // 加载默认字体
@@ -41,6 +41,14 @@ View::ViewQuit()
 void
 View::ViewShowWindows()
 {
+    if(controller.is_fresh_data)
+    {
+        controller.is_fresh_data = false;
+        controller.Getdatas();
+    }
+
+    is_show_user_input = controller.is_processing_data;
+
     update_view_layout();
 
     show_config_window();
@@ -49,7 +57,7 @@ View::ViewShowWindows()
 
     if(is_show_demo_window) ImGui::ShowDemoWindow(&is_show_demo_window);
 
-    show_user_input_window();
+    show_user_input_window(&controller.is_processing_data);
 
     ViewConsoleShowLog();
 }
@@ -83,11 +91,10 @@ View::show_config_window(bool* p_open)
         printf("train_status: %s\n", parse_train_status(train_data.train_status).c_str());
     }
 
-    // 输入一个整数
-    static int number = 0;
-    if(ImGui::InputInt("input number", &number))
+    // 读取数据库
+    if(ImGui::Button("Get datas"))
     {
-        controller.Getdata();
+        controller.Getdatas();
     }
 
     ImGui::End();
@@ -100,16 +107,20 @@ View::update_view_layout()
     ImVec2 display_size = ImGui::GetIO().DisplaySize;
 
     // 数据窗口位置和大小
-    data_window_pos  = ImVec2(0, 0);
-    data_window_size = ImVec2(display_size.x, display_size.y * data_window_height);
+    data_window_pos    = ImVec2(0, 0);
+    data_window_size.x = display_size.x;
+    data_window_size.y = (is_show_user_input || is_show_console) ? display_size.y * data_window_height : display_size.y;
 
     // 用户输入窗口位置和大小
-    input_window_pos  = ImVec2(0, display_size.y * data_window_height);
-    input_window_size = ImVec2(display_size.x * inuput_window_width, display_size.y * (1 - data_window_height));
+    input_window_pos    = ImVec2(0, display_size.y * data_window_height);
+    input_window_size.x = is_show_console ? display_size.x * inuput_window_width : display_size.x;
+    input_window_size.y = display_size.y * (1 - data_window_height);
 
     // 控制台窗口位置和大小
-    console_window_pos  = ImVec2(display_size.x * inuput_window_width, display_size.y * data_window_height);
-    console_window_size = ImVec2(display_size.x * (1 - inuput_window_width), display_size.y * (1 - data_window_height));
+    console_window_pos.x  = is_show_user_input ? display_size.x * inuput_window_width : 0;
+    console_window_pos.y  = display_size.y * data_window_height;
+    console_window_size.x = is_show_user_input ? display_size.x * (1 - inuput_window_width) : display_size.x;
+    console_window_size.y = display_size.y * (1 - data_window_height);
 }
 
 void

@@ -10,7 +10,7 @@ parse_train_status_color(TrainStatus status)
 {
     switch(status)
     {
-    case TRAIN_STATUS_RUNNING: return ImVec4(0, 255, 0, 255);       // 绿色
+    case TRAIN_STATUS_NORMAL: return ImVec4(0, 255, 0, 255);        // 绿色
     case TRAIN_STATUS_DELAYED: return ImVec4(255, 255, 0, 255);     // 黄色
     case TRAIN_STATUS_STOPPED: return ImVec4(255, 0, 0, 255);       // 红色
     case TRAIN_STATUS_CANCELLED: return ImVec4(128, 128, 128, 255); // 灰色
@@ -19,7 +19,9 @@ parse_train_status_color(TrainStatus status)
     }
 }
 
-static Controller& controller = Controller::Instance();
+static Controller& controller         = Controller::Instance();
+static TrainData&  processing_data    = controller.processing_data;
+static bool&       is_processing_data = controller.is_processing_data;
 
 void
 View::show_train_datas_window(bool* p_open)
@@ -47,7 +49,7 @@ View::show_train_datas_window(bool* p_open)
     // 第一个元素位置为(0, 0)
     ImGui::SetCursorPos(ImVec2(0, 0));
 
-    const Controller::TrainDatas& train_datas = controller.train_datas;
+    const Controller::TrainDatas& train_datas = controller.GetTrainDatas();
 
     // 表格显示车次信息
     uint32_t table_flags = 0;
@@ -78,24 +80,26 @@ View::show_train_datas_window(bool* p_open)
         ImGui::TableHeadersRow();
 
         int index = 0;
-        for(auto& train_data : train_datas)
+        for(const auto& train_data : train_datas)
         {
             index++;
 
             ImGui::TableNextRow();
 
             // 如果是选中的行
-            if(selected_id == train_data.id && table_to_selected)
+            if(is_processing_data && processing_data.id == train_data.id && table_to_selected)
             {
                 ImGui::SetScrollHereY();
                 table_to_selected = false;
             }
 
             // 检测鼠标点击事件
-            if(ImGui::TableNextColumn() && ImGui::Selectable(std::to_string(index).c_str(), selected_id == index, ImGuiSelectableFlags_SpanAllColumns))
+            bool is_selected = is_processing_data && (processing_data.id == train_data.id);
+            if(ImGui::TableNextColumn() && ImGui::Selectable(std::to_string(index).c_str(), is_selected, ImGuiSelectableFlags_SpanAllColumns))
             {
-                selected_id     = index;
-                is_selected_new = true;
+                processing_data.id = train_data.id;
+                is_selected_new    = true;
+                is_processing_data = true;
             }
 
             // 车次 ID

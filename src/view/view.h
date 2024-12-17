@@ -35,6 +35,8 @@ private:
 public: // 窗口布局相关配置
     bool is_show_demo_window = false;
     bool is_show_train_datas = true;
+    bool is_show_user_input  = true;
+    bool is_show_console     = true;
 
     // 背景颜色
     Color clear_color = { 0x33, 0x33, 0x33, 0xff };
@@ -57,9 +59,6 @@ private:
     ImVec2 console_window_size;
 
     void update_view_layout(); // 更新窗口布局
-
-public:
-    int selected_id = -1;
 
 public:
     ImFont* font_default = nullptr;

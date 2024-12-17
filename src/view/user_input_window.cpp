@@ -30,7 +30,9 @@ DrawTimeInput(const char* label, Date* time)
     ImGui::PopItemWidth();
 }
 
-static Controller& controller = Controller::Instance();
+static Controller& controller         = Controller::Instance();
+static TrainData&  processing_data    = controller.processing_data; // 引用控制器中的数据
+static bool&       is_processing_data = controller.is_processing_data;
 
 void
 View::show_user_input_window(bool* p_open)
@@ -50,15 +52,14 @@ View::show_user_input_window(bool* p_open)
     bool is_insert = false;
     bool is_del    = false;
     bool is_update = false;
+    bool is_cancel = false;
 
     if(is_selected_new) // 如果选中了新的车次
     {
         is_selected_new = false;
 
-        controller.Getdata();
-
         // 如果选中了新的车次，将该车次的数据显示在输入框中
-        if(controller.SelectTrainData(selected_id))
+        if(controller.UpdateProcessingData())
         {
             // 如果存在该车次，禁用插入按钮，启用删除和更新按钮
             unable_insert = true;
@@ -75,9 +76,13 @@ View::show_user_input_window(bool* p_open)
             unable_update = true;
         }
     }
-
-    // 引用控制器中的数据
-    TrainData& train_data = controller.processing_data;
+    else if(!is_processing_data) // 如果没有选中车次
+    {
+        // 如果没有选中车次
+        unable_insert = true;
+        unable_del    = true;
+        unable_update = true;
+    }
 
     uint32_t window_flags = 0;
     window_flags |= ImGuiWindowFlags_NoTitleBar;
@@ -90,34 +95,38 @@ View::show_user_input_window(bool* p_open)
     ImGui::SetNextWindowPos(input_window_pos);
     ImGui::SetNextWindowSize(input_window_size);
     ImGui::Begin("Input Text", p_open, window_flags);
-    ImGui::Text("processing data:");
 
-    // 如果选中了某个车次，将该车次的数据显示在输入框中
-    if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &train_data.id))
+    if(ImGui::Button("Search")) controller.is_fresh_data = true;
+
+    ImGui::Text("processing data: %s", is_processing_data ? "true" : "false");
+
+    // Train ID 输入框
+    if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &processing_data.id))
     {
         is_selected_new = true;
     }
-    ImGui::InputText("Train Number", train_data.number, MAX_SIZE);
 
-    ImGui::InputText("Start Station", train_data.start_station, MAX_SIZE);
-    ImGui::InputText("Arrive Station", train_data.arrive_station, MAX_SIZE);
+    ImGui::InputText("Train Number", processing_data.number, MAX_SIZE);
+
+    ImGui::InputText("Start Station", processing_data.start_station, MAX_SIZE);
+    ImGui::InputText("Arrive Station", processing_data.arrive_station, MAX_SIZE);
 
     // 出发时间
-    Date start_time = uint64_time_to_date(train_data.start_time);
+    Date start_time = uint64_time_to_date(processing_data.start_time);
     DrawTimeInput("Start Time", &start_time);
-    train_data.start_time = date_to_uint64_time(start_time);
+    processing_data.start_time = date_to_uint64_time(start_time);
     // 到达时间
-    Date arrive_time = uint64_time_to_date(train_data.arrive_time);
+    Date arrive_time = uint64_time_to_date(processing_data.arrive_time);
     DrawTimeInput("Arrive Time", &arrive_time);
-    train_data.arrive_time = date_to_uint64_time(arrive_time);
+    processing_data.arrive_time = date_to_uint64_time(arrive_time);
 
-    ImGui::InputScalar("Ticket Count", ImGuiDataType_U32, &train_data.ticket_remain);
-    ImGui::InputScalar("Ticket Price", ImGuiDataType_Float, &train_data.ticket_price);
+    ImGui::InputScalar("Ticket Count", ImGuiDataType_U32, &processing_data.ticket_remain);
+    ImGui::InputScalar("Ticket Price", ImGuiDataType_Float, &processing_data.ticket_price);
 
     // 下拉框选择车次状态
     ImGui::Text("Train Status");
-    const char* items[] = { "NORMAL", "DELAY", "STOP", "CANCEL", "OTHER" };
-    ImGui::Combo("##Train Status", (int*)&train_data.train_status, items, IM_ARRAYSIZE(items));
+    const char* items[] = { "NORMAL", "DELAY", "STOP", "CANCEL", "UNKNOWN" };
+    ImGui::Combo("##Train Status", (int*)&processing_data.train_status, items, IM_ARRAYSIZE(items));
 
     // 分割线
     ImGui::Separator();
@@ -139,7 +148,6 @@ View::show_user_input_window(bool* p_open)
     }
 
     ImGui::SameLine();
-
     if(unable_del)
     {
         ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
@@ -156,7 +164,6 @@ View::show_user_input_window(bool* p_open)
     }
 
     ImGui::SameLine();
-
     if(unable_update)
     {
         ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
@@ -172,10 +179,11 @@ View::show_user_input_window(bool* p_open)
         is_update = ImGui::Button("Update", ImVec2(100, 0));
     }
 
+    ImGui::SameLine();
+    is_cancel = ImGui::Button("Cancel", ImVec2(100, 0));
+
     ImGui::End();
     ImGui::PopFont();
-
-    selected_id = train_data.id;
 
     if(is_insert)
     {
@@ -187,12 +195,13 @@ View::show_user_input_window(bool* p_open)
 
         is_selected_new = true;
 
+        controller.is_fresh_data = true;
+
         // 日志
-        add_log("Insert: ", train_data);
+        add_log("Insert: ", processing_data);
         console_scroll_to_bottom = true;
     }
-
-    if(is_del)
+    else if(is_del)
     {
         controller.DeleteData();
 
@@ -202,19 +211,26 @@ View::show_user_input_window(bool* p_open)
 
         is_selected_new = true;
 
+        controller.is_fresh_data = true;
+
         // 日志
-        add_log("Delete: ", train_data);
+        add_log("Delete: ", processing_data);
         console_scroll_to_bottom = true;
     }
-
-    if(is_update)
+    else if(is_update)
     {
         controller.UpdateData();
 
         is_selected_new = true;
 
+        controller.is_fresh_data = true;
+
         // 日志
-        add_log("Update: ", train_data);
+        add_log("Update: ", processing_data);
         console_scroll_to_bottom = true;
+    }
+    else if(is_cancel)
+    {
+        is_processing_data = false;
     }
 }

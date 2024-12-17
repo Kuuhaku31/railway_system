@@ -9,7 +9,7 @@
 #include <vector>
 
 
-#define DATA_COUNT 500
+#define DATA_COUNT 20
 #define START_STATION "北京"
 #define ARRIVE_STATION "上海"
 
@@ -18,7 +18,7 @@ static std::vector<TrainData> database;
 int32_t
 RailwaySystemGetTrainDataCount()
 {
-    return DATA_COUNT;
+    return database.size();
 }
 
 int32_t
@@ -41,7 +41,7 @@ RailwaySystemSearchTrainData(TrainData* train_data, uint32_t num, const SearchRe
             database[i].arrive_time   = 0;
             database[i].ticket_remain = 100;
             database[i].ticket_price  = 100.0f;
-            database[i].train_status  = TRAIN_STATUS_RUNNING;
+            database[i].train_status  = TRAIN_STATUS_NORMAL;
         }
     }
 

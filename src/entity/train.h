@@ -11,9 +11,9 @@ extern "C"{
 #include <stdint.h>
 
 enum TrainStatus {
-    TRAIN_STATUS_RUNNING = 0,//正常
-    TRAIN_STATUS_STOPPED = 1,//停运
-    TRAIN_STATUS_DELAYED = 2,//延误
+    TRAIN_STATUS_NORMAL = 0,//正常
+    TRAIN_STATUS_DELAYED = 1,//停运
+    TRAIN_STATUS_STOPPED = 2,//延误
     TRAIN_STATUS_CANCELLED = 3,//取消
     TRAIN_STATUS_UNKNOWN = 4//未知
 };
