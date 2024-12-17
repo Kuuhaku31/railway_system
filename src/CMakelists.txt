@@ -1,23 +1,47 @@
 project(main_project)
 
-# 添加头文件
-include_directories(./)
-include_directories(./view)
-include_directories(./entity)
-include_directories(./controler)
+set(MODEL_SRC
+        model/train_model.c
+        model/train_model.h
+        model/train_model.c
+        model/train_model.h
+        model/order_model.c
+        model/order_model.h
+)
 
-# 添加源文件
-aux_source_directory(./ SRC_FILES)
-aux_source_directory(./view SRC_FILES)
-aux_source_directory(./entity SRC_FILES)
-aux_source_directory(./controler SRC_FILES)
+set(VIEW_SRC
+        view/imgui_windows.cpp
+        view/imgui_windows.h
+        view/view.cpp
+        view/view.h
+)
 
-aux_source_directory(../lib SRC_FILES)
+set(CONTROLLER_SRC
+        controller/train_ontroller.c
+        controller/train_controller.c
+)
 
-message(STATUS "Source files: ${SRC_FILES}")
+set(ENTITY_SRC
+        entity/train.h
+)
 
-add_executable(${PROJECT_NAME} ${SRC_FILES})
+set(UTILS_SRC utils/imgui_setup.cpp utils/imgui_setup.h
+        utils/error.h
+        utils/utils.h
+        utils/utils.c
+        entity/order.h)
 
-# 添加imgui_setup库
-include_directories(${IMGUISETUP_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} imgui_setup)
+set(HEADER_DIR . view model entity controller utils)
+
+message(STATUS "Model Source files: ${MODEL_SRC}")
+message(STATUS "View Source files: ${VIEW_SRC}")
+message(STATUS "Entity Source files: ${ENTITY_SRC}")
+
+
+add_executable(${PROJECT_NAME} ${MODEL_SRC} ${VIEW_SRC} ${ENTITY_SRC} ${UTILS_SRC} main.cpp)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+        ../lib/sqlite3 ../lib/imgui
+        ${HEADER_DIR}
+        )
+target_link_libraries(${PROJECT_NAME} PUBLIC imgui sqlite3)

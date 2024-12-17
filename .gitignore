@@ -1,6 +1,7 @@
 /.vscode
 /bin
 /build
-/lib
 /misc
 /resources
+cmake-build-*
+.idea/
