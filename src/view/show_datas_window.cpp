@@ -1,16 +1,13 @@
 
 // show_datas_window.cpp
 
-#include "imgui_windows.h"
-
 #include "controler.h"
 #include "view.h"
 
-static View&      view      = View::Instance();
 static Controler& controler = Controler::Instance();
 
 void
-ImGuiWindowTrainDatas(bool* p_open)
+View::show_train_datas_window(bool* p_open)
 {
     if(p_open && !*p_open) return;
 
@@ -35,13 +32,13 @@ ImGuiWindowTrainDatas(bool* p_open)
     ImGui::SetNextWindowPos(ImVec2(0, 0));
 
     ImVec2 window_size = ImGui::GetIO().DisplaySize;
-    window_size.y *= 0.65;
+    window_size.y *= data_window_height;
 
     // 设置宽度为程序窗口宽度
     ImGui::SetNextWindowSize(window_size, ImGuiCond_Always);
 
     // 中文显示
-    ImGui::PushFont(view.font_chinese);
+    ImGui::PushFont(font_chinese);
     ImGui::Begin("Train Datas", p_open, window_flags);
 
     // 临时修改样式变量，取消表格和窗口的间距
@@ -131,7 +128,7 @@ ImGuiWindowTrainDatas(bool* p_open)
             ImGui::TextColored(color, "%s", parse_train_status(train_data->train_status).c_str());
 
             // 如果是选中的行，改变背景颜色
-            if(view.selected_id == train_data->train_id)
+            if(selected_id == train_data->train_id)
             {
                 ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, IM_COL32(255, 0, 0, 255));
             }

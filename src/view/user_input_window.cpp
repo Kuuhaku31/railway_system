@@ -1,13 +1,8 @@
 
 // user_input_window.cpp
 
-#include "imgui_windows.h"
-
 #include "controler.h"
 #include "view.h"
-
-static View&      view      = View::Instance();
-static Controler& controler = Controler::Instance();
 
 void
 DrawTimeInput(const char* label, Date& time)
@@ -56,8 +51,10 @@ DrawTimeInput(const char* label, Date& time)
     ImGui::PopItemWidth();
 }
 
+static Controler& controler = Controler::Instance();
+
 void
-ImGuiInputText(bool* p_open)
+View::show_user_input_window(bool* p_open)
 {
     static const int MAX_SIZE = 256;
 
@@ -95,7 +92,7 @@ ImGuiInputText(bool* p_open)
     if(is_selected_new)
     {
         // 如果选中了新的车次，将该车次的数据显示在输入框中
-        controler.SelectTrainData(view.selected_id);
+        controler.SelectTrainData(selected_id);
         is_selected_new = false;
     }
 
@@ -118,8 +115,9 @@ ImGuiInputText(bool* p_open)
     ImVec2 window_pos;
     ImVec2 window_size = display_size;
 
-    window_pos.y = display_size.y * 0.65;
-    window_size.y *= 0.35;
+    window_pos.y = display_size.y * data_window_height;
+    window_size.x *= inuput_window_width;
+    window_size.y *= (1 - data_window_height);
 
     uint32_t window_flags = 0;
 
@@ -130,7 +128,7 @@ ImGuiInputText(bool* p_open)
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 
     // 使用中文字体
-    ImGui::PushFont(view.font_chinese);
+    ImGui::PushFont(font_chinese);
 
     ImGui::SetNextWindowPos(window_pos);
     ImGui::SetNextWindowSize(window_size);
@@ -233,7 +231,7 @@ ImGuiInputText(bool* p_open)
 
     controler.processing_data.train_status = train_status;
 
-    view.selected_id = train_id;
+    selected_id = train_id;
 
     if(is_insert)
     {
