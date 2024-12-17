@@ -1,10 +1,11 @@
 
 // show_datas_window.cpp
 
-#include "controler.h"
+// #include "train_controller.h"
+#include "controller.h"
 #include "view.h"
 
-static Controler& controler = Controler::Instance();
+static Controller& controller = Controller::Instance();
 
 void
 View::show_train_datas_window(bool* p_open)
@@ -32,7 +33,7 @@ View::show_train_datas_window(bool* p_open)
     // 第一个元素位置为(0, 0)
     ImGui::SetCursorPos(ImVec2(0, 0));
 
-    const Controler::TrainDatas& train_datas = controler.train_datas;
+    const Controller::TrainDatas& train_datas = controller.train_datas;
 
     // 表格显示车次信息
     uint32_t table_flags = 0;
@@ -70,17 +71,10 @@ View::show_train_datas_window(bool* p_open)
             ImGui::TableNextRow();
 
             // 如果是选中的行
-            if(selected_id == train_data->train_id)
+            if(selected_id == train_data->train_id && table_to_selected)
             {
-                // 改变背景颜色
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, IM_COL32(0x77, 0, 0, 255));
-
-                // 如果是新选中的行，滚动到该行
-                if(table_to_selected)
-                {
-                    ImGui::SetScrollHereY();
-                    table_to_selected = false;
-                }
+                ImGui::SetScrollHereY();
+                table_to_selected = false;
             }
 
             // 检测鼠标点击事件

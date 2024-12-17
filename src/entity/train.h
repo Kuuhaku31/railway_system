@@ -9,6 +9,14 @@ extern "C"{
 #endif
 
 #include <stdint.h>
+
+enum TrainStatus {
+    TRAIN_STATUS_RUNNING = 0,
+    TRAIN_STATUS_STOPPED = 1,
+    TRAIN_STATUS_DELAYED = 2,
+    TRAIN_STATUS_CANCELLED = 3,
+};
+
 typedef struct {
     int32_t id; // 唯一 ID
 
@@ -21,7 +29,7 @@ typedef struct {
     char start_station[64];  // 始发站
     char arrive_station[64]; // 到达站
 
-    bool is_running; // 是否运行
+   enum TrainStatus train_status; // 列车状态
 } TrainData;
 
 enum condition{

@@ -1,8 +1,0 @@
-//
-// Created by sy200 on 24-12-16.
-//
-
-#ifndef RAILWAYSYSTEM_MODEL_H
-#define RAILWAYSYSTEM_MODEL_H
-
-#endif //RAILWAYSYSTEM_MODEL_H

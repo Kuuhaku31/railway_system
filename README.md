@@ -73,7 +73,7 @@ int32_t RailwaySystemSearchTrainData(std::vector<TrainData*>& train_data, int32_
 * src
   - entity
   - view
-  - controler
+  - controller
   - model
   - main.c
 

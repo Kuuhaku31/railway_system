@@ -3,10 +3,44 @@
 
 #include "view.h"
 
-#include "controler.h"
+#include "controller.h"
+
+#include <chrono>
+
+std::string
+date_to_string(const Date& date)
+{
+    std::stringstream ss;
+    ss << date.year << "-"
+       << std::setw(2) << std::setfill('0') << date.month << "-"
+       << std::setw(2) << std::setfill('0') << date.day << " "
+       << std::setw(2) << std::setfill('0') << date.hour << ":"
+       << std::setw(2) << std::setfill('0') << date.minute << ":"
+       << std::setw(2) << std::setfill('0') << date.second;
+    return ss.str();
+}
+
+std::string
+parse_train_status(TrainStatus status)
+{
+    switch(status)
+    {
+    case TrainStatus::NORMAL:
+        return "NORMAL";
+    case TrainStatus::DELAY:
+        return "DELAY";
+    case TrainStatus::STOP:
+        return "STOP";
+    case TrainStatus::OTHER:
+        return "OTHER";
+    default:
+        return "UNKNOWN";
+    }
+}
+
 
 static ImGui_setup& imgui_setup = ImGui_setup::Instance();
-static Controler&   controler   = Controler::Instance();
+static Controller&  controller  = Controller::Instance();
 
 View* View::instance = nullptr;
 View&
@@ -67,7 +101,7 @@ View::show_config_window(bool* p_open)
 
     if(ImGui::Button("print user processing data"))
     {
-        TrainData& train_data = controler.processing_data;
+        TrainData& train_data = controller.processing_data;
 
         printf("processing data: \n");
         printf("train_id: %d\n", train_data.train_id);
@@ -85,7 +119,7 @@ View::show_config_window(bool* p_open)
     static int number = 0;
     if(ImGui::InputInt("input number", &number))
     {
-        controler.RailwaySystemSearchTrainData(number);
+        controller.RailwaySystemSearchTrainData(number);
     }
 
     ImGui::End();

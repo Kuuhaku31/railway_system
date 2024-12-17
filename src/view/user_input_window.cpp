@@ -1,8 +1,11 @@
 
 // user_input_window.cpp
 
-#include "controler.h"
+// #include "train_controller.h"
+#include "controller.h"
 #include "view.h"
+
+#define MAX_SIZE 128
 
 void
 DrawTimeInput(const char* label, Date& time)
@@ -11,53 +14,49 @@ DrawTimeInput(const char* label, Date& time)
     ImGui::PushItemWidth(100);
 
     // 输入年
-    ImGui::InputInt((std::string("年##") + label).c_str(), &time.year, 1, 10);
+    ImGui::InputScalar((std::string("年##") + label).c_str(), ImGuiDataType_U32, &time.year);
     if(time.year <= 0) time.year = 1;
 
     ImGui::SameLine();
 
     // 输入月
-    ImGui::InputInt((std::string("月##") + label).c_str(), &time.month, 1, 10);
+    ImGui::InputScalar((std::string("月##") + label).c_str(), ImGuiDataType_U32, &time.month);
     if(time.month <= 0) time.month = 12;
     if(time.month > 12) time.month = 1;
 
     ImGui::SameLine();
 
     // 输入日
-    ImGui::InputInt((std::string("日##") + label).c_str(), &time.day, 1, 10);
+    ImGui::InputScalar((std::string("日##") + label).c_str(), ImGuiDataType_U32, &time.day);
     if(time.day <= 0) time.day = 31;
     if(time.day > 31) time.day = 1;
 
-    ImGui::SameLine();
-
     // 输入小时
-    ImGui::InputInt((std::string("时##") + label).c_str(), &time.hour, 1, 10);
+    ImGui::InputScalar((std::string("时##") + label).c_str(), ImGuiDataType_U32, &time.hour);
     if(time.hour < 0) time.hour = 23;
     if(time.hour > 23) time.hour = 0;
 
     ImGui::SameLine();
 
     // 输入分钟
-    ImGui::InputInt((std::string("分##") + label).c_str(), &time.minute, 1, 10);
+    ImGui::InputScalar((std::string("分##") + label).c_str(), ImGuiDataType_U32, &time.minute);
     if(time.minute < 0) time.minute = 59;
     if(time.minute > 59) time.minute = 0;
 
     ImGui::SameLine();
 
     // 输入秒
-    ImGui::InputInt((std::string("秒##") + label).c_str(), &time.second, 1, 10);
+    ImGui::InputScalar((std::string("秒##") + label).c_str(), ImGuiDataType_U32, &time.second);
     if(time.second < 0) time.second = 59;
 
     ImGui::PopItemWidth();
 }
 
-static Controler& controler = Controler::Instance();
+static Controller& controller = Controller::Instance();
 
 void
 View::show_user_input_window(bool* p_open)
 {
-    static const int MAX_SIZE = 256;
-
     static int  train_id = 0;           // 车次 ID
     static char train_number[MAX_SIZE]; // 车次
 
@@ -91,10 +90,10 @@ View::show_user_input_window(bool* p_open)
     {
         is_selected_new = false;
 
-        controler.RailwaySystemSearchTrainData();
+        controller.RailwaySystemSearchTrainData();
 
         // 如果选中了新的车次，将该车次的数据显示在输入框中
-        if(controler.SelectTrainData(selected_id))
+        if(controller.SelectTrainData(selected_id))
         {
             // 如果存在该车次，禁用插入按钮，启用删除和更新按钮
             unable_insert = true;
@@ -113,19 +112,19 @@ View::show_user_input_window(bool* p_open)
     }
 
     // 将数据拷贝到输入框中
-    train_id = controler.processing_data.train_id;
-    strncpy(train_number, controler.processing_data.train_number.c_str(), MAX_SIZE);
+    train_id = controller.processing_data.train_id;
+    strncpy(train_number, controller.processing_data.train_number.c_str(), MAX_SIZE);
 
-    strncpy(train_start_station, controler.processing_data.train_start_station.c_str(), MAX_SIZE);
-    strncpy(train_arrive_station, controler.processing_data.train_arrive_station.c_str(), MAX_SIZE);
+    strncpy(train_start_station, controller.processing_data.train_start_station.c_str(), MAX_SIZE);
+    strncpy(train_arrive_station, controller.processing_data.train_arrive_station.c_str(), MAX_SIZE);
 
-    train_start_time  = controler.processing_data.train_start_time;
-    train_arrive_time = controler.processing_data.train_arrive_time;
+    train_start_time  = controller.processing_data.train_start_time;
+    train_arrive_time = controller.processing_data.train_arrive_time;
 
-    train_ticket_count = controler.processing_data.train_ticket_count;
-    train_ticket_price = controler.processing_data.train_ticket_price;
+    train_ticket_count = controller.processing_data.train_ticket_count;
+    train_ticket_price = controller.processing_data.train_ticket_price;
 
-    train_status = controler.processing_data.train_status;
+    train_status = controller.processing_data.train_status;
 
 
     uint32_t window_flags = 0;
@@ -142,7 +141,7 @@ View::show_user_input_window(bool* p_open)
     ImGui::Text("processing data:");
 
     // 如果选中了某个车次，将该车次的数据显示在输入框中
-    if(ImGui::InputScalar("Train ID", ImGuiDataType_S32, &train_id))
+    if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &train_id))
     {
         is_selected_new = true;
     }
@@ -221,25 +220,25 @@ View::show_user_input_window(bool* p_open)
     ImGui::PopFont();
 
     // 将输入框中的数据拷贝到 controller.processing_data 中
-    controler.processing_data.train_id = train_id;
+    controller.processing_data.train_id = train_id;
 
-    controler.processing_data.train_number = train_number[0] == '\0' ? "UNKNOWN" : train_number;
+    controller.processing_data.train_number = train_number[0] == '\0' ? "UNKNOWN" : train_number;
 
-    controler.processing_data.train_start_station  = train_start_station[0] == '\0' ? "UNKNOWN" : train_start_station;
-    controler.processing_data.train_arrive_station = train_arrive_station[0] == '\0' ? "UNKNOWN" : train_arrive_station;
-    controler.processing_data.train_start_time     = train_start_time;
-    controler.processing_data.train_arrive_time    = train_arrive_time;
+    controller.processing_data.train_start_station  = train_start_station[0] == '\0' ? "UNKNOWN" : train_start_station;
+    controller.processing_data.train_arrive_station = train_arrive_station[0] == '\0' ? "UNKNOWN" : train_arrive_station;
+    controller.processing_data.train_start_time     = train_start_time;
+    controller.processing_data.train_arrive_time    = train_arrive_time;
 
-    controler.processing_data.train_ticket_count = train_ticket_count;
-    controler.processing_data.train_ticket_price = train_ticket_price;
+    controller.processing_data.train_ticket_count = train_ticket_count;
+    controller.processing_data.train_ticket_price = train_ticket_price;
 
-    controler.processing_data.train_status = train_status;
+    controller.processing_data.train_status = train_status;
 
     selected_id = train_id;
 
     if(is_insert)
     {
-        controler.RailwaySystemInsertTrainData();
+        controller.RailwaySystemInsertTrainData();
 
         unable_insert = true;
         unable_del    = false;
@@ -262,7 +261,7 @@ View::show_user_input_window(bool* p_open)
 
     if(is_del)
     {
-        controler.RailwaySystemDelTrainData(selected_id);
+        controller.RailwaySystemDelTrainData(selected_id);
 
         unable_insert = false;
         unable_del    = true;
@@ -285,7 +284,7 @@ View::show_user_input_window(bool* p_open)
 
     if(is_update)
     {
-        controler.RailwaySystemInsertTrainData();
+        controller.RailwaySystemInsertTrainData();
 
         is_selected_new = true;
 

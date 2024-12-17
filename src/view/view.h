@@ -3,10 +3,9 @@
 
 #pragma once
 
-#include "utils/imgui_setup.h"
+#include "imgui_setup.h"
 
-#include "entity.h"
-
+#include <string>
 #include <vector>
 
 // 单例模式

@@ -1,13 +1,11 @@
 
-#include "controler.h"
+#include "controller.h"
 #include "view.h"
 
 
 static ImGui_setup& imgui_setup = ImGui_setup::Instance();
-
-static View&      view      = View::Instance();
-static Controler& controler = Controler::Instance();
-
+static View&        view        = View::Instance();
+static Controller&  controller  = Controller::Instance();
 
 int
 main()
@@ -17,8 +15,8 @@ main()
 
     printf("Hello, test!\n");
 
-    controler.ControlerInit();
-    controler.RailwaySystemArrangeTrainData();
+    controller.ControlerInit();
+    controller.RailwaySystemArrangeTrainData();
 
     view.ViewInit();
 
