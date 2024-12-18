@@ -96,25 +96,3 @@ View::ViewConsoleAddLog(const char* fmt, ...)
     va_end(args);
     logs.push_back(std::string(buf));
 }
-
-
-void
-View::add_train_data_log(std::string label, const TrainData& train_data)
-{
-    // 价格保留两位小数
-    char buf[256];
-    snprintf(buf, sizeof(buf), "%.2f", train_data.ticket_price);
-
-    std::string log =
-        label +
-        std::to_string(train_data.id) + " " +
-        std::string(train_data.number) + " " +
-        std::string(train_data.start_station) + "->" +
-        std::string(train_data.arrive_station) + " " +
-        date_to_string(uint64_time_to_date(train_data.start_time)) + " " +
-        date_to_string(uint64_time_to_date(train_data.arrive_time)) + " " +
-        std::to_string(train_data.ticket_remain) + " " +
-        buf + " " +
-        parse_train_status(train_data.train_status);
-    ViewConsoleAddLog(log.c_str());
-}

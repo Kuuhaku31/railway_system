@@ -5,6 +5,7 @@
 
 #include "train.h"
 
+#include <string>
 #include <vector>
 
 // 单例
@@ -45,6 +46,12 @@ public:
     bool unable_del    = false;
     bool unable_update = true;
 
+    bool is_insert = false;
+    bool is_del    = false;
+    bool is_update = false;
+    bool is_clear  = false;
+    bool is_cancel = false;
+
 public:
     TrainData processing_data; // 用户正在编辑的数据，特别的，当 id 为 0 时时，表示没有选中任何数据
 
@@ -59,6 +66,8 @@ public:
 
 private:
     TrainDatas train_datas; // 从数据库中查询到的数据
+
+    void add_train_data_log(std::string label, const TrainData& train_data);
 
 private:
     Controller()                             = default;

@@ -6,4 +6,4 @@
 cmake-build-*
 .idea/
 
-lib
+lib/imgui_setup/bin

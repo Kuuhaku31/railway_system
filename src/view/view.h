@@ -78,13 +78,12 @@ public:
     ImFont* font_default = nullptr;
     ImFont* font_chinese = nullptr;
 
-private:
-    std::vector<std::string> logs;
-
+public:
     bool console_scroll_to_bottom = false;
     bool table_to_selected        = false;
 
-    void add_train_data_log(std::string label, const TrainData& train_data);
+private:
+    std::vector<std::string> logs;
 
 private:
     View()                       = default;

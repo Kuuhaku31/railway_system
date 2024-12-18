@@ -26,42 +26,6 @@ View::show_user_input_window(bool* p_open)
 {
     if(p_open && !*p_open) return;
 
-    bool is_insert = false;
-    bool is_del    = false;
-    bool is_update = false;
-    bool is_clear  = false;
-    bool is_cancel = false;
-
-    if(controller.is_fresh_processing_data) // 如果选中了新的车次
-    {
-        controller.is_fresh_processing_data = false;
-
-        // 如果选中了新的车次，将该车次的数据显示在输入框中
-        if(controller.UpdateProcessingData())
-        {
-            // 如果存在该车次，禁用插入按钮，启用删除和更新按钮
-            controller.unable_insert = true;
-            controller.unable_del    = false;
-            controller.unable_update = false;
-
-            table_to_selected = true;
-        }
-        else
-        {
-            // 如果不存在该车次，启用插入按钮，禁用删除和更新按钮
-            controller.unable_insert = false;
-            controller.unable_del    = true;
-            controller.unable_update = true;
-        }
-    }
-    else if(!processing_data.id) // 如果没有选中车次
-    {
-        // 如果没有选中车次
-        controller.unable_insert = true;
-        controller.unable_del    = true;
-        controller.unable_update = true;
-    }
-
     uint32_t window_flags = 0;
     window_flags |= ImGuiWindowFlags_NoTitleBar;
     window_flags |= ImGuiWindowFlags_NoResize;
@@ -128,7 +92,7 @@ View::show_user_input_window(bool* p_open)
     }
     else
     {
-        is_insert = ImGui::Button("Insert", ImVec2(100, 0));
+        controller.is_insert = ImGui::Button("Insert", ImVec2(100, 0));
     }
 
     // 删除按钮
@@ -143,7 +107,7 @@ View::show_user_input_window(bool* p_open)
     }
     else
     {
-        is_del = ImGui::Button("Delete", ImVec2(100, 0));
+        controller.is_del = ImGui::Button("Delete", ImVec2(100, 0));
     }
 
     // 更新按钮
@@ -158,70 +122,17 @@ View::show_user_input_window(bool* p_open)
     }
     else
     {
-        is_update = ImGui::Button("Update", ImVec2(100, 0));
+        controller.is_update = ImGui::Button("Update", ImVec2(100, 0));
     }
 
     // 清空按钮
     ImGui::SameLine();
-    is_clear = ImGui::Button("Clear", ImVec2(100, 0));
+    controller.is_clear = ImGui::Button("Clear", ImVec2(100, 0));
 
     // 取消按钮
     ImGui::SameLine();
-    is_cancel = ImGui::Button("Cancel", ImVec2(100, 0));
+    controller.is_cancel = ImGui::Button("Cancel", ImVec2(100, 0));
 
     ImGui::End();
     ImGui::PopFont();
-
-    if(is_cancel)
-    {
-        processing_data.id = 0;
-        is_show_user_input = false;
-    }
-    else if(is_insert)
-    {
-        controller.InsertData();
-
-        controller.unable_insert = true;
-        controller.unable_del    = false;
-        controller.unable_update = false;
-
-        controller.ControllerFreshProcessingData();
-
-        // 日志
-        add_train_data_log("Insert: ", processing_data);
-        console_scroll_to_bottom = true;
-    }
-    else if(is_del)
-    {
-        controller.UpdateProcessingData();
-        controller.DeleteData();
-
-        controller.unable_insert = false;
-        controller.unable_del    = true;
-        controller.unable_update = true;
-
-        controller.ControllerFreshProcessingData();
-
-        // 日志
-        add_train_data_log("Delete: ", processing_data);
-        console_scroll_to_bottom = true;
-    }
-    else if(is_update)
-    {
-        controller.UpdateData();
-
-        controller.ControllerFreshProcessingData();
-
-        // 日志
-        add_train_data_log("Update: ", processing_data);
-        console_scroll_to_bottom = true;
-    }
-    else if(is_clear)
-    {
-        controller.ClearProcessingData();
-
-        controller.unable_insert = true;
-        controller.unable_del    = true;
-        controller.unable_update = true;
-    }
 }
