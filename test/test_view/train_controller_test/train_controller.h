@@ -9,15 +9,14 @@
 
 #include <stdint.h>
 
+// 查询结果
+typedef struct
+{
+    uint32_t data_total_count;  // 查询到的数据总数
+    uint32_t data_return_count; // 返回的数据数量
+    uint32_t page_count;        // 查询到的数据页数
+} SearchResult;
 
-// 以下函数返回值小于0均表示表示执行失败
-
-// 获取数据库中的车次信息数量
-int32_t
-RailwaySystemGetTrainDataCount();
-
-int32_t
-RailwaySystemGetTrainDataPageCountWithPageItem(uint32_t page_item_count);
 
 // 查询车次信息
 // 传入数组的首地址，以及数组的大小
@@ -27,8 +26,11 @@ RailwaySystemGetTrainDataPageCountWithPageItem(uint32_t page_item_count);
 // **按照id升序排列**
 // **依次拷贝到train_data数组中**
 // **返回拷贝的车次信息数量**
-int32_t
+SearchResult
 RailwaySystemSearchTrainData(TrainData* train_data, uint32_t num, uint32_t page_idx, const TrainQuery* search_request);
+
+
+// 以下函数返回值小于0均表示表示执行失败
 
 // 插入数据
 // 插入数据到数据库中

@@ -54,9 +54,9 @@ View::show_user_input_window(bool* p_open)
         // 设置宽度
         ImGui::PushItemWidth(150);
 
-        uint32_t page_page_count = controller.GetPageCount();
-        uint32_t page_item_count = controller.GetPageItemCount();
-        uint32_t page_idx        = controller.GetPageIdx() + 1;
+        uint32_t page_page_count = controller.ControllerGetPageCount();
+        uint32_t page_item_count = controller.ControllerGetPageItemCount();
+        uint32_t page_idx        = controller.ControllerGetPageIdx() + 1;
 
         ImGui::SameLine();
         if(ImGui::InputInt("Page Index", (int*)&page_idx))
@@ -88,7 +88,7 @@ View::show_user_input_window(bool* p_open)
         // Train ID 输入框
         if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &processing_data.id))
         {
-            controller.ControllerFreshProcessingData();
+            controller.is_fresh_processing_data = true;
         }
 
         ImGui::InputText("Train Number", processing_data.number, MAX_SIZE);
@@ -118,7 +118,7 @@ View::show_user_input_window(bool* p_open)
 
     { // 按钮
         // 插入按钮
-        if(controller.unable_insert)
+        if(controller.ControllerUnableInsert())
         {
             ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);
@@ -133,7 +133,7 @@ View::show_user_input_window(bool* p_open)
 
         // 删除按钮
         ImGui::SameLine();
-        if(controller.unable_del)
+        if(controller.ControllerUnableDel())
         {
             ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);
@@ -148,7 +148,7 @@ View::show_user_input_window(bool* p_open)
 
         // 更新按钮
         ImGui::SameLine();
-        if(controller.unable_update)
+        if(controller.ControllerUnableUpdate())
         {
             ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);
@@ -163,7 +163,7 @@ View::show_user_input_window(bool* p_open)
 
         // 清空按钮
         ImGui::SameLine();
-        controller.is_clear = ImGui::Button("Clear", ImVec2(100, 0));
+        controller.is_clear_processing_data = ImGui::Button("Clear", ImVec2(100, 0));
 
         // 取消按钮
         ImGui::SameLine();

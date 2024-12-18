@@ -28,10 +28,10 @@ View::ViewConsoleShowLog(bool* p_open)
     if(ImGui::Button("Clear Logs")) logs.clear();
 
     ImGui::SameLine();
-    if(ImGui::Button("Refresh")) controller.ControllerFreshProcessingData();
+    if(ImGui::Button("Refresh")) controller.is_fresh_processing_data = true;
 
     ImGui::SameLine();
-    if(ImGui::Button("Clear Buffer")) controller.ControllerClearBuffer();
+    if(ImGui::Button("Clear Buffer")) controller.is_clear_buffer = true;
 
     ImGui::SameLine();
     if(ImGui::Button("Config")) is_show_user_input = !is_show_user_input;

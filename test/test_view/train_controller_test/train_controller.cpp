@@ -21,15 +21,11 @@ RailwaySystemGetTrainDataCount()
     return database.size();
 }
 
-int32_t
-RailwaySystemGetTrainDataPageCountWithPageItem(uint32_t page_item_count)
-{
-    return 5;
-}
-
-int32_t
+SearchResult
 RailwaySystemSearchTrainData(TrainData* train_data, uint32_t num, uint32_t page_idx, const TrainQuery* search_request)
 {
+    SearchResult result;
+
     static bool is_inited = false;
     if(!is_inited)
     {
@@ -56,7 +52,11 @@ RailwaySystemSearchTrainData(TrainData* train_data, uint32_t num, uint32_t page_
         train_data[i] = database[i];
     }
 
-    return 0;
+    result.data_total_count  = database.size();
+    result.data_return_count = num;
+    result.page_count        = 1;
+
+    return result;
 }
 
 int32_t

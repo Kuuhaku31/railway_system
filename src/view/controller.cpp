@@ -24,143 +24,85 @@ void
 Controller::ControlerInit()
 {
     ControllerChangePageItemsCount(100);
-    ControllerRequestData();
-}
-
-void
-Controller::ControllerRequestData()
-{
-    printf("Get datas...\n");
-
-    RailwaySystemSearchTrainData(train_datas.data(), train_datas.size(), page_idx, &search_request);
-}
-
-void
-Controller::InsertData()
-{
-    printf("Insert data...\n");
-    RailwaySystemInsertTrainData(processing_data);
-
-    is_fresh_data = true;
-}
-
-void
-Controller::UpdateData()
-{
-    printf("Update data...\n");
-    RailwaySystemUpdateTrainData(processing_data);
-
-    is_fresh_data = true;
-}
-
-void
-Controller::DeleteData()
-{
-    printf("Delete data...\n");
-    RailwaySystemDelTrainData(processing_data.id);
-
-    is_fresh_data = true;
+    request_data();
 }
 
 void
 Controller::ControllerUpdate()
 {
-    if(is_cancel)
+    // 插入操作
+    if(is_insert && !unable_insert)
     {
-        processing_data.id      = 0;
-        view.is_show_user_input = false;
-    }
-    else if(is_insert)
-    {
-        InsertData();
+        insert_data();
 
         unable_insert = true;
         unable_del    = false;
         unable_update = false;
 
-        ControllerFreshProcessingData();
+        is_fresh_data = true;
 
-        // 日志
-        add_train_data_log("Insert: ", processing_data);
-        view.console_scroll_to_bottom = true;
+        add_train_data_log("Insert: ", processing_data); // 日志
     }
-    else if(is_del)
+
+    // 删除操作
+    if(is_del && !unable_del)
     {
-        UpdateProcessingData();
-        DeleteData();
+        fresh_processing_data(); // 刷新处理数据
+        delete_data();           // 删除当前数据
 
         unable_insert = false;
         unable_del    = true;
         unable_update = true;
 
-        ControllerFreshProcessingData();
+        is_fresh_data = true;
 
-        // 日志
-        add_train_data_log("Delete: ", processing_data);
-        view.console_scroll_to_bottom = true;
+        add_train_data_log("Delete: ", processing_data); // 日志
     }
-    else if(is_update)
+
+    // 更新操作
+    if(is_update && !unable_update)
     {
-        UpdateData();
+        update_data(); // 更新当前数据
 
-        ControllerFreshProcessingData();
+        is_fresh_data = true;
 
-        // 日志
-        add_train_data_log("Update: ", processing_data);
-        view.console_scroll_to_bottom = true;
+        add_train_data_log("Update: ", processing_data); // 日志
     }
-    else if(is_clear)
+
+    // 清除操作
+    if(is_clear_processing_data)
     {
-        ClearProcessingData();
+        clear_processing_data();
 
         unable_insert = true;
         unable_del    = true;
         unable_update = true;
     }
 
-    is_insert = false;
-    is_del    = false;
-    is_update = false;
-    is_clear  = false;
-    is_cancel = false;
-
-    if(is_fresh_data)
+    // 取消操作
+    if(is_cancel)
     {
-        is_fresh_data = false;
-        ControllerRequestData();
+        processing_data.id      = 0;
+        view.is_show_user_input = false;
     }
 
-    if(is_clear_buffer)
+    // 刷新处理数据
+    if(is_fresh_processing_data && processing_data.id)
     {
-        is_clear_buffer = false;
-        ClearDatasBuffer();
-    }
-
-    if(is_clear_processing_data)
-    {
-        is_clear_processing_data = false;
-        ClearProcessingData();
-    }
-
-    if(is_fresh_processing_data) // 如果选中了新的车次
-    {
-        printf("is_fresh_processing_data\n");
-
-        is_fresh_processing_data = false;
-
+        // 设置查询条件
         search_request.id       = processing_data.id;
         search_request.query_id = IGNORE_THIS;
         is_fresh_data           = true;
 
         // 如果选中了新的车次，将该车次的数据显示在输入框中
-        if(UpdateProcessingData())
+        if(fresh_processing_data())
         {
             // 如果存在该车次，禁用插入按钮，启用删除和更新按钮
             unable_insert = true;
             unable_del    = false;
             unable_update = false;
 
-            // table_to_selected = true;
+            view.table_to_selected = true;
         }
         else
         {
@@ -170,20 +112,90 @@ Controller::ControllerUpdate()
             unable_update = true;
         }
     }
-    else if(!processing_data.id) // 如果没有选中车次
+
+    // 刷新数据
+    if(is_fresh_data)
     {
-        // 如果没有选中车次
-        unable_insert = true;
-        unable_del    = true;
-        unable_update = true;
+        request_data();
     }
+
+    // 清空数据缓存
+    if(is_clear_buffer)
+    {
+        clear_datas_buffer();
+    }
+
+    // 重置操作状态
+    is_insert                = false;
+    is_del                   = false;
+    is_update                = false;
+    is_clear_processing_data = false;
+    is_cancel                = false;
+    is_fresh_processing_data = false;
+    is_fresh_data            = false;
+    is_clear_buffer          = false;
+}
+
+
+void
+Controller::ControllerChangePageIdx(uint32_t new_idx)
+{
+    page_idx = new_idx;
+
+    is_fresh_data = true;
+}
+
+void
+Controller::ControllerChangePageItemsCount(uint32_t page_item_count)
+{
+    train_data_buffer.clear();
+    train_data_buffer.resize(page_item_count);
+
+    is_fresh_data = true;
+}
+
+void
+Controller::insert_data()
+{
+    printf("Insert data...\n");
+    RailwaySystemInsertTrainData(processing_data);
+
+    is_fresh_data = true;
+}
+
+void
+Controller::update_data()
+{
+    printf("Update data...\n");
+    RailwaySystemUpdateTrainData(processing_data);
+
+    is_fresh_data = true;
+}
+
+void
+Controller::delete_data()
+{
+    printf("Delete data...\n");
+    RailwaySystemDelTrainData(processing_data.id);
+
+    is_fresh_data = true;
+}
+
+void
+Controller::request_data()
+{
+    printf("Get datas...\n");
+
+    SearchResult res = RailwaySystemSearchTrainData(train_data_buffer.data(), train_data_buffer.size(), page_idx, &search_request);
+
+    page_count = res.page_count;
 }
 
 bool
-Controller::UpdateProcessingData()
+Controller::fresh_processing_data()
 {
     printf("Update processing data...\n");
-    for(auto& train_data : train_datas)
+    for(auto& train_data : train_data_buffer)
     {
         if(train_data.id == processing_data.id)
         {
@@ -196,7 +208,7 @@ Controller::UpdateProcessingData()
 }
 
 void
-Controller::ClearProcessingData()
+Controller::clear_processing_data()
 {
     static const char unkonw[] = "Unkonw";
     static TrainData  empty_data;
@@ -221,42 +233,9 @@ Controller::ClearProcessingData()
 }
 
 void
-Controller::ClearDatasBuffer()
+Controller::clear_datas_buffer()
 {
-    train_datas.clear();
-}
-
-bool
-Controller::SelectTrainData(int train_data_id)
-{
-    for(auto& train_data : train_datas)
-    {
-        if(train_data.id == train_data_id)
-        {
-            processing_data = train_data;
-            return true;
-        }
-    }
-
-    return false;
-}
-
-void
-Controller::ControllerChangePageIdx(uint32_t new_idx)
-{
-    page_idx = new_idx;
-
-    is_fresh_data = true;
-}
-
-void
-Controller::ControllerChangePageItemsCount(uint32_t page_item_count)
-{
-    train_datas.clear();
-    train_datas.resize(page_item_count);
-    page_count = RailwaySystemGetTrainDataPageCountWithPageItem(page_item_count);
-
-    is_fresh_data = true;
+    train_data_buffer.clear();
 }
 
 void
