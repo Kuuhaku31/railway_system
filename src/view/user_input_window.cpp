@@ -38,112 +38,137 @@ View::show_user_input_window(bool* p_open)
     ImGui::SetNextWindowSize(input_window_size);
     ImGui::Begin("User Input", p_open, window_flags);
 
-    ImGui::SetCursorPosY(5);
-    ImGui::Text(TITLE);
-    // 显示帧率
-    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-    ImGui::SameLine();
-    ImGui::Text("|  is processing data: %s", processing_data.id ? "true" : "false");
+    { // 标题
+        ImGui::SetCursorPosY(5);
+        ImGui::Text(TITLE);
+        // 显示帧率
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::SameLine();
+        ImGui::Text("|  is processing data: %s", processing_data.id ? "true" : "false");
+    }
 
-    // 分割线 //=================================================================================
     ImGui::SetCursorPosY(first_separator_pos); // 调整光标位置
-    ImGui::Separator();
+    ImGui::Separator();                        // 分割线 //=================================================================================
 
-    // 调整页码和每页显示数量
-    // 设置宽度
-    ImGui::PushItemWidth(150);
-    ImGui::SameLine();
-    ImGui::InputScalar("Page Index", ImGuiDataType_U32, &controller.page_idx);
-    ImGui::SameLine();
-    if(ImGui::InputScalar("Page Item Count", ImGuiDataType_U32, &controller.page_item_count))
-    {
-        controller.ControllerChangePageItemsCount();
-    }
-    ImGui::PopItemWidth();
+    { // 调整页码和每页显示数量
+        // 设置宽度
+        ImGui::PushItemWidth(150);
 
-    // Train ID 输入框
-    if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &processing_data.id))
-    {
-        controller.is_fresh_processing_data = true;
-    }
+        uint32_t page_page_count = controller.GetPageCount();
+        uint32_t page_item_count = controller.GetPageItemCount();
+        uint32_t page_idx        = controller.GetPageIdx() + 1;
 
-    ImGui::InputText("Train Number", processing_data.number, MAX_SIZE);
+        ImGui::SameLine();
+        if(ImGui::InputInt("Page Index", (int*)&page_idx))
+        {
+            if(page_idx < 1)
+            {
+                page_idx = 1;
+            }
+            else if(page_idx > page_page_count)
+            {
+                page_idx = page_page_count;
+            }
 
-    ImGui::InputText("Start Station", processing_data.start_station, MAX_SIZE);
-    ImGui::InputText("Arrive Station", processing_data.arrive_station, MAX_SIZE);
+            controller.ControllerChangePageIdx(page_idx - 1);
+        }
 
-    // 出发时间
-    Date start_time = uint64_time_to_date(processing_data.start_time);
-    InputTime("Start Time", &start_time);
-    processing_data.start_time = date_to_uint64_time(start_time);
-    // 到达时间
-    Date arrive_time = uint64_time_to_date(processing_data.arrive_time);
-    InputTime("Arrive Time", &arrive_time);
-    processing_data.arrive_time = date_to_uint64_time(arrive_time);
+        ImGui::SameLine();
+        if(ImGui::InputInt("Page Item Count", (int*)&page_item_count))
+        {
+            if(page_item_count < 0) page_item_count = 0;
 
-    ImGui::InputScalar("Ticket Count", ImGuiDataType_U32, &processing_data.ticket_remain);
-    ImGui::InputScalar("Ticket Price", ImGuiDataType_Float, &processing_data.ticket_price);
+            controller.ControllerChangePageItemsCount(page_item_count);
+        }
 
-    // 下拉框选择车次状态
-    ImGui::Text("Train Status");
-    const char* items[] = { "NORMAL", "DELAY", "STOP", "CANCEL", "UNKNOWN" };
-    ImGui::Combo("##Train Status", (int*)&processing_data.train_status, items, IM_ARRAYSIZE(items));
-
-    // 分割线 //=================================================================================
-    ImGui::Separator();
-
-    // 按钮
-    // 插入按钮
-    if(controller.unable_insert)
-    {
-        ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, disable_color);
-        ImGui::Button("Insert", ImVec2(100, 0));
-        ImGui::PopStyleColor(3);
-    }
-    else
-    {
-        controller.is_insert = ImGui::Button("Insert", ImVec2(100, 0));
+        ImGui::PopItemWidth();
     }
 
-    // 删除按钮
-    ImGui::SameLine();
-    if(controller.unable_del)
-    {
-        ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, disable_color);
-        ImGui::Button("Delete", ImVec2(100, 0));
-        ImGui::PopStyleColor(3);
-    }
-    else
-    {
-        controller.is_del = ImGui::Button("Delete", ImVec2(100, 0));
+    { // 用户输入框
+        // Train ID 输入框
+        if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &processing_data.id))
+        {
+            controller.ControllerFreshProcessingData();
+        }
+
+        ImGui::InputText("Train Number", processing_data.number, MAX_SIZE);
+
+        ImGui::InputText("Start Station", processing_data.start_station, MAX_SIZE);
+        ImGui::InputText("Arrive Station", processing_data.arrive_station, MAX_SIZE);
+
+        // 出发时间
+        Date start_time = uint64_time_to_date(processing_data.start_time);
+        InputTime("Start Time", &start_time);
+        processing_data.start_time = date_to_uint64_time(start_time);
+        // 到达时间
+        Date arrive_time = uint64_time_to_date(processing_data.arrive_time);
+        InputTime("Arrive Time", &arrive_time);
+        processing_data.arrive_time = date_to_uint64_time(arrive_time);
+
+        ImGui::InputScalar("Ticket Count", ImGuiDataType_U32, &processing_data.ticket_remain);
+        ImGui::InputScalar("Ticket Price", ImGuiDataType_Float, &processing_data.ticket_price);
+
+        // 下拉框选择车次状态
+        ImGui::Text("Train Status");
+        const char* items[] = { "NORMAL", "DELAY", "STOP", "CANCEL", "UNKNOWN" };
+        ImGui::Combo("##Train Status", (int*)&processing_data.train_status, items, IM_ARRAYSIZE(items));
     }
 
-    // 更新按钮
-    ImGui::SameLine();
-    if(controller.unable_update)
-    {
-        ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, disable_color);
-        ImGui::Button("Update", ImVec2(100, 0));
-        ImGui::PopStyleColor(3);
-    }
-    else
-    {
-        controller.is_update = ImGui::Button("Update", ImVec2(100, 0));
-    }
+    ImGui::Separator(); // 分割线 //=================================================================================
 
-    // 清空按钮
-    ImGui::SameLine();
-    controller.is_clear = ImGui::Button("Clear", ImVec2(100, 0));
+    { // 按钮
+        // 插入按钮
+        if(controller.unable_insert)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, disable_color);
+            ImGui::Button("Insert", ImVec2(100, 0));
+            ImGui::PopStyleColor(3);
+        }
+        else
+        {
+            controller.is_insert = ImGui::Button("Insert", ImVec2(100, 0));
+        }
 
-    // 取消按钮
-    ImGui::SameLine();
-    controller.is_cancel = ImGui::Button("Cancel", ImVec2(100, 0));
+        // 删除按钮
+        ImGui::SameLine();
+        if(controller.unable_del)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, disable_color);
+            ImGui::Button("Delete", ImVec2(100, 0));
+            ImGui::PopStyleColor(3);
+        }
+        else
+        {
+            controller.is_del = ImGui::Button("Delete", ImVec2(100, 0));
+        }
+
+        // 更新按钮
+        ImGui::SameLine();
+        if(controller.unable_update)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, disable_color);
+            ImGui::Button("Update", ImVec2(100, 0));
+            ImGui::PopStyleColor(3);
+        }
+        else
+        {
+            controller.is_update = ImGui::Button("Update", ImVec2(100, 0));
+        }
+
+        // 清空按钮
+        ImGui::SameLine();
+        controller.is_clear = ImGui::Button("Clear", ImVec2(100, 0));
+
+        // 取消按钮
+        ImGui::SameLine();
+        controller.is_cancel = ImGui::Button("Cancel", ImVec2(100, 0));
+    }
 
     ImGui::End();
     ImGui::PopFont();

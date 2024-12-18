@@ -23,16 +23,16 @@ Controller::Instance()
 void
 Controller::ControlerInit()
 {
-    train_datas.resize(RailwaySystemGetTrainDataCount());
+    ControllerChangePageItemsCount(100);
+    ControllerRequestData();
 }
 
 void
-Controller::Getdatas()
+Controller::ControllerRequestData()
 {
     printf("Get datas...\n");
 
-    train_datas.resize(RailwaySystemGetTrainDataCount());
-    RailwaySystemSearchTrainData(train_datas.data(), train_datas.size(), page_idx, nullptr);
+    RailwaySystemSearchTrainData(train_datas.data(), train_datas.size(), page_idx, &search_request);
 }
 
 void
@@ -127,7 +127,7 @@ Controller::ControllerUpdate()
     if(is_fresh_data)
     {
         is_fresh_data = false;
-        Getdatas();
+        ControllerRequestData();
     }
 
     if(is_clear_buffer)
@@ -144,6 +144,8 @@ Controller::ControllerUpdate()
 
     if(is_fresh_processing_data) // 如果选中了新的车次
     {
+        printf("is_fresh_processing_data\n");
+
         is_fresh_processing_data = false;
 
         search_request.id       = processing_data.id;
@@ -240,10 +242,21 @@ Controller::SelectTrainData(int train_data_id)
 }
 
 void
-Controller::ControllerChangePageItemsCount()
+Controller::ControllerChangePageIdx(uint32_t new_idx)
 {
+    page_idx = new_idx;
+
+    is_fresh_data = true;
+}
+
+void
+Controller::ControllerChangePageItemsCount(uint32_t page_item_count)
+{
+    train_datas.clear();
     train_datas.resize(page_item_count);
     page_count = RailwaySystemGetTrainDataPageCountWithPageItem(page_item_count);
+
+    is_fresh_data = true;
 }
 
 void

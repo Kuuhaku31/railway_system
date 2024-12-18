@@ -6,7 +6,7 @@ project(test_view)
 include_directories(../src/view)
 include_directories(../src/entity)
 include_directories(../src/controller)
-include_directories(.train_controller_test)
+include_directories(./train_controller_test)
 
 # 添加源文件
 aux_source_directory(./test_view DIR_SRCS)
