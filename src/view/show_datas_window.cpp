@@ -5,23 +5,8 @@
 #include "controller.h"
 #include "view.h"
 
-ImVec4
-parse_train_status_color(TrainStatus status)
-{
-    switch(status)
-    {
-    case TRAIN_STATUS_NORMAL: return ImVec4(0, 255, 0, 255);        // 绿色
-    case TRAIN_STATUS_DELAYED: return ImVec4(255, 255, 0, 255);     // 黄色
-    case TRAIN_STATUS_STOPPED: return ImVec4(255, 0, 0, 255);       // 红色
-    case TRAIN_STATUS_CANCELLED: return ImVec4(128, 128, 128, 255); // 灰色
-    default:                                                        // 未知状态
-    case TRAIN_STATUS_UNKNOWN: return ImVec4(0, 0, 255, 255);       // 蓝色
-    }
-}
-
-static Controller& controller         = Controller::Instance();
-static TrainData&  processing_data    = controller.processing_data;
-static bool&       is_processing_data = controller.is_processing_data;
+static Controller& controller      = Controller::Instance();
+static TrainData&  processing_data = controller.processing_data;
 
 void
 View::show_train_datas_window(bool* p_open)
@@ -87,19 +72,19 @@ View::show_train_datas_window(bool* p_open)
             ImGui::TableNextRow();
 
             // 如果是选中的行
-            if(is_processing_data && processing_data.id == train_data.id && table_to_selected)
+            if(processing_data.id && processing_data.id == train_data.id && table_to_selected)
             {
                 ImGui::SetScrollHereY();
                 table_to_selected = false;
             }
 
             // 检测鼠标点击事件
-            bool is_selected = is_processing_data && (processing_data.id == train_data.id);
+            bool is_selected = processing_data.id && (processing_data.id == train_data.id);
             if(ImGui::TableNextColumn() && ImGui::Selectable(std::to_string(index).c_str(), is_selected, ImGuiSelectableFlags_SpanAllColumns))
             {
                 processing_data.id = train_data.id;
                 is_selected_new    = true;
-                is_processing_data = true;
+                processing_data.id = true;
             }
 
             // 车次 ID

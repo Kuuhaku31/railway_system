@@ -5,10 +5,23 @@
 
 #include "imgui_setup.h"
 
+#include "date.h"
 #include "train.h"
 
 #include <string>
 #include <vector>
+
+std::string
+date_to_string(const Date& date);
+
+std::string
+parse_train_status(TrainStatus status);
+
+ImVec4
+parse_train_status_color(TrainStatus status);
+
+void
+InputTime(const char* label, Date* time);
 
 // 单例模式
 class View
@@ -24,7 +37,6 @@ public:
 
     void ViewConsoleAddLog(const char* fmt, ...) IM_FMTARGS(2); // 添加日志
     void ViewConsoleShowLog(bool* p_open = nullptr);            // 显示日志
-    void ViewScrollToBottom();                                  // 滑动到底部
 
 private:
     void show_config_window(bool* p_open = nullptr);      // config window 用于调试
@@ -72,7 +84,7 @@ private:
     bool console_scroll_to_bottom = false;
     bool table_to_selected        = false;
 
-    void add_log(std::string label, const TrainData& train_data);
+    void add_train_data_log(std::string label, const TrainData& train_data);
 
 private:
     View()                       = default;

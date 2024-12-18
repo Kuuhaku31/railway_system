@@ -3,6 +3,10 @@
 
 #include "view.h"
 
+#include "controller.h"
+
+static Controller& controller = Controller::Instance();
+
 void
 View::ViewConsoleShowLog(bool* p_open)
 {
@@ -21,21 +25,18 @@ View::ViewConsoleShowLog(bool* p_open)
     ImGui::SetNextWindowSize(console_window_size);
     ImGui::Begin("log window", p_open, window_flags);
 
-    if(ImGui::Button("Clear")) logs.clear();
+    if(ImGui::Button("Clear Logs")) logs.clear();
 
     ImGui::SameLine();
-    bool copy_to_clipboard = ImGui::Button("Copy");
+    if(ImGui::Button("Refresh")) controller.is_fresh_data = true;
 
     ImGui::SameLine();
-    console_scroll_to_bottom = ImGui::Button("Scroll to bottom");
+    if(ImGui::Button("Clear Buffer")) controller.is_clear_buffer = true;
 
     ImGui::Separator(); // 分割线
 
     ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
-    if(copy_to_clipboard)
-    {
-        ImGui::LogToClipboard();
-    }
+
     for(const auto& log : logs)
     {
         ImGui::TextUnformatted(log.c_str());

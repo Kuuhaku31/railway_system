@@ -41,13 +41,9 @@ View::ViewQuit()
 void
 View::ViewShowWindows()
 {
-    if(controller.is_fresh_data)
-    {
-        controller.is_fresh_data = false;
-        controller.Getdatas();
-    }
+    controller.ControllerUpdate();
 
-    is_show_user_input = controller.is_processing_data;
+    // is_show_user_input = (bool)controller.processing_data.id;
 
     update_view_layout();
 
@@ -57,7 +53,7 @@ View::ViewShowWindows()
 
     if(is_show_demo_window) ImGui::ShowDemoWindow(&is_show_demo_window);
 
-    show_user_input_window(&controller.is_processing_data);
+    show_user_input_window(&is_show_user_input);
 
     ViewConsoleShowLog();
 }
@@ -137,7 +133,7 @@ View::ViewConsoleAddLog(const char* fmt, ...)
 
 
 void
-View::add_log(std::string label, const TrainData& train_data)
+View::add_train_data_log(std::string label, const TrainData& train_data)
 {
     std::string log =
         label +
@@ -151,10 +147,4 @@ View::add_log(std::string label, const TrainData& train_data)
         std::to_string(train_data.ticket_price) + " " +
         parse_train_status(train_data.train_status);
     ViewConsoleAddLog(log.c_str());
-}
-
-void
-View::ViewScrollToBottom()
-{
-    console_scroll_to_bottom = true;
 }

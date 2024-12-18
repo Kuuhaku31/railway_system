@@ -5,30 +5,8 @@
 
 #include "train_controller.h"
 
-#include <algorithm>
-#include <chrono>
-
-std::string
-date_to_string(const Date& date)
-{
-    char buf[64];
-    snprintf(buf, sizeof(buf), "%04d-%02d-%02d %02d:%02d:%02d", date.year, date.month, date.day, date.hour, date.minute, date.second);
-    return std::string(buf);
-}
-
-std::string
-parse_train_status(TrainStatus status)
-{
-    switch(status)
-    {
-    case TRAIN_STATUS_NORMAL: return "NORMAL";
-    case TRAIN_STATUS_DELAYED: return "DELAY";
-    case TRAIN_STATUS_STOPPED: return "STOP";
-    case TRAIN_STATUS_CANCELLED: return "CANCEL";
-    default:
-    case TRAIN_STATUS_UNKNOWN: return "UNKNOWN";
-    }
-}
+#include <cstdio>
+#include <cstring>
 
 Controller* Controller::instance = nullptr;
 Controller&
@@ -74,6 +52,28 @@ Controller::DeleteData()
     RailwaySystemDelTrainData(processing_data.id);
 }
 
+void
+Controller::ControllerUpdate()
+{
+    if(is_fresh_data)
+    {
+        is_fresh_data = false;
+        Getdatas();
+    }
+
+    if(is_clear_buffer)
+    {
+        is_clear_buffer = false;
+        ClearDatasBuffer();
+    }
+
+    if(is_clear_processing_data)
+    {
+        is_clear_processing_data = false;
+        ClearProcessingData();
+    }
+}
+
 bool
 Controller::UpdateProcessingData()
 {
@@ -88,6 +88,37 @@ Controller::UpdateProcessingData()
     }
 
     return false;
+}
+
+void
+Controller::ClearProcessingData()
+{
+    static const char unkonw[] = "Unkonw";
+    static TrainData  empty_data;
+    static bool       is_init = false;
+
+    if(!is_init)
+    {
+        is_init = true;
+
+        empty_data.id = 0;
+        strcpy(empty_data.number, unkonw);
+        strcpy(empty_data.start_station, unkonw);
+        strcpy(empty_data.arrive_station, unkonw);
+        empty_data.start_time    = 0;
+        empty_data.arrive_time   = 0;
+        empty_data.ticket_remain = 0;
+        empty_data.ticket_price  = 0;
+        empty_data.train_status  = TRAIN_STATUS_UNKNOWN;
+    }
+
+    processing_data = empty_data;
+}
+
+void
+Controller::ClearDatasBuffer()
+{
+    train_datas.clear();
 }
 
 bool

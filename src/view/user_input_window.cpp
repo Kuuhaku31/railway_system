@@ -10,43 +10,22 @@
 
 #define MAX_SIZE 128
 
-void
-DrawTimeInput(const char* label, Date* time)
-{
-    ImGui::Text(label);
-    ImGui::PushItemWidth(100);
-    // 输入年
-    ImGui::InputScalar((std::string("年##") + label).c_str(), ImGuiDataType_U16, &time->year), ImGui::SameLine();
-    // 输入月
-    ImGui::InputScalar((std::string("月##") + label).c_str(), ImGuiDataType_U8, &time->month), ImGui::SameLine();
-    // 输入日
-    ImGui::InputScalar((std::string("日##") + label).c_str(), ImGuiDataType_U8, &time->day);
-    // 输入小时
-    ImGui::InputScalar((std::string("时##") + label).c_str(), ImGuiDataType_U8, &time->hour), ImGui::SameLine();
-    // 输入分钟
-    ImGui::InputScalar((std::string("分##") + label).c_str(), ImGuiDataType_U8, &time->minute), ImGui::SameLine();
-    // 输入秒
-    ImGui::InputScalar((std::string("秒##") + label).c_str(), ImGuiDataType_U8, &time->second);
-    ImGui::PopItemWidth();
-}
+static Controller& controller      = Controller::Instance();
+static TrainData&  processing_data = controller.processing_data; // 引用控制器中的数据
 
-static Controller& controller         = Controller::Instance();
-static TrainData&  processing_data    = controller.processing_data; // 引用控制器中的数据
-static bool&       is_processing_data = controller.is_processing_data;
+// 设置按钮的颜色
+static ImVec4 normal_color  = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); // 正常颜色
+static ImVec4 hovered_color = ImVec4(0.7f, 0.7f, 0.7f, 1.0f); // 悬停颜色
+static ImVec4 active_color  = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // 按下颜色
+static ImVec4 disable_color = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // 禁用颜色
+
+static bool unable_insert = false;
+static bool unable_del    = false;
+static bool unable_update = true;
 
 void
 View::show_user_input_window(bool* p_open)
 {
-    // 设置按钮的颜色
-    static ImVec4 normal_color  = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); // 正常颜色
-    static ImVec4 hovered_color = ImVec4(0.7f, 0.7f, 0.7f, 1.0f); // 悬停颜色
-    static ImVec4 active_color  = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // 按下颜色
-    static ImVec4 disable_color = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // 禁用颜色
-
-    static bool unable_insert = false;
-    static bool unable_del    = false;
-    static bool unable_update = true;
-
     if(p_open && !*p_open) return;
 
     bool is_insert = false;
@@ -76,7 +55,7 @@ View::show_user_input_window(bool* p_open)
             unable_update = true;
         }
     }
-    else if(!is_processing_data) // 如果没有选中车次
+    else if(!processing_data.id) // 如果没有选中车次
     {
         // 如果没有选中车次
         unable_insert = true;
@@ -98,7 +77,7 @@ View::show_user_input_window(bool* p_open)
 
     if(ImGui::Button("Search")) controller.is_fresh_data = true;
 
-    ImGui::Text("processing data: %s", is_processing_data ? "true" : "false");
+    ImGui::Text("processing data: %s", processing_data.id ? "true" : "false");
 
     // Train ID 输入框
     if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &processing_data.id))
@@ -113,11 +92,11 @@ View::show_user_input_window(bool* p_open)
 
     // 出发时间
     Date start_time = uint64_time_to_date(processing_data.start_time);
-    DrawTimeInput("Start Time", &start_time);
+    InputTime("Start Time", &start_time);
     processing_data.start_time = date_to_uint64_time(start_time);
     // 到达时间
     Date arrive_time = uint64_time_to_date(processing_data.arrive_time);
-    DrawTimeInput("Arrive Time", &arrive_time);
+    InputTime("Arrive Time", &arrive_time);
     processing_data.arrive_time = date_to_uint64_time(arrive_time);
 
     ImGui::InputScalar("Ticket Count", ImGuiDataType_U32, &processing_data.ticket_remain);
@@ -180,6 +159,9 @@ View::show_user_input_window(bool* p_open)
     }
 
     ImGui::SameLine();
+    controller.is_clear_processing_data = ImGui::Button("Clear", ImVec2(100, 0));
+
+    ImGui::SameLine();
     is_cancel = ImGui::Button("Cancel", ImVec2(100, 0));
 
     ImGui::End();
@@ -198,7 +180,7 @@ View::show_user_input_window(bool* p_open)
         controller.is_fresh_data = true;
 
         // 日志
-        add_log("Insert: ", processing_data);
+        add_train_data_log("Insert: ", processing_data);
         console_scroll_to_bottom = true;
     }
     else if(is_del)
@@ -214,7 +196,7 @@ View::show_user_input_window(bool* p_open)
         controller.is_fresh_data = true;
 
         // 日志
-        add_log("Delete: ", processing_data);
+        add_train_data_log("Delete: ", processing_data);
         console_scroll_to_bottom = true;
     }
     else if(is_update)
@@ -226,11 +208,11 @@ View::show_user_input_window(bool* p_open)
         controller.is_fresh_data = true;
 
         // 日志
-        add_log("Update: ", processing_data);
+        add_train_data_log("Update: ", processing_data);
         console_scroll_to_bottom = true;
     }
     else if(is_cancel)
     {
-        is_processing_data = false;
+        processing_data.id = 0;
     }
 }
