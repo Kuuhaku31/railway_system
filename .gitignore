@@ -5,5 +5,6 @@
 /resources
 cmake-build-*
 .idea/
-
-lib
+lib/
+!lib/CMakeLists.txt
+!lib/imgui_setup
