@@ -22,7 +22,13 @@ RailwaySystemGetTrainDataCount()
 }
 
 int32_t
-RailwaySystemSearchTrainData(TrainData* train_data, uint32_t num, const SearchRequest* search_request)
+RailwaySystemGetTrainDataPageCountWithPageItem(uint32_t page_item_count)
+{
+    return 5;
+}
+
+int32_t
+RailwaySystemSearchTrainData(TrainData* train_data, uint32_t num, uint32_t page_idx, const TrainQuery* search_request)
 {
     static bool is_inited = false;
     if(!is_inited)

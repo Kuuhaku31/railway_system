@@ -49,6 +49,18 @@ View::show_user_input_window(bool* p_open)
     ImGui::SetCursorPosY(first_separator_pos); // 调整光标位置
     ImGui::Separator();
 
+    // 调整页码和每页显示数量
+    // 设置宽度
+    ImGui::PushItemWidth(150);
+    ImGui::SameLine();
+    ImGui::InputScalar("Page Index", ImGuiDataType_U32, &controller.page_idx);
+    ImGui::SameLine();
+    if(ImGui::InputScalar("Page Item Count", ImGuiDataType_U32, &controller.page_item_count))
+    {
+        controller.ControllerChangePageItemsCount();
+    }
+    ImGui::PopItemWidth();
+
     // Train ID 输入框
     if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &processing_data.id))
     {

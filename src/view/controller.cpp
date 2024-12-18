@@ -32,7 +32,7 @@ Controller::Getdatas()
     printf("Get datas...\n");
 
     train_datas.resize(RailwaySystemGetTrainDataCount());
-    RailwaySystemSearchTrainData(train_datas.data(), train_datas.size(), nullptr);
+    RailwaySystemSearchTrainData(train_datas.data(), train_datas.size(), page_idx, nullptr);
 }
 
 void
@@ -146,6 +146,10 @@ Controller::ControllerUpdate()
     {
         is_fresh_processing_data = false;
 
+        search_request.id       = processing_data.id;
+        search_request.query_id = IGNORE_THIS;
+        is_fresh_data           = true;
+
         // 如果选中了新的车次，将该车次的数据显示在输入框中
         if(UpdateProcessingData())
         {
@@ -235,6 +239,12 @@ Controller::SelectTrainData(int train_data_id)
     return false;
 }
 
+void
+Controller::ControllerChangePageItemsCount()
+{
+    train_datas.resize(page_item_count);
+    page_count = RailwaySystemGetTrainDataPageCountWithPageItem(page_item_count);
+}
 
 void
 Controller::add_train_data_log(std::string label, const TrainData& train_data)

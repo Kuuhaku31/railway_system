@@ -52,6 +52,16 @@ public:
     bool is_clear  = false;
     bool is_cancel = false;
 
+    uint32_t page_idx        = 0;
+    uint32_t page_item_count = 10;
+
+    TrainQuery search_request;
+
+    void ControllerChangePageItemsCount();
+
+private:
+    int page_count = 0; // 总页数
+
 public:
     TrainData processing_data; // 用户正在编辑的数据，特别的，当 id 为 0 时时，表示没有选中任何数据
 
