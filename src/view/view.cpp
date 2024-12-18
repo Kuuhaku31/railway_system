@@ -7,6 +7,9 @@
 
 #include "date.h"
 
+#define WELOME_TEXT_0 "Welcome to Railway System Application"
+#define WELOME_TEXT_1 "Made By: Kuuhaku-kazari & Mike, 2024.12"
+
 static ImGui_setup& imgui_setup = ImGui_setup::Instance();
 static Controller&  controller  = Controller::Instance();
 
@@ -30,6 +33,9 @@ View::ViewInit()
 
     // 加载中文字体（微软雅黑）
     font_chinese = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\msyh.ttc", 18.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
+
+    ViewConsoleAddLog(WELOME_TEXT_0);
+    ViewConsoleAddLog(WELOME_TEXT_1);
 }
 
 void
@@ -47,8 +53,6 @@ View::ViewShowWindows()
 
     update_view_layout();
 
-    show_config_window();
-
     show_train_datas_window(&is_show_train_datas);
 
     if(is_show_demo_window) ImGui::ShowDemoWindow(&is_show_demo_window);
@@ -56,44 +60,6 @@ View::ViewShowWindows()
     show_user_input_window(&is_show_user_input);
 
     ViewConsoleShowLog();
-}
-
-void
-View::show_config_window(bool* p_open)
-{
-    // 如果 p_open 不为空，且 p_open 为 false，则返回
-    if(p_open && !*p_open) return;
-
-    ImGui::Begin("config", p_open);
-    // 显示帧率
-    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
-    ImGui::Checkbox("Show Demo Window", &is_show_demo_window);
-    ImGui::Checkbox("Show Train Datas", &is_show_train_datas);
-
-    if(ImGui::Button("print user processing data"))
-    {
-        TrainData& train_data = controller.processing_data;
-
-        printf("processing data: \n");
-        printf("train_id: %d\n", train_data.id);
-        printf("ticket_remain: %d\n", train_data.ticket_remain);
-        printf("ticket_price: %.2f\n", train_data.ticket_price);
-        printf("start_time: %s\n", date_to_string(uint64_time_to_date(train_data.start_time)).c_str());
-        printf("arrive_time: %s\n", date_to_string(uint64_time_to_date(train_data.arrive_time)).c_str());
-        printf("number: %s\n", train_data.number);
-        printf("start_station: %s\n", train_data.start_station);
-        printf("arrive_station: %s\n", train_data.arrive_station);
-        printf("train_status: %s\n", parse_train_status(train_data.train_status).c_str());
-    }
-
-    // 读取数据库
-    if(ImGui::Button("Get datas"))
-    {
-        controller.Getdatas();
-    }
-
-    ImGui::End();
 }
 
 void
@@ -135,16 +101,20 @@ View::ViewConsoleAddLog(const char* fmt, ...)
 void
 View::add_train_data_log(std::string label, const TrainData& train_data)
 {
+    // 价格保留两位小数
+    char buf[256];
+    snprintf(buf, sizeof(buf), "%.2f", train_data.ticket_price);
+
     std::string log =
         label +
         std::to_string(train_data.id) + " " +
         std::string(train_data.number) + " " +
-        std::string(train_data.start_station) + " " +
+        std::string(train_data.start_station) + "->" +
         std::string(train_data.arrive_station) + " " +
         date_to_string(uint64_time_to_date(train_data.start_time)) + " " +
         date_to_string(uint64_time_to_date(train_data.arrive_time)) + " " +
         std::to_string(train_data.ticket_remain) + " " +
-        std::to_string(train_data.ticket_price) + " " +
+        buf + " " +
         parse_train_status(train_data.train_status);
     ViewConsoleAddLog(log.c_str());
 }

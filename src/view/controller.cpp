@@ -36,6 +36,8 @@ Controller::InsertData()
 {
     printf("Insert data...\n");
     RailwaySystemInsertTrainData(processing_data);
+
+    is_fresh_data = true;
 }
 
 void
@@ -43,6 +45,8 @@ Controller::UpdateData()
 {
     printf("Update data...\n");
     RailwaySystemUpdateTrainData(processing_data);
+
+    is_fresh_data = true;
 }
 
 void
@@ -50,6 +54,8 @@ Controller::DeleteData()
 {
     printf("Delete data...\n");
     RailwaySystemDelTrainData(processing_data.id);
+
+    is_fresh_data = true;
 }
 
 void
@@ -59,6 +65,12 @@ Controller::ControllerUpdate()
     {
         is_fresh_data = false;
         Getdatas();
+    }
+
+    if(is_fresh_processing_data)
+    {
+        is_fresh_processing_data = false;
+        UpdateProcessingData();
     }
 
     if(is_clear_buffer)

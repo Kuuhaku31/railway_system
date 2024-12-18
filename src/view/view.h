@@ -39,7 +39,6 @@ public:
     void ViewConsoleShowLog(bool* p_open = nullptr);            // 显示日志
 
 private:
-    void show_config_window(bool* p_open = nullptr);      // config window 用于调试
     void show_train_datas_window(bool* p_open = nullptr); // 显示车次信息
     void show_user_input_window(bool* p_open = nullptr);  // 获取用户输入的字符串
 
@@ -54,6 +53,9 @@ public: // 窗口布局相关配置
     Color clear_color = { 0x33, 0x33, 0x33, 0xff };
 
 private:
+    // 第一个分割线位置
+    int first_separator_pos = 50;
+
     // 布局比例
     float data_window_height  = 0.65f;
     float inuput_window_width = 0.65f;
@@ -78,8 +80,6 @@ public:
 
 private:
     std::vector<std::string> logs;
-
-    bool is_selected_new = false;
 
     bool console_scroll_to_bottom = false;
     bool table_to_selected        = false;

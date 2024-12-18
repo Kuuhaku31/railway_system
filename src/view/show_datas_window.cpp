@@ -71,20 +71,22 @@ View::show_train_datas_window(bool* p_open)
 
             ImGui::TableNextRow();
 
+            // 检测鼠标点击事件
+            bool is_selected = processing_data.id && (processing_data.id == train_data.id);
+            if(ImGui::TableNextColumn() && ImGui::Selectable(std::to_string(index).c_str(), is_selected, ImGuiSelectableFlags_SpanAllColumns))
+            {
+                table_to_selected  = false;
+                is_show_user_input = true;
+
+                processing_data.id = train_data.id;
+                controller.ControllerFreshProcessingData();
+            }
+
             // 如果是选中的行
             if(processing_data.id && processing_data.id == train_data.id && table_to_selected)
             {
                 ImGui::SetScrollHereY();
                 table_to_selected = false;
-            }
-
-            // 检测鼠标点击事件
-            bool is_selected = processing_data.id && (processing_data.id == train_data.id);
-            if(ImGui::TableNextColumn() && ImGui::Selectable(std::to_string(index).c_str(), is_selected, ImGuiSelectableFlags_SpanAllColumns))
-            {
-                processing_data.id = train_data.id;
-                is_selected_new    = true;
-                processing_data.id = true;
             }
 
             // 车次 ID

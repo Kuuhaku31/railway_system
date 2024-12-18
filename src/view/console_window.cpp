@@ -33,7 +33,11 @@ View::ViewConsoleShowLog(bool* p_open)
     ImGui::SameLine();
     if(ImGui::Button("Clear Buffer")) controller.is_clear_buffer = true;
 
-    ImGui::Separator(); // 分割线
+    ImGui::SameLine();
+    if(ImGui::Button("Config")) is_show_user_input = !is_show_user_input;
+
+    ImGui::SetCursorPosY(first_separator_pos); // 调整光标位置
+    ImGui::Separator();                        // 分割线
 
     ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
 

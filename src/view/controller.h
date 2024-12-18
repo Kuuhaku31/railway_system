@@ -41,11 +41,19 @@ public:
     bool SelectTrainData(int train_data_id);
 
 public:
+    bool unable_insert = false;
+    bool unable_del    = false;
+    bool unable_update = true;
+
+public:
     TrainData processing_data; // 用户正在编辑的数据，特别的，当 id 为 0 时时，表示没有选中任何数据
 
     bool is_fresh_data            = false; // 是否刷新数据
+    bool is_fresh_processing_data = false; // 是否刷新处理数据
     bool is_clear_buffer          = false; // 是否清空数据缓存
     bool is_clear_processing_data = false; // 是否清空处理数据
+
+    void ControllerFreshProcessingData() { is_fresh_processing_data = true; }
 
     const TrainDatas& GetTrainDatas() const { return train_datas; }
 

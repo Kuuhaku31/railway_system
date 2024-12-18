@@ -9,7 +9,7 @@
 #include <vector>
 
 
-#define DATA_COUNT 20
+#define DATA_COUNT 500
 #define START_STATION "北京"
 #define ARRIVE_STATION "上海"
 
