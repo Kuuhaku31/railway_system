@@ -16,7 +16,6 @@ View::show_console_window(bool* p_open)
     window_flags |= ImGuiWindowFlags_NoTitleBar;
     window_flags |= ImGuiWindowFlags_NoResize;
     window_flags |= ImGuiWindowFlags_NoMove;
-    // window_flags |= ImGuiWindowFlags_NoDocking;
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 
     // 中文显示
@@ -28,7 +27,7 @@ View::show_console_window(bool* p_open)
     if(ImGui::Button("Clear Logs")) logs.clear();
 
     ImGui::SameLine();
-    if(ImGui::Button("Refresh")) controller.is_fresh_processing_data = true;
+    if(ImGui::Button("Refresh")) controller.is_fresh_data = true;
 
     ImGui::SameLine();
     if(ImGui::Button("Clear Buffer")) controller.is_clear_buffer = true;

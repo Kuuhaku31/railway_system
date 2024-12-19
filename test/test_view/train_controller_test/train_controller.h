@@ -36,16 +36,18 @@ RailwaySystemSearchTrainData(TrainData* train_data, uint32_t num, uint32_t page_
 // 插入数据到数据库中
 // 如果数据库中不存在该车次信息
 // 插入失败，返回负数
-// 插入成功，返回车次信息的id
+// **插入成功，返回车次信息的id**
 int32_t
 RailwaySystemInsertTrainData(TrainData train_data);
 
 // 修改数据
 // 根据 id 值
+// **修改成功，返回修改的车次信息的id**
 int32_t
 RailwaySystemUpdateTrainData(TrainData train_data);
 
 // 删除数据，根据传入id
+// **删除成功，返回删除的车次信息的id**
 int32_t
 RailwaySystemDelTrainData(int32_t train_data_id);
 

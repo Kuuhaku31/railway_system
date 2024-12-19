@@ -24,7 +24,6 @@ Controller::Instance()
 void
 Controller::ControlerInit()
 {
-    ControllerChangePageItemsCount(100);
     request_data();
 
     const char unkonw[] = "Unkonw";
@@ -38,6 +37,13 @@ Controller::ControlerInit()
     empty_data.ticket_remain = 0;
     empty_data.ticket_price  = 0;
     empty_data.train_status  = TRAIN_STATUS_UNKNOWN;
+
+    for(int i = 0; i < BUFFER_SIZE; i++)
+    {
+        train_data_buffer[i] = empty_data;
+    }
+
+    processing_data = empty_data;
 }
 
 void
@@ -110,16 +116,6 @@ Controller::ControllerUpdate()
         clear_datas_buffer();
     }
 
-    // 如果需要刷新编辑数据，并且有数据
-    if(is_fresh_processing_data && processing_data.id)
-    {
-        // 设置查询条件
-        search_request.id       = processing_data.id;
-        search_request.query_id = IGNORE_THIS;
-
-        is_fresh_data = true;
-    }
-
     // 请求数据
     if(is_fresh_data)
     {
@@ -170,14 +166,27 @@ Controller::ControllerChangePageIdx(uint32_t new_idx)
 {
     page_idx = new_idx;
 
+    if(page_idx < 1)
+    {
+        page_idx = 1;
+    }
+
     is_fresh_data = true;
 }
 
 void
-Controller::ControllerChangePageItemsCount(uint32_t page_item_count)
+Controller::ControllerChangePageItemsCount(int new_count)
 {
-    train_data_buffer.clear();
-    train_data_buffer.resize(page_item_count);
+    page_item_count = new_count;
+
+    if(page_item_count < 1)
+    {
+        page_item_count = 1;
+    }
+    else if(page_item_count > BUFFER_SIZE)
+    {
+        page_item_count = BUFFER_SIZE;
+    }
 
     is_fresh_data = true;
 }
@@ -185,8 +194,9 @@ Controller::ControllerChangePageItemsCount(uint32_t page_item_count)
 void
 Controller::insert_data()
 {
-    printf("Insert data...\n");
-    processing_data.id = RailwaySystemInsertTrainData(processing_data);
+    printf("Controller Insert data...\n");
+    int res = RailwaySystemInsertTrainData(processing_data);
+    printf("%d\n", res);
 
     is_fresh_processing_data = true;
     is_fresh_data            = true;
@@ -195,7 +205,7 @@ Controller::insert_data()
 void
 Controller::update_data()
 {
-    printf("Update data...\n");
+    printf("Controller Update data...\n");
     RailwaySystemUpdateTrainData(processing_data);
 
     is_fresh_data = true;
@@ -204,7 +214,7 @@ Controller::update_data()
 void
 Controller::delete_data()
 {
-    printf("Delete data...\n");
+    printf("Controller Delete data...\n");
     RailwaySystemDelTrainData(processing_data.id);
 
     is_fresh_data = true;
@@ -213,11 +223,13 @@ Controller::delete_data()
 void
 Controller::request_data()
 {
-    printf("Get datas...\n");
+    printf("Controller Get datas...\n");
 
-    SearchResult res = RailwaySystemSearchTrainData(train_data_buffer.data(), train_data_buffer.size(), page_idx, &search_request);
+    SearchResult res = RailwaySystemSearchTrainData(train_data_buffer, page_item_count, page_idx, &search_request);
 
     page_count = res.page_count;
+    if(page_count == 0) page_count = 1;
+    page_item_count_current = res.data_return_count;
 }
 
 int8_t
@@ -226,11 +238,11 @@ Controller::fresh_processing_data_from_buffer()
     if(!processing_data.id) return -1;
 
     printf("Search data from buffer...\n");
-    for(auto& train_data : train_data_buffer)
+    for(int i = 0; i < page_item_count; i++)
     {
-        if(train_data.id == processing_data.id)
+        if(train_data_buffer[i].id == processing_data.id)
         {
-            processing_data = train_data;
+            processing_data = train_data_buffer[i];
             return 1;
         }
     }

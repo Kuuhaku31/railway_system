@@ -63,7 +63,7 @@ public: // 窗口布局相关配置
     Color clear_color = { 0x33, 0x33, 0x33, 0xff };
 
 private:
-    bool is_search_all                       = false;
+    bool is_use_filter                       = false;
     bool is_search_by_id                     = false;
     bool is_search_by_number_keyword         = false;
     bool is_search_by_start_station_keyword  = false;

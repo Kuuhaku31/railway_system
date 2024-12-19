@@ -8,12 +8,11 @@
 #include <string>
 #include <vector>
 
+#define BUFFER_SIZE 10000
+
 // 单例
 class Controller
 {
-public:
-    typedef std::vector<TrainData> TrainDatas;
-
 public:
     static Controller& Instance();
 
@@ -37,29 +36,32 @@ public:
     TrainData  processing_data; // 用户正在编辑的数据，特别的，当 id 为 0 时时，表示没有选中任何数据
 
 public:
-    void ControllerChangePageIdx(uint32_t new_idx);                // 改变页码
-    void ControllerChangePageItemsCount(uint32_t page_item_count); // 改变每页显示的数据数量
+    void ControllerChangePageIdx(uint32_t new_idx);           // 改变页码
+    void ControllerChangePageItemsCount(int page_item_count); // 改变每页显示的数据数量
 
-    uint32_t ControllerGetPageIdx() const { return page_idx; }                       // 获取当前页数
-    uint32_t ControllerGetPageItemCount() const { return train_data_buffer.size(); } // 获取每页显示的数据数量
-    uint32_t ControllerGetPageCount() const { return page_count; }                   // 获取总页数
+    uint32_t ControllerGetPageIdx() const { return page_idx; }                             // 获取当前页数
+    uint32_t ControllerGetPageItemCountCurrent() const { return page_item_count_current; } // 获取buffer中实际的数据数量
+    uint32_t ControllerGetPageItemCount() const { return page_item_count; }                // 获取每页显示的数据数量
+    uint32_t ControllerGetPageCount() const { return page_count; }                         // 获取总页数
 
     bool ControllerUnableInsert() const { return unable_insert; } // 是否禁用插入按钮
     bool ControllerUnableDel() const { return unable_del; }       // 是否禁用删除按钮
     bool ControllerUnableUpdate() const { return unable_update; } // 是否禁用更新按钮
 
-    const TrainDatas& GetTrainDatas() const { return train_data_buffer; } // 获取数据缓存
+    const TrainData* GetTrainDatas() const { return train_data_buffer; } // 获取数据缓存
 
 private:
-    // 从数据库中查询到的数据参数，每页显示的数据数量为 train_datas 的大小
-    uint32_t   page_count = 0;    // 总页数
-    uint32_t   page_idx   = 0;    // 当前页数
-    TrainDatas train_data_buffer; // 从数据库中查询到的数据
+    // 从数据库中查询到的数据参数，每页显示的数据最大数量为 train_datas 的大小
+    uint32_t  page_count              = 0;    // 总页数
+    uint32_t  page_idx                = 1;    // 当前页数
+    uint32_t  page_item_count         = 100;  // 每一页期望显示的数据数量
+    uint32_t  page_item_count_current = 0;    // buffer 中实际的数据数量
+    TrainData train_data_buffer[BUFFER_SIZE]; // 从数据库中查询到的数据
 
 private:
     // 控制器状态
-    bool unable_insert = false;
-    bool unable_del    = false;
+    bool unable_insert = true;
+    bool unable_del    = true;
     bool unable_update = true;
 
 private:

@@ -30,7 +30,6 @@ View::show_user_input_window(bool* p_open)
     window_flags |= ImGuiWindowFlags_NoTitleBar;
     window_flags |= ImGuiWindowFlags_NoResize;
     window_flags |= ImGuiWindowFlags_NoMove;
-    // window_flags |= ImGuiWindowFlags_NoDocking;
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 
     ImGui::PushFont(font_chinese); // 使用中文字体
@@ -45,6 +44,8 @@ View::show_user_input_window(bool* p_open)
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::SameLine();
         ImGui::Text("|  is processing data: %s", processing_data.id ? "true" : "false");
+        ImGui::SameLine();
+        ImGui::Text("%d datas in buffer", controller.ControllerGetPageItemCountCurrent());
     }
 
     ImGui::SetCursorPosY(first_separator_pos); // 调整光标位置
@@ -54,31 +55,32 @@ View::show_user_input_window(bool* p_open)
         // 设置宽度
         ImGui::PushItemWidth(150);
 
-        uint32_t page_page_count = controller.ControllerGetPageCount();
-        uint32_t page_item_count = controller.ControllerGetPageItemCount();
-        uint32_t page_idx        = controller.ControllerGetPageIdx() + 1;
+        uint32_t page_page_count = controller.ControllerGetPageCount();     // 总页数
+        uint32_t page_item_count = controller.ControllerGetPageItemCount(); // 每页期望显示的数据数量
+        int      page_idx_curr   = controller.ControllerGetPageIdx();       // 当前页数
 
         ImGui::SameLine();
-        if(ImGui::InputInt("Page Index", (int*)&page_idx))
+        if(ImGui::InputInt("Page Index", &page_idx_curr))
         {
-            if(page_idx < 1)
+            if(page_idx_curr < 1)
             {
-                page_idx = 1;
+                page_idx_curr = 1;
             }
-            else if(page_idx > page_page_count)
+            else if(page_idx_curr > page_page_count)
             {
-                page_idx = page_page_count;
+                page_idx_curr = page_page_count;
             }
 
-            controller.ControllerChangePageIdx(page_idx - 1);
+            controller.ControllerChangePageIdx(page_idx_curr);
         }
+        ImGui::SameLine();
+        ImGui::Text("/ %d", page_page_count);
 
         ImGui::SameLine();
-        if(ImGui::InputInt("Page Item Count", (int*)&page_item_count))
+        int new_page_item_count = page_item_count;
+        if(ImGui::InputInt("Page Item Count", &new_page_item_count))
         {
-            if(page_item_count < 0) page_item_count = 0;
-
-            controller.ControllerChangePageItemsCount(page_item_count);
+            controller.ControllerChangePageItemsCount(new_page_item_count);
         }
 
         ImGui::PopItemWidth();

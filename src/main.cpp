@@ -1,19 +1,25 @@
 
 // main.cpp
 
+#include "controller.h"
+#include "utils.h"
 #include "view.h"
+
 
 #include <stdio.h>
 
 static ImGui_setup& imgui_setup = ImGui_setup::Instance();
-
-static View& view = View::Instance();
+static View&        view        = View::Instance();
+static Controller&  controller  = Controller::Instance();
 
 int
 main()
 {
+    initConfig();
+    initDb();
     printf("Hello, main!\n");
 
+    controller.ControlerInit();
     view.ViewInit();
 
     printf("Showing view...\n");
@@ -39,6 +45,6 @@ main()
     }
 
     view.ViewQuit();
-
+    finalizeDb();
     return 0;
 }

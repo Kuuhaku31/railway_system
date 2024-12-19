@@ -5,6 +5,8 @@
 
 #include "controller.h"
 
+#define TEXT_SEARCH_WINDOW_FILTERS "Filters" // 过滤器
+
 bool
 select_comparison_operators(const char* label, int* current_item)
 {
@@ -42,22 +44,18 @@ View::show_search_window(bool* p_open)
 
     ImGui::Text("Search Window...");
 
-    ImGui::Checkbox("Search All", &is_search_all);
-    if(is_search_all)
+    if(ImGui::Checkbox(TEXT_SEARCH_WINDOW_FILTERS, &is_use_filter))
     {
-        // 调整请求
-        // 将 search_request 中的所有查询条件设置为 0
+        controller.is_fresh_data = true;
+    }
+    if(!is_use_filter)
+    {
+        // 查询所有数据
+        search_request.id       = 0;
+        search_request.query_id = GREATER;
 
-        search_request.query_id             = 0;
-        search_request.query_ticket_remain  = 0;
-        search_request.query_ticket_price   = 0;
-        search_request.query_start_time     = 0;
-        search_request.query_arrive_time    = 0;
-        search_request.query_number         = 0;
-        search_request.query_start_station  = 0;
-        search_request.query_arrive_station = 0;
-        search_request.query_is_running     = 0;
-
+        ImGui::End();
+        ImGui::PopFont();
         return;
     }
 
@@ -79,9 +77,10 @@ View::show_search_window(bool* p_open)
         // 如果更新了查询条件，调整请求
         if(is_update)
         {
-            search_request.query_id = search_id;
+            search_request.id       = search_id;
             search_request.query_id = current_item;
-            printf("update search request id: %d, %d\n", search_id, current_item);
+
+            controller.is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -102,7 +101,7 @@ View::show_search_window(bool* p_open)
             strcpy(search_request.number, search_number);
             search_request.query_number = EQUAL;
 
-            printf("update search request number: %s\n", search_number);
+            controller.is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -123,7 +122,7 @@ View::show_search_window(bool* p_open)
             strcpy(search_request.start_station, search_start);
             search_request.query_start_station = EQUAL;
 
-            printf("update search request start station: %s\n", search_start);
+            controller.is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -144,7 +143,7 @@ View::show_search_window(bool* p_open)
             strcpy(search_request.arrive_station, search_arrive);
             search_request.query_arrive_station = EQUAL;
 
-            printf("update search request arrive station: %s\n", search_arrive);
+            controller.is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -168,7 +167,7 @@ View::show_search_window(bool* p_open)
             search_request.start_time       = date_to_uint64_time(search_start_time);
             search_request.query_start_time = current_item;
 
-            printf("update search request start time: %s\n", date_to_string(search_start_time).c_str());
+            controller.is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -192,7 +191,7 @@ View::show_search_window(bool* p_open)
             search_request.arrive_time       = date_to_uint64_time(search_arrive_time);
             search_request.query_arrive_time = current_item;
 
-            printf("update search request arrive time: %s\n", date_to_string(search_arrive_time).c_str());
+            controller.is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -216,7 +215,7 @@ View::show_search_window(bool* p_open)
             search_request.ticket_remain       = search_ticket_remain;
             search_request.query_ticket_remain = current_item;
 
-            printf("update search request ticket remain: %d, %d\n", search_ticket_remain, current_item);
+            controller.is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -241,8 +240,7 @@ View::show_search_window(bool* p_open)
             search_request.ticket_price       = float_to_uint32_price(search_ticket_price);
             search_request.query_ticket_price = current_item;
 
-            // 保留两位小数
-            printf("update search request ticket price: %s, %d\n", uint32_price_to_string(search_request.ticket_price).c_str(), current_item);
+            controller.is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -267,7 +265,7 @@ View::show_search_window(bool* p_open)
             search_request.train_status     = search_train_status;
             search_request.query_is_running = EQUAL;
 
-            printf("update search request train status: %s\n", parse_train_status(search_train_status).c_str());
+            controller.is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
