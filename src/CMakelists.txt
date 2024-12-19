@@ -42,7 +42,7 @@
  message(STATUS "View Source files: ${VIEW_SRC}")
  message(STATUS "Entity Source files: ${ENTITY_SRC}")
 
- add_executable(${PROJECT_NAME} ${MODEL_SRC} ${VIEW_SRC} ${ENTITY_SRC} ${IMGUI_SETUP_SRC} ${UTILS_SRC} main.cpp)
+ add_executable(${PROJECT_NAME} ${CONTROLLER_SRC} ${MODEL_SRC} ${VIEW_SRC} ${ENTITY_SRC} ${IMGUI_SETUP_SRC} ${UTILS_SRC} main.cpp)
 
  target_include_directories(${PROJECT_NAME} PUBLIC
  ../lib/sqlite3 ../lib/imgui

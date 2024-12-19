@@ -176,7 +176,26 @@ int main(){
     setlocale(LC_CTYPE, "");
     initConfig();
     initDb();
-    test_db();
+    char *sql=(char *) calloc(1024, sizeof(char));
+    char *buffer=(char *) calloc(1024, sizeof(char));
+    sprintf_s(sql,1024, "select count(*) from trains;");
+    char** resultp=NULL;
+    int row=0;
+    int col=0;
+    char *errMsg=NULL;
+    int ret=sqlite3_get_table(db,sql,&resultp,&row, &col, &errMsg);
+    free(sql);
+    sql=NULL;
+    free(buffer);
+    buffer=NULL;
+    if(ret!=SQLITE_OK){
+        printf("\033[31m%s",errMsg);
+        sqlite3_free(errMsg);
+        errMsg=NULL;
+        return ret;
+    }
+    printf("row=%d, col=%d, result=%s", row, col, resultp[1*1]);
+    sqlite3_free(errMsg);
     finalizeDb();
     return 0;
 }

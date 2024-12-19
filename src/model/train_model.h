@@ -14,7 +14,7 @@ extern "C"{
 #include "train.h"
 #include "error.h"
 
-void analyzeCondition(TrainQuery *condition, char *buffer, int bufferSize);
+void analyzeCondition(const TrainQuery *condition, char *buffer, int bufferSize);
 
 void analyzeChange(TrainChange *condition, char *buffer, int bufferSize);
 
@@ -57,12 +57,12 @@ int getTrainByNumber(char *number, TrainData *train);
  * @param num [out] 符合条件的车次个数
  * @return 错误码
  */
-int getTrainList(TrainQuery *condition,
+int getTrainList(const TrainQuery *condition,
                  TrainData *train,
                  uint32_t pageSize,
                  uint32_t pageNum,
                  uint32_t *num);
-
+int getCount(const TrainQuery *condition,uint32_t *num);
 #ifdef __cplusplus
 };
 #endif

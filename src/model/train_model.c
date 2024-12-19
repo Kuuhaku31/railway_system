@@ -27,7 +27,7 @@ uint64_t str2u64(char *str){
     sscanf_s(str, "%llu", &i);
     return i;
 }
-void analyzeCondition(TrainQuery* condition, char* buffer, int bufferSize){
+void analyzeCondition(const TrainQuery* condition, char* buffer, int bufferSize){
     buffer[0]=' ';
     char *temp=(char *) calloc(128, sizeof(char ));
     bool first = true;
@@ -40,49 +40,49 @@ void analyzeCondition(TrainQuery* condition, char* buffer, int bufferSize){
         memset(temp, 0, 128*sizeof(char));
     }
     if(condition->query_ticket_remain!=IGNORE_THIS){
-        sprintf_s(temp, 128, "%s ticket_remain%s%d", first?"":" and ", operator[condition->query_ticket_remain-1],condition->ticket_remain);
+        sprintf_s(temp, 128, "%s ticket_remain%s%d", first?" ":" and ", operator[condition->query_ticket_remain-1],condition->ticket_remain);
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
     }
     if(condition->query_ticket_price!=IGNORE_THIS){
-        sprintf_s(temp, 128, "%s ticket_price%s%d", first?"":" and ", operator[condition->query_ticket_price-1], (int)(condition->ticket_price*100));
+        sprintf_s(temp, 128, "%s ticket_price%s%d", first?" ":" and ", operator[condition->query_ticket_price-1], (int)(condition->ticket_price*100));
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
     }
     if(condition->query_start_time!=IGNORE_THIS){
-        sprintf_s(temp, 128,"%s start_time%s%lld", first?"":" and ", operator[condition->query_start_time-1], condition->start_time);
+        sprintf_s(temp, 128,"%s start_time%s%lld", first?" ":" and ", operator[condition->query_start_time-1], condition->start_time);
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
     }
     if(condition->query_arrive_time!=IGNORE_THIS){
-        sprintf_s(temp, 128,"%s arrive_time%s%lld", first?"":" and ", operator[condition->query_arrive_time-1], condition->arrive_time);
+        sprintf_s(temp, 128,"%s arrive_time%s%lld", first?" ":" and ", operator[condition->query_arrive_time-1], condition->arrive_time);
         first = false;
         strcat_s(buffer, bufferSize, temp );
         memset(temp, 0, 128*sizeof(char));
     }
     if(condition->query_number!=IGNORE_THIS){
-        sprintf_s(temp, 128,"%s number%s'%s'", first?"":" and ", operator[condition->query_number-1], condition->number);
+        sprintf_s(temp, 128,"%s number like '%%%s%%'", first?" ":" and ", condition->number);
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
     }
     if(condition->query_start_station!=IGNORE_THIS){
-        sprintf_s(temp, 128,"%s start_station%s'%s'", first?"":" and ", operator[condition->query_start_station-1], condition->start_station);
+        sprintf_s(temp, 128,"%s start_station like '%%%s%%'", first?" ":" and ", condition->start_station);
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
     }
     if(condition->query_arrive_station!=IGNORE_THIS){
-        sprintf_s(temp, 128,"%s arrive_station%s'%s'", first?"":" and ", operator[condition->query_arrive_station-1], condition->arrive_station);
+        sprintf_s(temp, 128,"%s arrive_station like '%%%s%%'", first?" ":" and ", condition->arrive_station);
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
     }
     if(condition->query_is_running!=IGNORE_THIS){
-        sprintf_s(temp, 128, "%s is_running%s%d", first?"":" and ", operator[condition->query_is_running-1], condition->train_status);
+        sprintf_s(temp, 128, "%s is_running%s%d", first?" ":" and ", operator[condition->query_is_running-1], condition->train_status);
         strcat_s(buffer, bufferSize, temp);
     }
     free(temp);
@@ -99,49 +99,49 @@ void analyzeChange(TrainChange* change, char* buffer, int bufferSize){
         memset(temp, 0, 128*sizeof(char));
     }
     if(change->change_ticket_remain){
-        sprintf_s(temp, 128, "%s ticket_remain=%d", first?"":", ", change->ticket_remain);
+        sprintf_s(temp, 128, "%s ticket_remain=%d", first?" ":", ", change->ticket_remain);
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
     }
     if(change->change_ticket_price){
-        sprintf_s(temp, 128, "%s ticket_price=%d", first?"":", ",  (int)(change->ticket_price*100));
+        sprintf_s(temp, 128, "%s ticket_price=%d", first?" ":", ",  (int)(change->ticket_price*100));
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
     }
     if(change->change_start_time){
-        sprintf_s(temp, 128,"%s start_time=%lld", first?"":", ",  change->start_time);
+        sprintf_s(temp, 128,"%s start_time=%lld", first?" ":", ",  change->start_time);
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
     }
     if(change->change_arrive_time){
-        sprintf_s(temp, 128,"%s arrive_time=%lld", first?"":", ",  change->arrive_time);
+        sprintf_s(temp, 128,"%s arrive_time=%lld", first?" ":", ",  change->arrive_time);
         first = false;
         strcat_s(buffer, bufferSize, temp );
         memset(temp, 0, 128*sizeof(char));
     }
     if(change->change_number){
-        sprintf_s(temp, 128,"%s number='%s'", first?"":", ",  change->number);
+        sprintf_s(temp, 128,"%s number='%s'", first?" ":", ",  change->number);
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
     }
     if(change->change_start_station){
-        sprintf_s(temp, 128,"%s start_station='%s'", first?"":", ",  change->start_station);
+        sprintf_s(temp, 128,"%s start_station='%s'", first?" ":", ",  change->start_station);
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
     }
     if(change->change_arrive_station){
-        sprintf_s(temp, 128,"%s arrive_station='%s'", first?"":", ",  change->arrive_station);
+        sprintf_s(temp, 128,"%s arrive_station='%s'", first?" ":", ",  change->arrive_station);
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
     }
     if(change->change_is_running){
-        sprintf_s(temp, 128, "%s is_running=%d", first?"":", ",  change->train_status);
+        sprintf_s(temp, 128, "%s is_running=%d", first?" ":", ",  change->train_status);
         strcat_s(buffer, bufferSize, temp);
     }
     free(temp);
@@ -291,7 +291,30 @@ int getTrainByNumber(char *number, TrainData *train) {
     return SUCCESS;
 }
 
-int getTrainList(TrainQuery *condition, TrainData *train, uint32_t pageSize, uint32_t pageNum, uint32_t *num) {
+int getCount(const TrainQuery *condition, uint32_t *count){
+    char *sql=(char *) calloc(1024, sizeof(char));
+    char *buffer=(char *) calloc(1024, sizeof(char));
+    analyzeCondition(condition, buffer, 1024);
+    sprintf_s(sql,1024, "select count(*) from trains where %s;", buffer);
+    char** resultp=NULL;
+    int row=0;
+    int col=0;
+    char *errMsg=NULL;
+    int ret=sqlite3_get_table(db,sql,&resultp,&row, &col, &errMsg);
+    free(sql);
+    sql=NULL;
+    free(buffer);
+    buffer=NULL;
+    if(ret!=SQLITE_OK){
+        printf("\033[31m%s",errMsg);
+        sqlite3_free(errMsg);
+        errMsg=NULL;
+        return ret;
+    }
+    *count= atoi(resultp[1]);
+    return 0;
+}
+int getTrainList(const TrainQuery *condition, TrainData *train, uint32_t pageSize, uint32_t pageNum, uint32_t *num) {
     char *sql=(char *) calloc(1024, sizeof(char));
     char *buffer=(char *) calloc(1024, sizeof(char));
     analyzeCondition(condition, buffer, 1024);

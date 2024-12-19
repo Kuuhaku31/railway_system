@@ -29,7 +29,7 @@ typedef struct {
     time_t arrive_time;  // 到达时间
 
     int32_t ticket_remain; // 票数
-    float ticket_price; // 价格, 分为单位
+    int32_t ticket_price; // 价格, 分为单位
 
     int train_status; // 列车状态
 } TrainData;
