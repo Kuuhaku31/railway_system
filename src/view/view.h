@@ -106,12 +106,27 @@ private:
     void update_view_layout(); // 更新窗口布局
 
 public:
+    bool console_scroll_to_bottom = false;
+    bool table_to_selected        = false;
+
+public:
     ImFont* font_default = nullptr;
     ImFont* font_chinese = nullptr;
 
-public:
-    bool console_scroll_to_bottom = false;
-    bool table_to_selected        = false;
+public: // 组件样式
+    ImVec2 button_size_02 = { 90, 35 };
+
+    // 设置按钮的正常颜色
+    ImVec4 normal_normal_color  = ImVec4(BUTTON_COLOR_NORMAL_NORMAL);  // 正常正常颜色
+    ImVec4 normal_hovered_color = ImVec4(BUTTON_COLOR_NORMAL_HOVERED); // 正常悬停颜色
+    ImVec4 normal_active_color  = ImVec4(BUTTON_COLOR_NORMAL_ACTIVE);  // 正常按下颜色
+
+    // 设置按钮的活动颜色
+    ImVec4 active_normal_color  = ImVec4(BUTTON_COLOR_ACTIVE_NORMAL);  // 活动正常颜色
+    ImVec4 active_hovered_color = ImVec4(BUTTON_COLOR_ACTIVE_HOVERED); // 活动悬停颜色
+    ImVec4 active_active_color  = ImVec4(BUTTON_COLOR_ACTIVE_ACTIVE);  // 活动按下颜色
+
+    ImVec4 disable_color = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // 禁用颜色
 
 private:
     View()                       = default;

@@ -23,7 +23,8 @@ public:
     void ControlerInit();    // 初始化
     void ControllerUpdate(); // 控制器更新逻辑
 
-    void ControllerConsoleAddLog(const char* fmt, ...); // IM_FMTARGS(2); // 添加日志
+    void ControllerAddLog(const char* fmt, ...); // IM_FMTARGS(2); // 添加日志
+    void ControllerExportLogs();                 // 导出日志
 
 public:
     // 用户操作

@@ -20,8 +20,7 @@ View::Instance()
 void
 View::ViewInit()
 {
-    static Rect window_rect = { 30, 40, 1100, 1400 };
-    imgui_setup.Init(APPLICATION_NAME, window_rect, false);
+    imgui_setup.Init(APPLICATION_NAME, WINDOW_INIT_RECT, false);
 
     // 加载默认字体
     ImGuiIO& io  = ImGui::GetIO();

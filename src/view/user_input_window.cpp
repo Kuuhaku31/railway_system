@@ -11,12 +11,6 @@
 static Controller& controller      = Controller::Instance();
 static TrainData&  processing_data = controller.processing_data; // 引用控制器中的数据
 
-// 设置按钮的颜色
-static ImVec4 normal_color  = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); // 正常颜色
-static ImVec4 hovered_color = ImVec4(0.7f, 0.7f, 0.7f, 1.0f); // 悬停颜色
-static ImVec4 active_color  = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // 按下颜色
-static ImVec4 disable_color = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // 禁用颜色
-
 void
 View::show_user_input_window(bool* p_open)
 {
@@ -57,7 +51,6 @@ View::show_user_input_window(bool* p_open)
         uint32_t page_item_count = controller.ControllerGetPageItemCount(); // 每页期望显示的数据数量
         int      page_idx_curr   = controller.ControllerGetPageIdx();       // 当前页数
 
-        ImGui::SameLine();
         if(ImGui::InputInt("Page Index", &page_idx_curr))
         {
             if(page_idx_curr < 1)

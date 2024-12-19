@@ -12,6 +12,7 @@ extern "C" {
 
 #include <cstdio>
 #include <cstring>
+#include <ctime>
 
 Controller* Controller::instance = nullptr;
 Controller&
@@ -50,6 +51,7 @@ Controller::ControlerInit()
 
     logs.push_back(WELOME_TEXT_0);
     logs.push_back(WELOME_TEXT_1);
+    ControllerAddLog("System Init Success");
 }
 
 void
@@ -139,17 +141,44 @@ Controller::ControllerUpdate()
 }
 
 void
-Controller::ControllerConsoleAddLog(const char* fmt, ...)
+Controller::ControllerAddLog(const char* fmt, ...)
 {
+    static char time_str[32];
+
+    // 获取当前时间
+    time_t now = time(nullptr);
+    tm*    t   = localtime(&now);
+
+    strftime(time_str, sizeof(time_str), "[%Y-%m-%d %H:%M:%S] ", t);
+
     va_list args;
     va_start(args, fmt);
     char buf[1024];
     vsnprintf(buf, sizeof(buf), fmt, args);
     buf[sizeof(buf) - 1] = 0;
     va_end(args);
-    logs.push_back(std::string(buf));
+    logs.push_back(std::string(time_str) + std::string(buf));
 }
 
+void
+Controller::ControllerExportLogs()
+{
+    // 打开日志文件
+    FILE* file = fopen(PATH_LOGS_EXPORT, "w");
+    if(file == nullptr)
+    {
+        ControllerAddLog("Export logs failed: %s", PATH_LOGS_EXPORT);
+        return;
+    }
+
+    for(const auto& log : logs)
+    {
+        fprintf(file, "%s\n", log.c_str());
+    }
+
+    fclose(file);
+    ControllerAddLog("Export logs success: %s", PATH_LOGS_EXPORT);
+}
 
 void
 Controller::ControllerChangePageIdx(uint32_t new_idx)
@@ -276,7 +305,7 @@ Controller::clear_datas_buffer()
 void
 Controller::add_train_data_log(std::string label)
 {
-    ControllerConsoleAddLog(
+    ControllerAddLog(
         (label +
             std::to_string(processing_data.id) + " " +
             std::string(processing_data.number) + " " +
