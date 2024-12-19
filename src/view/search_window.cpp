@@ -34,7 +34,7 @@ View::show_search_window(bool* p_open)
     // window_flags |= ImGuiWindowFlags_NoTitleBar;
     // window_flags |= ImGuiWindowFlags_NoResize;
     // window_flags |= ImGuiWindowFlags_NoMove;
-    window_flags |= ImGuiWindowFlags_NoDocking;
+    // window_flags |= ImGuiWindowFlags_NoDocking;
     // window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 
     ImGui::PushFont(font_chinese);
@@ -264,7 +264,7 @@ View::show_search_window(bool* p_open)
         // 如果更新了查询条件，调整请求
         if(is_update)
         {
-            search_request.is_running       = search_train_status;
+            search_request.train_status     = search_train_status;
             search_request.query_is_running = EQUAL;
 
             printf("update search request train status: %s\n", parse_train_status(search_train_status).c_str());

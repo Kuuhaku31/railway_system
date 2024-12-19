@@ -30,7 +30,7 @@ View::show_user_input_window(bool* p_open)
     window_flags |= ImGuiWindowFlags_NoTitleBar;
     window_flags |= ImGuiWindowFlags_NoResize;
     window_flags |= ImGuiWindowFlags_NoMove;
-    window_flags |= ImGuiWindowFlags_NoDocking;
+    // window_flags |= ImGuiWindowFlags_NoDocking;
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 
     ImGui::PushFont(font_chinese); // 使用中文字体

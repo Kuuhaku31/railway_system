@@ -4,8 +4,9 @@
 #include "controller.h"
 
 #include "view.h"
-
+extern "C" {
 #include "train_controller.h"
+}
 
 #include <cstdio>
 #include <cstring>

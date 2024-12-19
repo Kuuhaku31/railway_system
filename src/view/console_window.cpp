@@ -16,7 +16,7 @@ View::show_console_window(bool* p_open)
     window_flags |= ImGuiWindowFlags_NoTitleBar;
     window_flags |= ImGuiWindowFlags_NoResize;
     window_flags |= ImGuiWindowFlags_NoMove;
-    window_flags |= ImGuiWindowFlags_NoDocking;
+    // window_flags |= ImGuiWindowFlags_NoDocking;
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 
     // 中文显示

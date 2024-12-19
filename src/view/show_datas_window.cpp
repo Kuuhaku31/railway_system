@@ -14,12 +14,12 @@ View::show_train_datas_window(bool* p_open)
     if(p_open && !*p_open) return;
 
     uint32_t window_flags = 0;
-    window_flags |= ImGuiWindowFlags_NoTitleBar;            // 不显示标题栏
-    window_flags |= ImGuiWindowFlags_NoResize;              // 无法调整宽度
-    window_flags |= ImGuiWindowFlags_NoMove;                // 无法移动
-    window_flags |= ImGuiWindowFlags_NoScrollbar;           // 没有滚动条
-    window_flags |= ImGuiWindowFlags_NoScrollWithMouse;     // 无法滚动
-    window_flags |= ImGuiWindowFlags_NoDocking;             // 无法Dock
+    window_flags |= ImGuiWindowFlags_NoTitleBar;        // 不显示标题栏
+    window_flags |= ImGuiWindowFlags_NoResize;          // 无法调整宽度
+    window_flags |= ImGuiWindowFlags_NoMove;            // 无法移动
+    window_flags |= ImGuiWindowFlags_NoScrollbar;       // 没有滚动条
+    window_flags |= ImGuiWindowFlags_NoScrollWithMouse; // 无法滚动
+    // window_flags |= ImGuiWindowFlags_NoDocking;             // 无法Dock
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus; // 保持在最后
 
     ImGui::PushFont(font_chinese); // 中文显示

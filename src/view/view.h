@@ -15,10 +15,10 @@ std::string
 date_to_string(const Date& date);
 
 std::string
-parse_train_status(TrainStatus status);
+parse_train_status(int status);
 
 ImVec4
-parse_train_status_color(TrainStatus status);
+parse_train_status_color(int status);
 
 bool
 InputTime(const char* label, Date* time);

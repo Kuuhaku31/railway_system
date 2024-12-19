@@ -10,7 +10,7 @@ include_directories(./train_controller_test)
 
 # 添加源文件
 aux_source_directory(./ DIR_SRCS)
-aux_source_directory(../../lib/imgui_setup DIR_SRCS)
+aux_source_directory(../../src/imgui_setup DIR_SRCS)
 aux_source_directory(../../src/view DIR_SRCS)
 aux_source_directory(../../src/entity DIR_SRCS)
 aux_source_directory(../../src/controller DIR_SRCS)
@@ -19,7 +19,7 @@ aux_source_directory(./train_controller_test DIR_SRCS)
 add_executable(${PROJECT_NAME} ${DIR_SRCS})
 
 # 添加imgui_setup库
-include_directories(${IMGUISETUP_INCLUDE_DIRS})
+include_directories(${IMGUISETUP_INCLUDE_DIRS} ../../src/imgui_setup)
 target_link_libraries(${PROJECT_NAME} imgui_setup)
 
 # test_table
