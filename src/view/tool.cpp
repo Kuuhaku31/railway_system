@@ -39,22 +39,26 @@ parse_train_status_color(TrainStatus status)
     }
 }
 
-void
+bool
 InputTime(const char* label, Date* time)
 {
+    bool is_update = false;
+
     ImGui::Text(label);
     ImGui::PushItemWidth(100);
     // 输入年
-    ImGui::InputScalar((std::string("年##") + label).c_str(), ImGuiDataType_U16, &time->year), ImGui::SameLine();
+    is_update |= ImGui::InputScalar((std::string("年##") + label).c_str(), ImGuiDataType_U16, &time->year), ImGui::SameLine();
     // 输入月
-    ImGui::InputScalar((std::string("月##") + label).c_str(), ImGuiDataType_U8, &time->month), ImGui::SameLine();
+    is_update |= ImGui::InputScalar((std::string("月##") + label).c_str(), ImGuiDataType_U8, &time->month), ImGui::SameLine();
     // 输入日
-    ImGui::InputScalar((std::string("日##") + label).c_str(), ImGuiDataType_U8, &time->day);
+    is_update |= ImGui::InputScalar((std::string("日##") + label).c_str(), ImGuiDataType_U8, &time->day);
     // 输入小时
-    ImGui::InputScalar((std::string("时##") + label).c_str(), ImGuiDataType_U8, &time->hour), ImGui::SameLine();
+    is_update |= ImGui::InputScalar((std::string("时##") + label).c_str(), ImGuiDataType_U8, &time->hour), ImGui::SameLine();
     // 输入分钟
-    ImGui::InputScalar((std::string("分##") + label).c_str(), ImGuiDataType_U8, &time->minute), ImGui::SameLine();
+    is_update |= ImGui::InputScalar((std::string("分##") + label).c_str(), ImGuiDataType_U8, &time->minute), ImGui::SameLine();
     // 输入秒
-    ImGui::InputScalar((std::string("秒##") + label).c_str(), ImGuiDataType_U8, &time->second);
+    is_update |= ImGui::InputScalar((std::string("秒##") + label).c_str(), ImGuiDataType_U8, &time->second);
     ImGui::PopItemWidth();
+
+    return is_update;
 }

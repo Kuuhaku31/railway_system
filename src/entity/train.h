@@ -29,19 +29,19 @@ typedef struct {
     int64_t arrive_time;  // 到达时间
 
     int32_t ticket_remain; // 票数
-    float ticket_price; // 价格, 分为单位
+    int32_t ticket_price; // 价格, 分为单位
 
     enum TrainStatus train_status; // 列车状态
 } TrainData;
 
 enum condition{
-    IGNORE_THIS=0,
-    GREATER=1,
-    SMALLER=2,
-    NO_GREATER=3,
-    NO_SMALLER=4,
-    EQUAL=5,
-    NOT_EQUAL=6
+    IGNORE_THIS=0,//忽略
+    GREATER=1,//大于
+    SMALLER=2,//小于
+    NO_GREATER=3,//不大于
+    NO_SMALLER=4,//不小于
+    EQUAL=5,//等于
+    NOT_EQUAL=6//不等于
 };
 typedef struct {
 

@@ -20,7 +20,7 @@ parse_train_status(TrainStatus status);
 ImVec4
 parse_train_status_color(TrainStatus status);
 
-void
+bool
 InputTime(const char* label, Date* time);
 
 // 单例模式
