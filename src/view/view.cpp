@@ -49,17 +49,12 @@ View::ViewShowWindows()
 {
     controller.ControllerUpdate();
 
-    // is_show_user_input = (bool)controller.processing_data.id;
-
     update_view_layout();
 
     show_train_datas_window(&is_show_train_datas);
-
-    if(is_show_demo_window) ImGui::ShowDemoWindow(&is_show_demo_window);
-
     show_user_input_window(&is_show_user_input);
-
-    ViewConsoleShowLog();
+    show_console_window(&is_show_console);
+    show_search_window(&is_show_search_window);
 }
 
 void

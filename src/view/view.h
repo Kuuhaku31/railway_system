@@ -36,18 +36,19 @@ public:
     void ViewShowWindows();
 
     void ViewConsoleAddLog(const char* fmt, ...) IM_FMTARGS(2); // 添加日志
-    void ViewConsoleShowLog(bool* p_open = nullptr);            // 显示日志
 
 private:
     void show_train_datas_window(bool* p_open = nullptr); // 显示车次信息
     void show_user_input_window(bool* p_open = nullptr);  // 获取用户输入的字符串
-
+    void show_console_window(bool* p_open = nullptr);     // 显示日志
+    void show_search_window(bool* p_open = nullptr);      // 显示搜索窗口
 
 public: // 窗口布局相关配置
-    bool is_show_demo_window = false;
-    bool is_show_train_datas = true;
-    bool is_show_user_input  = true;
-    bool is_show_console     = true;
+    bool is_show_demo_window   = false;
+    bool is_show_train_datas   = true;
+    bool is_show_user_input    = true;
+    bool is_show_console       = true;
+    bool is_show_search_window = false;
 
     // 背景颜色
     Color clear_color = { 0x33, 0x33, 0x33, 0xff };

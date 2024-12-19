@@ -13,8 +13,8 @@
 typedef struct
 {
     uint32_t data_total_count;  // 查询到的数据总数
-    uint32_t data_return_count; // 返回的数据数量
-    uint32_t page_count;        // 查询到的数据页数
+    uint32_t data_return_count; // 实际返回的数据数量
+    uint32_t page_count;        // 查询到的数据一共有几页
 } SearchResult;
 
 

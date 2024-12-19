@@ -8,7 +8,7 @@
 static Controller& controller = Controller::Instance();
 
 void
-View::ViewConsoleShowLog(bool* p_open)
+View::show_console_window(bool* p_open)
 {
     if(p_open && !*p_open) return;
 
@@ -35,6 +35,9 @@ View::ViewConsoleShowLog(bool* p_open)
 
     ImGui::SameLine();
     if(ImGui::Button("Config")) is_show_user_input = !is_show_user_input;
+
+    ImGui::SameLine();
+    if(ImGui::Button("Search")) is_show_search_window = !is_show_search_window;
 
     ImGui::SetCursorPosY(first_separator_pos); // 调整光标位置
     ImGui::Separator();                        // 分割线
