@@ -25,13 +25,13 @@ typedef struct {
     char start_station[64];  // 始发站
     char arrive_station[64]; // 到达站
 
-    int64_t start_time;   // 出发时间
-    int64_t arrive_time;  // 到达时间
+    time_t start_time;   // 出发时间
+    time_t arrive_time;  // 到达时间
 
     int32_t ticket_remain; // 票数
     int32_t ticket_price; // 价格, 分为单位
 
-    enum TrainStatus train_status; // 列车状态
+    int train_status; // 列车状态
 } TrainData;
 
 enum condition{
@@ -69,7 +69,7 @@ typedef struct {
     char arrive_station[64]; // 到达站
     int query_arrive_station;
 
-    bool is_running; // 是否运行
+    int32_t train_status; // 是否运行
     int query_is_running;
 } TrainQuery;
 
@@ -99,7 +99,7 @@ typedef struct {
     char *arrive_station; // 到达站
     bool change_arrive_station;
 
-    bool is_running; // 是否运行
+    int32_t train_status; // 是否运行
     bool change_is_running;
 } TrainChange;
 #ifdef __cplusplus

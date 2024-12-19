@@ -1,50 +1,51 @@
 
-# project(main_project)
+ project(main_project)
 
-# set(MODEL_SRC
-# model/train_model.c
-# model/train_model.h
-# model/train_model.c
-# model/train_model.h
-# model/order_model.c
-# model/order_model.h
-# )
+ set(IMGUI_SETUP_SRC
+ imgui_setup/imgui_setup.h
+ imgui_setup/imgui_setup.cpp)
+ set(MODEL_SRC
+ model/train_model.c
+ model/train_model.h
+ model/train_model.c
+ model/train_model.h
+ model/order_model.c
+ model/order_model.h
+ )
 
-# set(VIEW_SRC
-# view/console_window.cpp
-# view/show_datas_window.cpp
-# view/user_input_window.cpp
-# view/view.cpp
-# view/view.h
-# )
+ set(VIEW_SRC
+ view/console_window.cpp
+ view/show_datas_window.cpp
+ view/user_input_window.cpp
+ view/view.cpp
+ view/view.h
+ )
 
-# set(CONTROLLER_SRC
-# controller/train_ontroller.c
-# controller/train_controller.c
-# )
+ set(CONTROLLER_SRC
+ controller/train_controller.c
+ controller/train_controller.c
+ )
 
-# set(ENTITY_SRC
-# entity/train.h
-# )
+ set(ENTITY_SRC
+ entity/train.h
+ )
 
-# set(UTILS_SRC
-# utils/imgui_setup.cpp
-# utils/imgui_setup.h
-# utils/error.h
-# utils/utils.h
-# utils/utils.c
-# entity/order.h)
+ set(UTILS_SRC
+ utils/error.h
+ utils/utils.h
+ utils/utils.c
+ entity/order.h)
 
-# set(HEADER_DIR . view model entity controller utils)
+ set(HEADER_DIR . view model entity controller utils)
 
-# message(STATUS "Model Source files: ${MODEL_SRC}")
-# message(STATUS "View Source files: ${VIEW_SRC}")
-# message(STATUS "Entity Source files: ${ENTITY_SRC}")
+ message(STATUS "Model Source files: ${MODEL_SRC}")
+ message(STATUS "View Source files: ${VIEW_SRC}")
+ message(STATUS "Entity Source files: ${ENTITY_SRC}")
 
-# add_executable(${PROJECT_NAME} ${MODEL_SRC} ${VIEW_SRC} ${ENTITY_SRC} ${UTILS_SRC} main.cpp)
+ add_executable(${PROJECT_NAME} ${CONTROLLER_SRC} ${MODEL_SRC} ${VIEW_SRC} ${ENTITY_SRC} ${IMGUI_SETUP_SRC} ${UTILS_SRC} main.cpp)
 
-# target_include_directories(${PROJECT_NAME} PUBLIC
-# ../lib/sqlite3 ../lib/imgui
-# ${HEADER_DIR}
-# )
-# target_link_libraries(${PROJECT_NAME} PUBLIC imgui sqlite3)
+ target_include_directories(${PROJECT_NAME} PUBLIC
+ ../lib/sqlite3 ../lib/imgui
+ ${HEADER_DIR}
+ )
+ target_link_libraries(${PROJECT_NAME} PUBLIC imgui sqlite3)

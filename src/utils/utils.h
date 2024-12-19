@@ -20,12 +20,14 @@ extern "C"{
 #define MAX_DB_FILE_CONFIG 128
 extern sqlite3* db;
 int initDb();
-
+int finalizeDb();
+int initConfig();
 typedef struct {
     char db_path[MAX_DB_FILE_CONFIG];
 }Config;
 extern Config config;
 extern const Config defaultConfig;
+
 #ifdef __cplusplus
 };
 #endif
