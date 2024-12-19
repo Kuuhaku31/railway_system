@@ -16,7 +16,6 @@ main()
     printf("Hello, test!\n");
 
     controller.ControlerInit();
-    controller.Getdatas();
 
     view.ViewInit();
 

@@ -79,7 +79,8 @@ View::show_train_datas_window(bool* p_open)
                 is_show_user_input = true;
 
                 processing_data.id = train_data.id;
-                controller.ControllerFreshProcessingData();
+
+                controller.is_fresh_processing_data = true;
             }
 
             // 如果是选中的行
