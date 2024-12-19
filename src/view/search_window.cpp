@@ -15,9 +15,11 @@ select_comparison_operators(const char* label, int* current_item)
     std::string combo_label = "##combo" + std::string(label);
     ImGui::Combo(combo_label.c_str(), &idex, items, IM_ARRAYSIZE(items));
 
+    bool is_update = (idex + 1) != *current_item;
+
     *current_item = idex + 1;
 
-    return idex + 1 != *current_item;
+    return is_update;
 }
 
 static Controller& controller     = Controller::Instance();
@@ -44,7 +46,7 @@ input()
     static Date        search_start_time    = { 0 };
     static Date        search_arrive_time   = { 0 };
     static uint32_t    search_ticket_remain = 0;
-    static uint32_t    search_ticket_price  = 0;
+    static float       search_ticket_price  = 0;
     static TrainStatus search_train_status  = TRAIN_STATUS_NORMAL;
 
     ImGui::Checkbox("Search All", &is_search_all);
@@ -236,16 +238,18 @@ input()
         ImGui::Indent(10);
 
         bool is_update = false;
-        is_update |= ImGui::InputScalarN("Ticket Price", ImGuiDataType_U32, &search_ticket_price, 1, nullptr, nullptr, "%u");
+        // 保留两位小数
+        is_update |= ImGui::InputScalarN("Ticket Price", ImGuiDataType_Float, &search_ticket_price, 1, nullptr, nullptr, "%.2f");
         is_update |= select_comparison_operators("Ticket Price", &current_item); // 下拉选择框
 
         // 如果更新了查询条件，调整请求
         if(is_update)
         {
-            search_request.ticket_price       = search_ticket_price;
+            search_request.ticket_price       = float_to_uint32_price(search_ticket_price);
             search_request.query_ticket_price = current_item;
 
-            printf("update search request ticket price: %d, %d\n", search_ticket_price, current_item);
+            // 保留两位小数
+            printf("update search request ticket price: %s, %d\n", uint32_price_to_string(search_request.ticket_price).c_str(), current_item);
         }
 
         ImGui::Unindent(10);
@@ -280,7 +284,7 @@ input()
 void
 View::show_search_window(bool* p_open)
 {
-    // if(p_open && !*p_open) return;
+    if(p_open && !*p_open) return;
 
     uint32_t window_flags = 0;
     // window_flags |= ImGuiWindowFlags_NoTitleBar;

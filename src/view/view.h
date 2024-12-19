@@ -23,6 +23,15 @@ parse_train_status_color(TrainStatus status);
 bool
 InputTime(const char* label, Date* time);
 
+uint32_t
+float_to_uint32_price(float price);
+
+float
+uint32_price_to_float(uint32_t price);
+
+std::string
+uint32_price_to_string(uint32_t price);
+
 // 单例模式
 class View
 {

@@ -62,3 +62,23 @@ InputTime(const char* label, Date* time)
 
     return is_update;
 }
+
+uint32_t
+float_to_uint32_price(float price)
+{
+    return (uint32_t)(price * 100);
+}
+
+float
+uint32_price_to_float(uint32_t price)
+{
+    return price / 100.0f;
+}
+
+std::string
+uint32_price_to_string(uint32_t price)
+{
+    char buf[64];
+    snprintf(buf, sizeof(buf), "%u.%02u", price / 100, price % 100);
+    return std::string(buf);
+}

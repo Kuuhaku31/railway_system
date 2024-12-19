@@ -106,7 +106,10 @@ View::show_user_input_window(bool* p_open)
         processing_data.arrive_time = date_to_uint64_time(arrive_time);
 
         ImGui::InputScalar("Ticket Count", ImGuiDataType_U32, &processing_data.ticket_remain);
-        ImGui::InputScalar("Ticket Price", ImGuiDataType_Float, &processing_data.ticket_price);
+
+        float ticket_price = uint32_price_to_float(processing_data.ticket_price);
+        ImGui::InputScalarN("Ticket Price", ImGuiDataType_Float, &ticket_price, 1, nullptr, nullptr, "%.2f");
+        processing_data.ticket_price = float_to_uint32_price(ticket_price);
 
         // 下拉框选择车次状态
         ImGui::Text("Train Status");
