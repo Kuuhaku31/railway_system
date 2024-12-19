@@ -14,11 +14,16 @@
 class Controller
 {
 public:
+    typedef std::vector<std::string> SystemLogs;
+
+public:
     static Controller& Instance();
 
 public:
     void ControlerInit();    // 初始化
     void ControllerUpdate(); // 控制器更新逻辑
+
+    void ControllerConsoleAddLog(const char* fmt, ...); // IM_FMTARGS(2); // 添加日志
 
 public:
     // 用户操作
@@ -44,12 +49,10 @@ public:
     uint32_t ControllerGetPageItemCount() const { return page_item_count; }                // 获取每页显示的数据数量
     uint32_t ControllerGetPageCount() const { return page_count; }                         // 获取总页数
 
-    // bool ControllerUnableInsert() const { return unable_insert; } // 是否禁用插入按钮
-    // bool ControllerUnableDel() const { return unable_del; }       // 是否禁用删除按钮
-    // bool ControllerUnableUpdate() const { return unable_update; } // 是否禁用更新按钮
     bool ControllerIsDataInBuffer(); // 在数据缓存中搜索数据
 
-    const TrainData* GetTrainDatas() const { return train_data_buffer; } // 获取数据缓存
+    const TrainData*  ControllerGetTrainDatas() const { return train_data_buffer; } // 获取数据缓存
+    const SystemLogs& ControllerGetLogs() const { return logs; }                    // 获取日志
 
 private:
     // 从数据库中查询到的数据参数，每页显示的数据最大数量为 train_datas 的大小
@@ -60,13 +63,10 @@ private:
     TrainData train_data_buffer[BUFFER_SIZE]; // 从数据库中查询到的数据
 
 private:
-    // 控制器状态
-    // bool unable_insert = true;
-    // bool unable_del    = true;
-    // bool unable_update = true;
+    TrainData empty_data; // 空数据
 
 private:
-    TrainData empty_data; // 空数据
+    SystemLogs logs; // 日志
 
 private:
     // 私有函数
@@ -75,9 +75,9 @@ private:
     void delete_data();  // 删除数据，根据当前数据的id删除
     void request_data(); // 向数据库请求
 
-    int8_t fresh_processing_data_from_buffer(); // 将指定 id 的数据拷贝到 processing_data 中，返回是否找到对应数据
-    void   clear_processing_data();             // 清空当前数据
-    void   clear_datas_buffer();                // 清空数据缓存
+    bool fresh_processing_data_from_buffer(); // 将指定 id 的数据拷贝到 processing_data 中，返回是否找到对应数据
+    void clear_processing_data();             // 清空当前数据
+    void clear_datas_buffer();                // 清空数据缓存
 
     void add_train_data_log(std::string label); // 添加日志
 

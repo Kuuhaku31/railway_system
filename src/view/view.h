@@ -6,6 +6,7 @@
 #include "imgui_setup.h"
 
 #include "date.h"
+#include "text.h"
 #include "train.h"
 
 #include <string>
@@ -43,8 +44,6 @@ public:
     void ViewQuit();
 
     void ViewShowWindows();
-
-    void ViewConsoleAddLog(const char* fmt, ...) IM_FMTARGS(2); // 添加日志
 
 private:
     void show_train_datas_window(bool* p_open = nullptr); // 显示车次信息
@@ -113,9 +112,6 @@ public:
 public:
     bool console_scroll_to_bottom = false;
     bool table_to_selected        = false;
-
-private:
-    std::vector<std::string> logs;
 
 private:
     View()                       = default;

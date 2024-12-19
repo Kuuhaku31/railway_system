@@ -24,8 +24,6 @@ View::show_console_window(bool* p_open)
     ImGui::SetNextWindowSize(console_window_size);
     ImGui::Begin("log window", p_open, window_flags);
 
-    if(ImGui::Button("Clear Logs")) logs.clear();
-
     ImGui::SameLine();
     if(ImGui::Button("Refresh")) controller.is_fresh_data = true;
 
@@ -43,7 +41,7 @@ View::show_console_window(bool* p_open)
 
     ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
 
-    for(const auto& log : logs)
+    for(const auto& log : controller.ControllerGetLogs())
     {
         ImGui::TextUnformatted(log.c_str());
     }

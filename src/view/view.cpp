@@ -4,11 +4,7 @@
 #include "view.h"
 
 #include "controller.h"
-
 #include "date.h"
-
-#define WELOME_TEXT_0 "Welcome to Railway System Application"
-#define WELOME_TEXT_1 "Made By: Kuuhaku-kazari & Mike, 2024.12"
 
 static ImGui_setup& imgui_setup = ImGui_setup::Instance();
 static Controller&  controller  = Controller::Instance();
@@ -25,7 +21,7 @@ void
 View::ViewInit()
 {
     static Rect window_rect = { 30, 40, 1100, 1400 };
-    imgui_setup.Init("view", window_rect, false);
+    imgui_setup.Init(APPLICATION_NAME, window_rect, false);
 
     // 加载默认字体
     ImGuiIO& io  = ImGui::GetIO();
@@ -33,9 +29,6 @@ View::ViewInit()
 
     // 加载中文字体（微软雅黑）
     font_chinese = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\msyh.ttc", 18.0f, NULL, io.Fonts->GetGlyphRangesChineseFull());
-
-    ViewConsoleAddLog(WELOME_TEXT_0);
-    ViewConsoleAddLog(WELOME_TEXT_1);
 }
 
 void
@@ -78,16 +71,4 @@ View::update_view_layout()
     console_window_pos.y  = display_size.y * data_window_height;
     console_window_size.x = is_show_user_input ? display_size.x * (1 - inuput_window_width) : display_size.x;
     console_window_size.y = display_size.y * (1 - data_window_height);
-}
-
-void
-View::ViewConsoleAddLog(const char* fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    char buf[1024];
-    vsnprintf(buf, sizeof(buf), fmt, args);
-    buf[sizeof(buf) - 1] = 0;
-    va_end(args);
-    logs.push_back(std::string(buf));
 }

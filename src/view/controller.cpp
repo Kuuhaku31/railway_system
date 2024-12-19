@@ -3,15 +3,15 @@
 
 #include "controller.h"
 
+#include "text.h"
 #include "view.h"
+
 extern "C" {
 #include "train_controller.h"
 }
 
 #include <cstdio>
 #include <cstring>
-
-static View& view = View::Instance();
 
 Controller* Controller::instance = nullptr;
 Controller&
@@ -26,6 +26,7 @@ Controller::ControlerInit()
 {
     const char unkonw[] = "Unkonw";
 
+    // 初始化空数据结构
     empty_data.id = 0;
     strcpy(empty_data.number, unkonw);
     strcpy(empty_data.start_station, unkonw);
@@ -46,21 +47,21 @@ Controller::ControlerInit()
     processing_data         = empty_data;
 
     request_data();
+
+    logs.push_back(WELOME_TEXT_0);
+    logs.push_back(WELOME_TEXT_1);
 }
 
 void
 Controller::ControllerUpdate()
 {
+    static View& view = View::Instance();
+
     // 插入操作
     if(is_insert)
     {
         // 插入数据
         insert_data();
-
-        // 改变状态
-        // unable_insert = true;
-        // unable_del    = false;
-        // unable_update = false;
 
         is_fresh_processing_data = true;
         is_fresh_data            = true;
@@ -73,10 +74,6 @@ Controller::ControllerUpdate()
     {
         fresh_processing_data_from_buffer(); // 刷新处理数据
         delete_data();                       // 删除当前数据
-
-        // unable_insert = false;
-        // unable_del    = true;
-        // unable_update = true;
 
         is_fresh_processing_data = true;
         is_fresh_data            = true;
@@ -99,10 +96,6 @@ Controller::ControllerUpdate()
     if(is_clear_processing_data)
     {
         clear_processing_data();
-
-        // unable_insert = true;
-        // unable_del    = true;
-        // unable_update = true;
     }
 
     // 取消操作
@@ -128,26 +121,9 @@ Controller::ControllerUpdate()
     if(is_fresh_processing_data)
     {
         // 从数据缓存中获取数据
-        switch(fresh_processing_data_from_buffer())
+        if(fresh_processing_data_from_buffer())
         {
-        case 0: // 未找到对应数据
-            // unable_insert = false;
-            // unable_del    = true;
-            // unable_update = true;
-            break;
-        case 1: // 找到对应数据
-            // unable_insert = true;
-            // unable_del    = false;
-            // unable_update = false;
-
             view.table_to_selected = !view.table_to_selected;
-            break;
-        default:
-        case -1: // 未选中任何数据
-            // unable_insert = true;
-            // unable_del    = true;
-            // unable_update = true;
-            break;
         }
     }
 
@@ -160,6 +136,18 @@ Controller::ControllerUpdate()
     is_fresh_processing_data = false;
     is_fresh_data            = false;
     is_clear_buffer          = false;
+}
+
+void
+Controller::ControllerConsoleAddLog(const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    char buf[1024];
+    vsnprintf(buf, sizeof(buf), fmt, args);
+    buf[sizeof(buf) - 1] = 0;
+    va_end(args);
+    logs.push_back(std::string(buf));
 }
 
 
@@ -252,10 +240,10 @@ Controller::request_data()
     page_item_count_current = res.data_return_count;
 }
 
-int8_t
+bool
 Controller::fresh_processing_data_from_buffer()
 {
-    if(!processing_data.id) return -1;
+    if(!processing_data.id) return false;
 
     printf("Search data from buffer...\n");
     for(int i = 0; i < page_item_count; i++)
@@ -263,11 +251,11 @@ Controller::fresh_processing_data_from_buffer()
         if(train_data_buffer[i].id == processing_data.id)
         {
             processing_data = train_data_buffer[i];
-            return 1;
+            return true;
         }
     }
 
-    return 0;
+    return false;
 }
 
 void
@@ -288,16 +276,17 @@ Controller::clear_datas_buffer()
 void
 Controller::add_train_data_log(std::string label)
 {
-    std::string log =
-        label +
-        std::to_string(processing_data.id) + " " +
-        std::string(processing_data.number) + " " +
-        std::string(processing_data.start_station) + "->" +
-        std::string(processing_data.arrive_station) + " " +
-        date_to_string(uint64_time_to_date(processing_data.start_time)) + " " +
-        date_to_string(uint64_time_to_date(processing_data.arrive_time)) + " " +
-        std::to_string(processing_data.ticket_remain) + " " +
-        std::to_string(processing_data.ticket_price) + "（分） " +
-        parse_train_status(processing_data.train_status);
-    view.ViewConsoleAddLog(log.c_str());
+    ControllerConsoleAddLog(
+        (label +
+            std::to_string(processing_data.id) + " " +
+            std::string(processing_data.number) + " " +
+            std::string(processing_data.start_station) + "->" +
+            std::string(processing_data.arrive_station) + " " +
+            date_to_string(uint64_time_to_date(processing_data.start_time)) + " " +
+            date_to_string(uint64_time_to_date(processing_data.arrive_time)) + " " +
+            std::to_string(processing_data.ticket_remain) + " " +
+            std::to_string(processing_data.ticket_price) + "（分） " +
+            parse_train_status(processing_data.train_status))
+            .c_str());
+    // 添加日志
 }

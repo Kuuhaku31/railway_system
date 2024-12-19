@@ -1,16 +1,12 @@
 
 // user_input_window.cpp
 
-// #include "train_controller.h"
 #include "view.h"
 
 #include "controller.h"
-
 #include "date.h"
 
 #define MAX_SIZE 128
-
-#define TITLE "Railway System Application Made By: Kuuhaku-kazari & Mike, 2024.12"
 
 static Controller& controller      = Controller::Instance();
 static TrainData&  processing_data = controller.processing_data; // 引用控制器中的数据

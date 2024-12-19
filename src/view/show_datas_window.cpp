@@ -33,7 +33,7 @@ View::show_train_datas_window(bool* p_open)
     // 第一个元素位置为(0, 0)
     ImGui::SetCursorPos(ImVec2(0, 0));
 
-    const TrainData* train_datas = controller.GetTrainDatas();
+    const TrainData* train_datas = controller.ControllerGetTrainDatas();
 
     // 表格显示车次信息
     uint32_t table_flags = 0;

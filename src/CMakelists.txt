@@ -45,7 +45,7 @@ set(UTILS_SRC
     utils/utils.c
     entity/order.h)
 
-set(HEADER_DIR . view model imgui_setup entity controller utils)
+set(HEADER_DIR . view model imgui_setup entity controller utils text)
 
 message(STATUS "Model Source files: ${MODEL_SRC}")
 message(STATUS "View Source files: ${VIEW_SRC}")
