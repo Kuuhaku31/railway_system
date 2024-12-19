@@ -63,6 +63,28 @@ public: // 窗口布局相关配置
     Color clear_color = { 0x33, 0x33, 0x33, 0xff };
 
 private:
+    bool is_search_all                       = false;
+    bool is_search_by_id                     = false;
+    bool is_search_by_number_keyword         = false;
+    bool is_search_by_start_station_keyword  = false;
+    bool is_search_by_arrive_station_keyword = false;
+    bool is_search_by_start_time             = false;
+    bool is_search_by_arrive_time            = false;
+    bool is_search_by_ticket_remain          = false;
+    bool is_search_by_ticket_price           = false;
+    bool is_search_by_train_status           = false;
+
+    uint32_t    search_id            = 0;
+    char        search_number[16]    = { 0 };
+    char        search_start[64]     = { 0 };
+    char        search_arrive[64]    = { 0 };
+    Date        search_start_time    = { 0 };
+    Date        search_arrive_time   = { 0 };
+    uint32_t    search_ticket_remain = 0;
+    float       search_ticket_price  = 0;
+    TrainStatus search_train_status  = TRAIN_STATUS_NORMAL;
+
+private:
     // 第一个分割线位置
     int first_separator_pos = 50;
 

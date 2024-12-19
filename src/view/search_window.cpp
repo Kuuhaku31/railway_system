@@ -26,28 +26,21 @@ static Controller& controller     = Controller::Instance();
 static TrainQuery& search_request = controller.search_request;
 
 void
-input()
+View::show_search_window(bool* p_open)
 {
-    static bool is_search_all                       = false;
-    static bool is_search_by_id                     = false;
-    static bool is_search_by_number_keyword         = false;
-    static bool is_search_by_start_station_keyword  = false;
-    static bool is_search_by_arrive_station_keyword = false;
-    static bool is_search_by_start_time             = false;
-    static bool is_search_by_arrive_time            = false;
-    static bool is_search_by_ticket_remain          = false;
-    static bool is_search_by_ticket_price           = false;
-    static bool is_search_by_train_status           = false;
+    if(p_open && !*p_open) return;
 
-    static uint32_t    search_id            = 0;
-    static char        search_number[16]    = { 0 };
-    static char        search_start[64]     = { 0 };
-    static char        search_arrive[64]    = { 0 };
-    static Date        search_start_time    = { 0 };
-    static Date        search_arrive_time   = { 0 };
-    static uint32_t    search_ticket_remain = 0;
-    static float       search_ticket_price  = 0;
-    static TrainStatus search_train_status  = TRAIN_STATUS_NORMAL;
+    uint32_t window_flags = 0;
+    // window_flags |= ImGuiWindowFlags_NoTitleBar;
+    // window_flags |= ImGuiWindowFlags_NoResize;
+    // window_flags |= ImGuiWindowFlags_NoMove;
+    window_flags |= ImGuiWindowFlags_NoDocking;
+    // window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+
+    ImGui::PushFont(font_chinese);
+    ImGui::Begin("Search Window", p_open, window_flags);
+
+    ImGui::Text("Search Window...");
 
     ImGui::Checkbox("Search All", &is_search_all);
     if(is_search_all)
@@ -279,26 +272,6 @@ input()
 
         ImGui::Unindent(10);
     }
-}
-
-void
-View::show_search_window(bool* p_open)
-{
-    if(p_open && !*p_open) return;
-
-    uint32_t window_flags = 0;
-    // window_flags |= ImGuiWindowFlags_NoTitleBar;
-    // window_flags |= ImGuiWindowFlags_NoResize;
-    // window_flags |= ImGuiWindowFlags_NoMove;
-    window_flags |= ImGuiWindowFlags_NoDocking;
-    // window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
-
-    ImGui::PushFont(font_chinese);
-    ImGui::Begin("Search Window", p_open, window_flags);
-
-    ImGui::Text("Search Window...");
-
-    input();
 
     ImGui::End();
     ImGui::PopFont();
