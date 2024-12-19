@@ -11,7 +11,13 @@ extern "C"{
 
 #include <string.h>
 
-static int callback(void *data, int argc, char **argv, char **azColName) {
+static int callback(void *NotUsed, int argc, char **argv, char **azColName){
+    int i;
+    for(i=0; i<argc; i++){
+        printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+        fflush(stdout);
+    }
+    printf("\n");
     return 0;
 }
 
@@ -26,9 +32,9 @@ void analyzeCondition(TrainQuery* condition, char* buffer, int bufferSize){
     char *temp=(char *) calloc(128, sizeof(char ));
     bool first = true;
     char operator[6][3]={">", "<", "<=", ">=", "=", "!="};
-    printf("%d\n", condition->query_ticket_remain);
+    //printf("%d\n", condition->query_ticket_remain);
     if(condition->query_id!=IGNORE_THIS){
-        sprintf_s(temp,128, "id%s%d", operator[condition->query_id-1],condition);
+        sprintf_s(temp,128, "id%s%d", operator[condition->query_id-1],condition->id);
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
@@ -76,7 +82,7 @@ void analyzeCondition(TrainQuery* condition, char* buffer, int bufferSize){
         memset(temp, 0, 128*sizeof(char));
     }
     if(condition->query_is_running!=IGNORE_THIS){
-        sprintf_s(temp, 128, "%s is_running%s%d", first?"":" and ", operator[condition->query_is_running-1], condition->is_running?1:0);
+        sprintf_s(temp, 128, "%s is_running%s%d", first?"":" and ", operator[condition->query_is_running-1], condition->train_status);
         strcat_s(buffer, bufferSize, temp);
     }
     free(temp);
@@ -135,7 +141,7 @@ void analyzeChange(TrainChange* change, char* buffer, int bufferSize){
         memset(temp, 0, 128*sizeof(char));
     }
     if(change->change_is_running){
-        sprintf_s(temp, 128, "%s is_running=%d", first?"":", ",  change->is_running?1:0);
+        sprintf_s(temp, 128, "%s is_running=%d", first?"":", ",  change->train_status);
         strcat_s(buffer, bufferSize, temp);
     }
     free(temp);
@@ -150,7 +156,7 @@ int addTrain(TrainData* train){
                         train->ticket_remain, train->ticket_price,
                         train->start_time, train->arrive_time,
                         train->number, train->start_station,
-                        train->arrive_station, train->is_running?1:0);
+                        train->arrive_station, train->train_status);
     int ret=sqlite3_exec(db, sql, callback,0,&err);
     sqlite3_free(err);
     free(sql);
@@ -195,7 +201,7 @@ int editTrain(TrainQuery * query, TrainChange * change){
     analyzeChange(change, change_str, 1024);
     int length=strlen(condition)+ strlen(change_str)+40;
     char *sql=(char *) calloc(length, sizeof(char));
-    sprintf_s(sql, length, "update trains set %swhere %s;", change_str, condition);
+    sprintf_s(sql, length, "update trains set %s where %s;", change_str, condition);
     char *err=NULL;
     int ret=sqlite3_exec(db, sql,  callback, 0, &err);
     free(condition);
@@ -218,6 +224,7 @@ int deleteTrain(TrainQuery * query){
     sprintf_s(sql, length, "delete from trains where %s;", condition);
     char *err=NULL;
     int ret=sqlite3_exec(db, sql,  callback, 0, &err);
+
     free(condition);
     free(sql);
     if(ret!=SQLITE_OK){
@@ -239,7 +246,7 @@ static void setTrainStruct(TrainData *train, char **resultp, int row, int col){
     strcpy_s(train->number, 32, resultp[row*col+5]);
     strcpy_s(train->start_station, 64, resultp[row*col+6]);
     strcpy_s(train->arrive_station, 64, resultp[row*col+7]);
-    train->is_running= atoi(resultp[row*col+8]);
+    train->train_status= atoi(resultp[row*col+8]);
 }
 
 int getTrainById(uint32_t id, TrainData *train) {
@@ -284,36 +291,39 @@ int getTrainByNumber(char *number, TrainData *train) {
     return SUCCESS;
 }
 
-int getTrainList(TrainQuery *condition, TrainData **train, int32_t *num) {
+int getTrainList(TrainQuery *condition, TrainData *train, uint32_t pageSize, uint32_t pageNum, uint32_t *num) {
     char *sql=(char *) calloc(1024, sizeof(char));
     char *buffer=(char *) calloc(1024, sizeof(char));
     analyzeCondition(condition, buffer, 1024);
-    sprintf_s(sql,1024, "select * from train where %s;", buffer);
+    sprintf_s(sql,1024, "select * from trains where %s order by id asc limit %u offset %u;", buffer, pageSize, pageSize*(pageNum-1));
     char** resultp=NULL;
     int row=0;
     int col=0;
     char *errMsg=NULL;
     int ret=sqlite3_get_table(db,sql,&resultp,&row, &col, &errMsg);
-    sqlite3_free(errMsg);
-    errMsg=NULL;
+
+
     free(sql);
     sql=NULL;
     free(buffer);
     buffer=NULL;
     if(ret!=SQLITE_OK){
+        printf("\033[31m%s",errMsg);
+        sqlite3_free(errMsg);
+        errMsg=NULL;
         return ret;
     }
+    sqlite3_free(errMsg);
+    errMsg=NULL;
     if(row<1){
+        *num=0;
         return NO_SUCH_RECORD;
     }
-    else if(row > 1){
-        return TOO_MANY_RECORDS;
+    memset(train, 0, pageSize* sizeof(TrainData));
+    for(int i=1;i<row+1;i++){
+        setTrainStruct(&train[i-1],resultp, i, col);
     }
     *num=row;
-    (*train)=(TrainData *) calloc(row, sizeof(TrainData));
-    for(int i=1;i<row+1;i++){
-        setTrainStruct(&(*train)[i-1],resultp, i, col);
-    }
     return SUCCESS;
 }
 #ifdef __cplusplus

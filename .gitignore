@@ -7,4 +7,4 @@ cmake-build-*
 .idea/
 lib/
 !lib/CMakeLists.txt
-!lib/imgui_setup
+!src/imgui_setup

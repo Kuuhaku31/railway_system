@@ -12,7 +12,12 @@ extern "C"{
 sqlite3 *db = NULL;
 Config config;
 
-static int callback(void *data, int argc, char **argv, char **azColName) {
+static int callback(void *NotUsed, int argc, char **argv, char **azColName){
+    int i;
+    for(i=0; i<argc; i++){
+        printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+    }
+    printf("\n");
     return 0;
 }
 
@@ -27,22 +32,25 @@ int initDb() {
         if (ret != 0) {
             return ret;
         }
-        ret = sqlite3_exec(db, "create table if not exists train("
-                               "id int primary key autoincrement,"
-                               "ticket_remain int,"
-                               "ticket_price int,"
-                               "start_time int,"
-                               "arrive_time int,"
+        ret = sqlite3_exec(db, "create table if not exists trains("
+                               "id integer primary key autoincrement,"
+                               "ticket_remain integer,"
+                               "ticket_price integer,"
+                               "start_time integer,"
+                               "arrive_time integer,"
                                "number text,"
                                "start_station text,"
                                "arrive_station text,"
-                               "is_running int;",
+                               "is_running integer);",
                            callback, NULL, &zErrMsg);
-        sqlite3_free(zErrMsg);
+
         if (ret != 0) {
+            printf("\033[31m%s",zErrMsg);
+            sqlite3_free(zErrMsg);
             return ret;
         }
     }
+    sqlite3_free(zErrMsg);
     return SUCCESS;
 }
 

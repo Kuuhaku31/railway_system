@@ -10,6 +10,5 @@ enable_testing()
 # 设置生成的可执行文件的输出路径为bin目录
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
-add_subdirectory(lib)
 add_subdirectory(src)
 add_subdirectory(test)
