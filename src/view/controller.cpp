@@ -25,6 +25,18 @@ Controller::ControlerInit()
 {
     ControllerChangePageItemsCount(100);
     request_data();
+
+    const char unkonw[] = "Unkonw";
+
+    empty_data.id = 0;
+    strcpy(empty_data.number, unkonw);
+    strcpy(empty_data.start_station, unkonw);
+    strcpy(empty_data.arrive_station, unkonw);
+    empty_data.start_time    = 0;
+    empty_data.arrive_time   = 0;
+    empty_data.ticket_remain = 0;
+    empty_data.ticket_price  = 0;
+    empty_data.train_status  = TRAIN_STATUS_UNKNOWN;
 }
 
 void
@@ -33,30 +45,34 @@ Controller::ControllerUpdate()
     // 插入操作
     if(is_insert && !unable_insert)
     {
+        // 插入数据
         insert_data();
 
+        // 改变状态
         unable_insert = true;
         unable_del    = false;
         unable_update = false;
 
-        is_fresh_data = true;
+        is_fresh_processing_data = true;
+        is_fresh_data            = true;
 
-        add_train_data_log("Insert: ", processing_data); // 日志
+        add_train_data_log("Insert: "); // 日志
     }
 
     // 删除操作
     if(is_del && !unable_del)
     {
-        fresh_processing_data(); // 刷新处理数据
-        delete_data();           // 删除当前数据
+        fresh_processing_data_from_buffer(); // 刷新处理数据
+        delete_data();                       // 删除当前数据
 
         unable_insert = false;
         unable_del    = true;
         unable_update = true;
 
-        is_fresh_data = true;
+        is_fresh_processing_data = true;
+        is_fresh_data            = true;
 
-        add_train_data_log("Delete: ", processing_data); // 日志
+        add_train_data_log("Delete: "); // 日志
     }
 
     // 更新操作
@@ -64,9 +80,10 @@ Controller::ControllerUpdate()
     {
         update_data(); // 更新当前数据
 
-        is_fresh_data = true;
+        is_fresh_processing_data = true; // 刷新处理数据
+        is_fresh_data            = true;
 
-        add_train_data_log("Update: ", processing_data); // 日志
+        add_train_data_log("Update: "); // 日志
     }
 
     // 清除操作
@@ -86,43 +103,53 @@ Controller::ControllerUpdate()
         view.is_show_user_input = false;
     }
 
-    // 刷新处理数据
+    // 清空数据缓存
+    if(is_clear_buffer)
+    {
+        clear_datas_buffer();
+    }
+
+    // 如果需要刷新编辑数据，并且有数据
     if(is_fresh_processing_data && processing_data.id)
     {
         // 设置查询条件
         search_request.id       = processing_data.id;
         search_request.query_id = IGNORE_THIS;
-        is_fresh_data           = true;
 
-        // 如果选中了新的车次，将该车次的数据显示在输入框中
-        if(fresh_processing_data())
-        {
-            // 如果存在该车次，禁用插入按钮，启用删除和更新按钮
-            unable_insert = true;
-            unable_del    = false;
-            unable_update = false;
-
-            view.table_to_selected = true;
-        }
-        else
-        {
-            // 如果不存在该车次，启用插入按钮，禁用删除和更新按钮
-            unable_insert = false;
-            unable_del    = true;
-            unable_update = true;
-        }
+        is_fresh_data = true;
     }
 
-    // 刷新数据
+    // 请求数据
     if(is_fresh_data)
     {
         request_data();
     }
 
-    // 清空数据缓存
-    if(is_clear_buffer)
+    // 如果需要刷新编辑数据
+    if(is_fresh_processing_data)
     {
-        clear_datas_buffer();
+        // 从数据缓存中获取数据
+        switch(fresh_processing_data_from_buffer())
+        {
+        case 0: // 未找到对应数据
+            unable_insert = false;
+            unable_del    = true;
+            unable_update = true;
+            break;
+        case 1: // 找到对应数据
+            unable_insert = true;
+            unable_del    = false;
+            unable_update = false;
+
+            view.table_to_selected = !view.table_to_selected;
+            break;
+        default:
+        case -1: // 未选中任何数据
+            unable_insert = true;
+            unable_del    = true;
+            unable_update = true;
+            break;
+        }
     }
 
     // 重置操作状态
@@ -191,70 +218,56 @@ Controller::request_data()
     page_count = res.page_count;
 }
 
-bool
-Controller::fresh_processing_data()
+int8_t
+Controller::fresh_processing_data_from_buffer()
 {
-    printf("Update processing data...\n");
+    if(!processing_data.id) return -1;
+
+    printf("Search data from buffer...\n");
     for(auto& train_data : train_data_buffer)
     {
         if(train_data.id == processing_data.id)
         {
             processing_data = train_data;
-            return true;
+            return 1;
         }
     }
 
-    return false;
+    return 0;
 }
 
 void
 Controller::clear_processing_data()
 {
-    static const char unkonw[] = "Unkonw";
-    static TrainData  empty_data;
-    static bool       is_init = false;
-
-    if(!is_init)
-    {
-        is_init = true;
-
-        empty_data.id = 0;
-        strcpy(empty_data.number, unkonw);
-        strcpy(empty_data.start_station, unkonw);
-        strcpy(empty_data.arrive_station, unkonw);
-        empty_data.start_time    = 0;
-        empty_data.arrive_time   = 0;
-        empty_data.ticket_remain = 0;
-        empty_data.ticket_price  = 0;
-        empty_data.train_status  = TRAIN_STATUS_UNKNOWN;
-    }
-
     processing_data = empty_data;
 }
 
 void
 Controller::clear_datas_buffer()
 {
-    train_data_buffer.clear();
+    for(auto& train_data : train_data_buffer)
+    {
+        train_data = empty_data;
+    }
 }
 
 void
-Controller::add_train_data_log(std::string label, const TrainData& train_data)
+Controller::add_train_data_log(std::string label)
 {
     // 价格保留两位小数
     char buf[256];
-    snprintf(buf, sizeof(buf), "%.2f", train_data.ticket_price);
+    snprintf(buf, sizeof(buf), "%.2f", processing_data.ticket_price);
 
     std::string log =
         label +
-        std::to_string(train_data.id) + " " +
-        std::string(train_data.number) + " " +
-        std::string(train_data.start_station) + "->" +
-        std::string(train_data.arrive_station) + " " +
-        date_to_string(uint64_time_to_date(train_data.start_time)) + " " +
-        date_to_string(uint64_time_to_date(train_data.arrive_time)) + " " +
-        std::to_string(train_data.ticket_remain) + " " +
+        std::to_string(processing_data.id) + " " +
+        std::string(processing_data.number) + " " +
+        std::string(processing_data.start_station) + "->" +
+        std::string(processing_data.arrive_station) + " " +
+        date_to_string(uint64_time_to_date(processing_data.start_time)) + " " +
+        date_to_string(uint64_time_to_date(processing_data.arrive_time)) + " " +
+        std::to_string(processing_data.ticket_remain) + " " +
         buf + " " +
-        parse_train_status(train_data.train_status);
+        parse_train_status(processing_data.train_status);
     view.ViewConsoleAddLog(log.c_str());
 }
