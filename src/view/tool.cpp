@@ -46,18 +46,73 @@ InputTime(const char* label, Date* time)
 
     ImGui::Text(label);
     ImGui::PushItemWidth(100);
+
     // 输入年
-    is_update |= ImGui::InputScalar((std::string("年##") + label).c_str(), ImGuiDataType_U16, &time->year), ImGui::SameLine();
+    is_update |= ImGui::InputScalar((std::string("年##") + label).c_str(), ImGuiDataType_U16, &time->year);
+    if(time->year < 0)
+    {
+        time->year = 0;
+    }
+
     // 输入月
-    is_update |= ImGui::InputScalar((std::string("月##") + label).c_str(), ImGuiDataType_U8, &time->month), ImGui::SameLine();
+    ImGui::SameLine();
+    is_update |= ImGui::InputScalar((std::string("月##") + label).c_str(), ImGuiDataType_U8, &time->month);
+    if(time->month < 1)
+    {
+        time->month = 1;
+    }
+    else if(time->month > 12)
+    {
+        time->month = 12;
+    }
+
     // 输入日
+    ImGui::SameLine();
     is_update |= ImGui::InputScalar((std::string("日##") + label).c_str(), ImGuiDataType_U8, &time->day);
+    if(time->day < 1)
+    {
+        time->day = 1;
+    }
+    else if(time->day > 31)
+    {
+        time->day = 31;
+    }
+
     // 输入小时
-    is_update |= ImGui::InputScalar((std::string("时##") + label).c_str(), ImGuiDataType_U8, &time->hour), ImGui::SameLine();
+    is_update |= ImGui::InputScalar((std::string("时##") + label).c_str(), ImGuiDataType_U8, &time->hour);
+    if(time->hour < 0)
+    {
+        time->hour = 0;
+    }
+    else if(time->hour > 23)
+    {
+        time->hour = 23;
+    }
+
     // 输入分钟
-    is_update |= ImGui::InputScalar((std::string("分##") + label).c_str(), ImGuiDataType_U8, &time->minute), ImGui::SameLine();
+    ImGui::SameLine();
+    is_update |= ImGui::InputScalar((std::string("分##") + label).c_str(), ImGuiDataType_U8, &time->minute);
+    if(time->minute < 0)
+    {
+        time->minute = 0;
+    }
+    else if(time->minute > 59)
+    {
+        time->minute = 59;
+    }
+
     // 输入秒
+    ImGui::SameLine();
     is_update |= ImGui::InputScalar((std::string("秒##") + label).c_str(), ImGuiDataType_U8, &time->second);
+    if(time->second < 0)
+    {
+        time->second = 0;
+    }
+    else if(time->second > 59)
+    {
+        time->second = 59;
+    }
+
     ImGui::PopItemWidth();
 
     return is_update;

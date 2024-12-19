@@ -44,9 +44,10 @@ public:
     uint32_t ControllerGetPageItemCount() const { return page_item_count; }                // 获取每页显示的数据数量
     uint32_t ControllerGetPageCount() const { return page_count; }                         // 获取总页数
 
-    bool ControllerUnableInsert() const { return unable_insert; } // 是否禁用插入按钮
-    bool ControllerUnableDel() const { return unable_del; }       // 是否禁用删除按钮
-    bool ControllerUnableUpdate() const { return unable_update; } // 是否禁用更新按钮
+    // bool ControllerUnableInsert() const { return unable_insert; } // 是否禁用插入按钮
+    // bool ControllerUnableDel() const { return unable_del; }       // 是否禁用删除按钮
+    // bool ControllerUnableUpdate() const { return unable_update; } // 是否禁用更新按钮
+    bool ControllerIsDataInBuffer(); // 在数据缓存中搜索数据
 
     const TrainData* GetTrainDatas() const { return train_data_buffer; } // 获取数据缓存
 
@@ -60,9 +61,9 @@ private:
 
 private:
     // 控制器状态
-    bool unable_insert = true;
-    bool unable_del    = true;
-    bool unable_update = true;
+    // bool unable_insert = true;
+    // bool unable_del    = true;
+    // bool unable_update = true;
 
 private:
     TrainData empty_data; // 空数据

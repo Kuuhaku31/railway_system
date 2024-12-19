@@ -24,6 +24,8 @@ static ImVec4 disable_color = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // 禁用颜色
 void
 View::show_user_input_window(bool* p_open)
 {
+    static bool is_inserting = false;
+
     if(p_open && !*p_open) return;
 
     uint32_t window_flags = 0;
@@ -86,13 +88,27 @@ View::show_user_input_window(bool* p_open)
         ImGui::PopItemWidth();
     }
 
-    { // 用户输入框
-        // Train ID 输入框
-        if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &processing_data.id))
-        {
-            controller.is_fresh_processing_data = true;
-        }
+    // Train ID 输入框
+    if(is_inserting)
+    {
+        static char text[] = "You Are Inserting Data";
+        ImGui::BeginDisabled(true);
+        ImGui::InputText("Train ID", text, sizeof(text), ImGuiInputTextFlags_ReadOnly);
+        ImGui::EndDisabled();
+    }
+    else if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &processing_data.id))
+    {
+        controller.is_fresh_processing_data = true;
+    }
 
+    ImGui::SameLine();
+    ImGui::Checkbox("Inserting", &is_inserting);
+
+    // 如果当前正在编辑的数据不在缓存中，禁用用户输入框
+    ImGui::BeginDisabled(!is_inserting && !controller.ControllerIsDataInBuffer());
+    ImGui::Separator(); // 分割线 //=================================================================================
+
+    { // 用户输入框
         ImGui::InputText("Train Number", processing_data.number, MAX_SIZE);
 
         ImGui::InputText("Start Station", processing_data.start_station, MAX_SIZE);
@@ -107,8 +123,10 @@ View::show_user_input_window(bool* p_open)
         InputTime("Arrive Time", &arrive_time);
         processing_data.arrive_time = date_to_uint64_time(arrive_time);
 
+        // 票数
         ImGui::InputScalar("Ticket Count", ImGuiDataType_U32, &processing_data.ticket_remain);
 
+        // 票价
         float ticket_price = uint32_price_to_float(processing_data.ticket_price);
         ImGui::InputScalarN("Ticket Price", ImGuiDataType_Float, &ticket_price, 1, nullptr, nullptr, "%.2f");
         processing_data.ticket_price = float_to_uint32_price(ticket_price);
@@ -123,7 +141,8 @@ View::show_user_input_window(bool* p_open)
 
     { // 按钮
         // 插入按钮
-        if(controller.ControllerUnableInsert())
+        // if(controller.ControllerUnableInsert())
+        if(!is_inserting)
         {
             ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);
@@ -138,7 +157,8 @@ View::show_user_input_window(bool* p_open)
 
         // 删除按钮
         ImGui::SameLine();
-        if(controller.ControllerUnableDel())
+        // if(controller.ControllerUnableDel())
+        if(is_inserting || !processing_data.id)
         {
             ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);
@@ -153,7 +173,8 @@ View::show_user_input_window(bool* p_open)
 
         // 更新按钮
         ImGui::SameLine();
-        if(controller.ControllerUnableUpdate())
+        // if(controller.ControllerUnableUpdate())
+        if(is_inserting || !processing_data.id)
         {
             ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);
@@ -169,11 +190,15 @@ View::show_user_input_window(bool* p_open)
         // 清空按钮
         ImGui::SameLine();
         controller.is_clear_processing_data = ImGui::Button("Clear", ImVec2(100, 0));
-
-        // 取消按钮
-        ImGui::SameLine();
-        controller.is_cancel = ImGui::Button("Cancel", ImVec2(100, 0));
     }
+
+    ImGui::EndDisabled();
+
+    // 取消按钮
+    ImGui::SameLine();
+    // 调整元素外边距
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 20);
+    controller.is_cancel = ImGui::Button("Cancel", ImVec2(150, 0));
 
     ImGui::End();
     ImGui::PopFont();
