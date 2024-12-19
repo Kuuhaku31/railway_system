@@ -11,9 +11,6 @@ extern "C" {
 
 #define MAX_SIZE 128
 
-// static Controller& controller      = Controller::Instance();
-// static TrainData& processing_data = controller.processing_data; // 引用控制器中的数据
-
 extern bool system_is_insert;
 extern bool system_is_del;
 extern bool system_is_update;
@@ -21,7 +18,6 @@ extern bool system_is_cancel;
 extern bool system_is_fresh_processing_data;
 
 extern TrainData system_processing_data;
-static TrainData processing_data = system_processing_data;
 
 void
 View::show_user_input_window(bool* p_open)
@@ -47,7 +43,7 @@ View::show_user_input_window(bool* p_open)
         // 显示帧率
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::SameLine();
-        ImGui::Text("|  is processing data: %s", processing_data.id ? "true" : "false");
+        ImGui::Text("|  is processing data: %s", system_processing_data.id ? "true" : "false");
         ImGui::SameLine();
         ImGui::Text("%d datas in buffer", SystemControllerGetPageItemCountCurrent());
     }
@@ -97,7 +93,7 @@ View::show_user_input_window(bool* p_open)
         ImGui::InputText("Train ID", text, sizeof(text), ImGuiInputTextFlags_ReadOnly);
         ImGui::EndDisabled();
     }
-    else if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &processing_data.id))
+    else if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &system_processing_data.id))
     {
         system_is_fresh_processing_data = true;
     }
@@ -110,32 +106,32 @@ View::show_user_input_window(bool* p_open)
     ImGui::Separator(); // 分割线 //=================================================================================
 
     { // 用户输入框
-        ImGui::InputText("Train Number", processing_data.number, MAX_SIZE);
+        ImGui::InputText("Train Number", system_processing_data.number, MAX_SIZE);
 
-        ImGui::InputText("Start Station", processing_data.start_station, MAX_SIZE);
-        ImGui::InputText("Arrive Station", processing_data.arrive_station, MAX_SIZE);
+        ImGui::InputText("Start Station", system_processing_data.start_station, MAX_SIZE);
+        ImGui::InputText("Arrive Station", system_processing_data.arrive_station, MAX_SIZE);
 
         // 出发时间
-        Date start_time = uint64_time_to_date(processing_data.start_time);
+        Date start_time = uint64_time_to_date(system_processing_data.start_time);
         InputTime("Start Time", &start_time);
-        processing_data.start_time = date_to_uint64_time(start_time);
+        system_processing_data.start_time = date_to_uint64_time(start_time);
         // 到达时间
-        Date arrive_time = uint64_time_to_date(processing_data.arrive_time);
+        Date arrive_time = uint64_time_to_date(system_processing_data.arrive_time);
         InputTime("Arrive Time", &arrive_time);
-        processing_data.arrive_time = date_to_uint64_time(arrive_time);
+        system_processing_data.arrive_time = date_to_uint64_time(arrive_time);
 
         // 票数
-        ImGui::InputScalar("Ticket Count", ImGuiDataType_U32, &processing_data.ticket_remain);
+        ImGui::InputScalar("Ticket Count", ImGuiDataType_U32, &system_processing_data.ticket_remain);
 
         // 票价
-        float ticket_price = uint32_price_to_float(processing_data.ticket_price);
+        float ticket_price = uint32_price_to_float(system_processing_data.ticket_price);
         ImGui::InputScalarN("Ticket Price", ImGuiDataType_Float, &ticket_price, 1, nullptr, nullptr, "%.2f");
-        processing_data.ticket_price = float_to_uint32_price(ticket_price);
+        system_processing_data.ticket_price = float_to_uint32_price(ticket_price);
 
         // 下拉框选择车次状态
         ImGui::Text("Train Status");
         const char* items[] = { "NORMAL", "DELAY", "STOP", "CANCEL", "UNKNOWN" };
-        ImGui::Combo("##Train Status", (int*)&processing_data.train_status, items, IM_ARRAYSIZE(items));
+        ImGui::Combo("##Train Status", (int*)&system_processing_data.train_status, items, IM_ARRAYSIZE(items));
     }
 
     ImGui::Separator(); // 分割线 //=================================================================================
@@ -159,7 +155,7 @@ View::show_user_input_window(bool* p_open)
         // 删除按钮
         ImGui::SameLine();
         // if(controller.ControllerUnableDel())
-        if(is_inserting || !processing_data.id)
+        if(is_inserting || !system_processing_data.id)
         {
             ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);
@@ -175,7 +171,7 @@ View::show_user_input_window(bool* p_open)
         // 更新按钮
         ImGui::SameLine();
         // if(controller.ControllerUnableUpdate())
-        if(is_inserting || !processing_data.id)
+        if(is_inserting || !system_processing_data.id)
         {
             ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);

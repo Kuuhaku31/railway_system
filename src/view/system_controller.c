@@ -3,6 +3,7 @@
 
 #include "system_controller.h"
 
+#include "date.h"
 #include "train_controller.h"
 
 #include <string.h>
@@ -36,6 +37,35 @@ uint32_t page_item_count_current = 0;   // buffer 中实际的数据数量
 TrainData train_data_buffer[DATA_BUFFER_SIZE]; // 从数据库中查询到的数据
 TrainData empty_data;                          // 空数据
 
+// 窗口参数
+bool view_is_show_train_datas   = true;  // 显示车次信息
+bool view_is_show_user_input    = true;  // 获取用户输入窗口
+bool view_is_show_console       = true;  // 显示控制台
+bool view_is_show_search_window = false; // 显示过滤器
+
+// 背景颜色
+float view_clear_color[4] = { 0x33, 0x33, 0x33, 0xff };
+
+bool is_use_filter                       = false; // 是否使用过滤器
+bool is_search_by_id                     = false; // 是否通过id过滤
+bool is_search_by_number_keyword         = false; // 是否通过车次关键字过滤
+bool is_search_by_start_station_keyword  = false; // 是否通过始发站关键字过滤
+bool is_search_by_arrive_station_keyword = false; // 是否通过到达站关键字过滤
+bool is_search_by_start_time             = false; // 是否通过出发时间过滤
+bool is_search_by_arrive_time            = false; // 是否通过到达时间过滤
+bool is_search_by_ticket_remain          = false; // 是否通过票数过滤
+bool is_search_by_ticket_price           = false; // 是否通过票价过滤
+bool is_search_by_train_status           = false; // 是否通过列车状态过滤
+
+uint32_t         search_id            = 0;
+char             search_number[16]    = { 0 };
+char             search_start[64]     = { 0 };
+char             search_arrive[64]    = { 0 };
+Date             search_start_time    = { 0 };
+Date             search_arrive_time   = { 0 };
+uint32_t         search_ticket_remain = 0;
+float            search_ticket_price  = 0;
+enum TrainStatus search_train_status  = TRAIN_STATUS_NORMAL;
 
 void
 insert_data()
