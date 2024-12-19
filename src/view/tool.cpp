@@ -137,3 +137,17 @@ uint32_price_to_string(uint32_t price)
     snprintf(buf, sizeof(buf), "%u.%02u", price / 100, price % 100);
     return std::string(buf);
 }
+
+static View& view = View::Instance();
+
+bool*
+View_is_show_user_input()
+{
+    return &view.is_show_user_input;
+}
+
+bool*
+View_table_to_selected()
+{
+    return &view.table_to_selected;
+}

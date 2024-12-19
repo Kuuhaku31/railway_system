@@ -1,16 +1,20 @@
 
 // main.cpp
 
-#include "controller.h"
+// #include "controller.h"
 #include "utils.h"
 #include "view.h"
+
+extern "C" {
+#include "system_controller.h"
+}
 
 
 #include <stdio.h>
 
 static ImGui_setup& imgui_setup = ImGui_setup::Instance();
 static View&        view        = View::Instance();
-static Controller&  controller  = Controller::Instance();
+// static Controller&  controller  = Controller::Instance();
 
 int
 main()
@@ -19,7 +23,7 @@ main()
     initDb();
     printf("Hello, main!\n");
 
-    controller.ControlerInit();
+    SystemControlerInit();
     view.ViewInit();
 
     printf("Showing view...\n");

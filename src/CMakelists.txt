@@ -25,6 +25,9 @@ set(VIEW_SRC
     view/controller.h
     view/controller.cpp
 
+    view/system_controller.h
+    view/system_controller.c
+
     view/tool.cpp
 )
 

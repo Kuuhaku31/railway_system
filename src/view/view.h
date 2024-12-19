@@ -136,3 +136,9 @@ private:
 
     static View* instance;
 };
+
+bool*
+View_is_show_user_input();
+
+bool*
+View_table_to_selected();

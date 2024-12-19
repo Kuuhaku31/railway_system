@@ -3,11 +3,14 @@
 
 #include "view.h"
 
-#include "controller.h"
+// #include "controller.h"
 #include "date.h"
+extern "C" {
+#include "system_controller.h"
+}
 
 static ImGui_setup& imgui_setup = ImGui_setup::Instance();
-static Controller&  controller  = Controller::Instance();
+// static Controller&  controller  = Controller::Instance();
 
 View* View::instance = nullptr;
 View&
@@ -39,7 +42,7 @@ View::ViewQuit()
 void
 View::ViewShowWindows()
 {
-    controller.ControllerUpdate();
+    SystemControllerUpdate();
 
     update_view_layout();
 

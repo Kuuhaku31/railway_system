@@ -50,13 +50,13 @@ public:
     uint32_t ControllerGetPageItemCount() const { return page_item_count; }                // 获取每页显示的数据数量
     uint32_t ControllerGetPageCount() const { return page_count; }                         // 获取总页数
 
-    bool ControllerIsDataInBuffer(); // 在数据缓存中搜索数据
-
     const TrainData*  ControllerGetTrainDatas() const { return train_data_buffer; } // 获取数据缓存
     const SystemLogs& ControllerGetLogs() const { return logs; }                    // 获取日志
 
+    bool ControllerIsDataInBuffer(); // 在数据缓存中搜索数据
+
 private:
-    // 从数据库中查询到的数据参数，每页显示的数据最大数量为 train_datas 的大小
+    // 从数据库中查询到的数据参数
     uint32_t  page_count              = 0;    // 总页数
     uint32_t  page_idx                = 1;    // 当前页数
     uint32_t  page_item_count         = 100;  // 每一页期望显示的数据数量

@@ -2,11 +2,19 @@
 // show_datas_window.cpp
 
 // #include "train_controller.h"
-#include "controller.h"
+// #include "controller.h"
+extern "C" {
+#include "system_controller.h"
+}
 #include "view.h"
 
-static Controller& controller      = Controller::Instance();
-static TrainData&  processing_data = controller.processing_data;
+// static Controller& controller      = Controller::Instance();
+// static TrainData& processing_data = controller.processing_data;
+
+extern bool system_is_fresh_processing_data;
+
+extern TrainData system_processing_data;
+static TrainData processing_data = system_processing_data;
 
 void
 View::show_train_datas_window(bool* p_open)
@@ -33,7 +41,7 @@ View::show_train_datas_window(bool* p_open)
     // 第一个元素位置为(0, 0)
     ImGui::SetCursorPos(ImVec2(0, 0));
 
-    const TrainData* train_datas = controller.ControllerGetTrainDatas();
+    const TrainData* train_datas = SystemControllerGetTrainDatas();
 
     // 表格显示车次信息
     uint32_t table_flags = 0;
@@ -64,7 +72,7 @@ View::show_train_datas_window(bool* p_open)
         ImGui::TableHeadersRow();
 
 
-        for(int index = 0; index < controller.ControllerGetPageItemCountCurrent(); index++)
+        for(int index = 0; index < SystemControllerGetPageItemCountCurrent(); index++)
         {
             const TrainData& train_data = train_datas[index];
 
@@ -81,10 +89,10 @@ View::show_train_datas_window(bool* p_open)
             bool is_selected = processing_data.id && (processing_data.id == train_data.id);
             if(ImGui::TableNextColumn() && ImGui::Selectable(std::to_string(index + 1).c_str(), is_selected, ImGuiSelectableFlags_SpanAllColumns))
             {
-                table_to_selected                   = true;
-                is_show_user_input                  = true;
-                processing_data.id                  = train_data.id;
-                controller.is_fresh_processing_data = true;
+                table_to_selected               = true;
+                is_show_user_input              = true;
+                processing_data.id              = train_data.id;
+                system_is_fresh_processing_data = true;
             }
 
             // 车次 ID
