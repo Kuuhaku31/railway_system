@@ -185,9 +185,10 @@ void
 Controller::insert_data()
 {
     printf("Insert data...\n");
-    RailwaySystemInsertTrainData(processing_data);
+    processing_data.id = RailwaySystemInsertTrainData(processing_data);
 
-    is_fresh_data = true;
+    is_fresh_processing_data = true;
+    is_fresh_data            = true;
 }
 
 void
