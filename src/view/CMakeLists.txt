@@ -1,0 +1,19 @@
+# 源文件
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} PROJECT_VIEW_SRC)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/imgui_setup PROJECT_VIEW_SRC)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/windows PROJECT_VIEW_SRC)
+
+# 头文件
+set(PROJECT_VIEW_HEADER
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/imgui_setup
+    ${CMAKE_CURRENT_SOURCE_DIR}/windows
+)
+
+message(STATUS "View Source files: ${PROJECT_VIEW_SRC}")
+message(STATUS "View Header files: ${PROJECT_VIEW_HEADER}")
+
+# 变量向上传递
+set(PROJECT_VIEW_SRC ${PROJECT_VIEW_SRC} PARENT_SCOPE)
+
+set(PROJECT_VIEW_HEADER ${PROJECT_VIEW_HEADER} PARENT_SCOPE)

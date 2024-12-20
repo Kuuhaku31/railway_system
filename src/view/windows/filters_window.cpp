@@ -1,5 +1,5 @@
 
-// search_window.cpp
+// filters_window.cpp
 
 #include "view.h"
 

@@ -1,9 +1,8 @@
 
 project(main_project)
 
-set(IMGUI_SETUP_SRC
-    imgui_setup/imgui_setup.h
-    imgui_setup/imgui_setup.cpp)
+add_subdirectory(view)
+
 set(MODEL_SRC
     model/train_model.c
     model/train_model.h
@@ -11,20 +10,6 @@ set(MODEL_SRC
     model/train_model.h
     model/order_model.c
     model/order_model.h
-)
-
-set(VIEW_SRC
-    view/console_window.cpp
-    view/show_datas_window.cpp
-    view/user_input_window.cpp
-    view/search_window.cpp
-
-    view/view.cpp
-    view/view.h
-
-    view/tool.cpp
-
-    view/system_view.h
 )
 
 set(CONTROLLER_SRC
@@ -47,16 +32,34 @@ set(UTILS_SRC
     utils/utils.c
     entity/order.h)
 
-set(HEADER_DIR . view model imgui_setup entity controller utils text)
+set(HEADER_DIR . view model entity controller utils text)
 
 message(STATUS "Model Source files: ${MODEL_SRC}")
 message(STATUS "View Source files: ${VIEW_SRC}")
 message(STATUS "Entity Source files: ${ENTITY_SRC}")
 
-add_executable(${PROJECT_NAME} ${CONTROLLER_SRC} ${MODEL_SRC} ${VIEW_SRC} ${ENTITY_SRC} ${IMGUI_SETUP_SRC} ${UTILS_SRC} main.c)
+add_executable(
+    ${PROJECT_NAME}
+    ${CONTROLLER_SRC}
+    ${MODEL_SRC}
+    ${ENTITY_SRC}
+    ${UTILS_SRC}
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-    ../lib/sqlite3 ../lib/imgui ../lib/imgui/backends
-    ${HEADER_DIR}
+    ${PROJECT_VIEW_SRC}
+
+    main.c
 )
+
+target_include_directories(
+    ${PROJECT_NAME} PUBLIC
+
+    ../lib/sqlite3
+    ../lib/imgui
+    ../lib/imgui/backends
+
+    ${HEADER_DIR}
+
+    ${PROJECT_VIEW_HEADER}
+)
+
 target_link_libraries(${PROJECT_NAME} PUBLIC imgui sqlite3)

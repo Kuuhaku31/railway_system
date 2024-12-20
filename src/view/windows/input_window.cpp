@@ -1,5 +1,5 @@
 
-// user_input_window.cpp
+// input_window.cpp
 
 #include "view.h"
 
