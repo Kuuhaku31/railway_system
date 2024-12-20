@@ -1,95 +1,55 @@
 # railway_system
 
-Course Design of C Programming Language
+### 项目信息
 
-## 数据（车次）
+。。。。。
 
-- id
-- 始发站
-- 终点站
-- 班次
-- 发车时间
-- 到达时间
-- 票数
-- 票价
-- 是否停运
+## 数据结构（车次）
 
-## 存储方法
+### 车次信息
 
-- struct
+| 数据类型 | 字段           | 描述             |
+| -------- | -------------- | ---------------- |
+| int32_t  | id             | 唯一标识         |
+| char[]   | number         | 列车班次         |
+| char[]   | start_station  | 列车始发站       |
+| char[]   | arrive_station | 列车终点站       |
+| time_t   | start_time     | 列车发车时间     |
+| time_t   | arrive_time    | 列车到达时间     |
+| int32_t  | ticket_remain  | 剩余票数         |
+| int32_t  | ticket_price   | 票价（单位：分） |
+| int      | train_status   | 列车状态         |
 
-## 方法
+### 列车状态
 
-- 查询
-- 预定
-- 修改
-  - 是否停运
-- 删除
+| 字段      | 描述 |
+| --------- | ---- |
+| NORMAL    | 正常 |
+| DELAYED   | 延误 |
+| STOPPED   | 停运 |
+| CANCELLED | 取消 |
+| UNKNOWN   | 未知 |
 
-## 前后端交互
+## 支持的操作
 
-```cpp
+### 查询
 
-enum SearchFlag
-{
-    SEARCH_TRAIN_DATA_ALL       = 0x00000001, // 查询所有车次信息
-    SEARCH_TRAIN_DATA_BY_ID     = 0x00000002, // 根据id查询
-    SEARCH_TRAIN_DATA_BY_NUMBER = 0x00000004, // 根据车次关键词查询
-    SEARCH_TRAIN_DATA_BY_START  = 0x00000008, // 根据始发站关键词查询
-    SEARCH_TRAIN_DATA_BY_ARRIVE = 0x00000010, // 根据到达站关键词查询
-};
+### 添加
 
-// 查询要求
-typedef struct
-{
-    uint32_t flag; // 查询标志
+### 修改
 
-    uint32_t* id;       // 一个id数组，查询包含该id的车次信息
-    uint32_t  id_count; // 数组大小
+### 删除
 
-    // 查询关键词，查询包含该关键词的车次信息
-    char number[16];         // 车次查询关键词
-    char start_station[64];  // 始发站查询关键词
-    char arrive_station[64]; // 到达站查询关键词
+## 程序架构
 
-} SearchRequest;
+### 前端
 
-// 以下函数返回值小于0均表示表示执行失败
+### 后端
 
-// 获取数据库中的车次信息数量
-int32_t
-RailwaySystemGetTrainDataCount();
+### 前后端交互
 
-// 查询车次信息
-// 传入数组的首地址，以及数组的大小
-// 以及查询要求
-// 根据SearchRequest的内容查询数据库中符合要求的车次信息
-// 将数据库中符合查询要求的车次信息：
-// **按照id升序排列**
-// **依次拷贝到train_data数组中**
-// **返回拷贝的车次信息数量**
-int32_t
-RailwaySystemSearchTrainData(TrainData* train_data, uint32_t num, const SearchRequest* search_request);
-// 特别的
-// 当传入的 search_request 为 nullptr
-// 或者 search_request 的 flag 的最低位为 1
-// 查询数据库中所有车次信息
+## 参考资料及第三方库
 
-
-```
-
-# 前端
-
-# 后端
-
-- test
-- lib
-
-* src
-  - entity
-  - view
-  - controller
-  - model
-  - main.c
-
-- CMakeLists.txt
+- imgui
+- sdl2
+- sqlite
