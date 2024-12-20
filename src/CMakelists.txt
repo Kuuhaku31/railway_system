@@ -22,18 +22,15 @@ set(VIEW_SRC
     view/view.cpp
     view/view.h
 
-    # view/controller.h
-    # view/controller.cpp
-
-    view/system_controller.h
-    view/system_controller.c
-
     view/tool.cpp
 )
 
 set(CONTROLLER_SRC
     controller/train_controller.c
     controller/train_controller.h
+
+    controller/system_controller.h
+    controller/system_controller.c
 )
 
 set(ENTITY_SRC
