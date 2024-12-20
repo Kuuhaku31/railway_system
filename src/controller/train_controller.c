@@ -36,7 +36,7 @@ RailwaySystemSearchTrainData(TrainData* train_data, uint32_t num, uint32_t page_
     }
 
     searchResult.page_count = searchResult.data_total_count / num;
-    if(searchResult.data_total_count % num != 0)
+    if(searchResult.data_total_count % num != 0 || searchResult.page_count == 0)
     {
         searchResult.page_count += 1;
     }

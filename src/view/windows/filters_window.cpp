@@ -370,8 +370,16 @@ View::show_search_window(bool* p_open)
     else
     {
         // 查询所有数据
-        system_search_request.id       = 0;
-        system_search_request.query_id = GREATER;
+        system_search_request.id                   = 0;
+        system_search_request.query_id             = GREATER;
+        system_search_request.query_number         = IGNORE_THIS;
+        system_search_request.query_start_station  = IGNORE_THIS;
+        system_search_request.query_arrive_station = IGNORE_THIS;
+        system_search_request.query_start_time     = IGNORE_THIS;
+        system_search_request.query_arrive_time    = IGNORE_THIS;
+        system_search_request.query_ticket_remain  = IGNORE_THIS;
+        system_search_request.query_ticket_price   = IGNORE_THIS;
+        system_search_request.query_train_status   = IGNORE_THIS;
     }
 
     ImGui::End();
