@@ -32,7 +32,7 @@ RailwaySystemUpdateTrainData(TrainData train_data)
     TrainQuery query;
     memset(&query, 0, sizeof(TrainQuery));
     query.id       = train_data.id;
-    query.query_id = true;
+    query.query_id = EQUAL;
 
     TrainChange change;
     memset(&change, 0, sizeof(TrainChange));
@@ -65,6 +65,6 @@ RailwaySystemDelTrainData(int32_t train_data_id)
     TrainQuery query;
     memset(&query, 0, sizeof(TrainQuery));
     query.id       = train_data_id;
-    query.query_id = true;
+    query.query_id = EQUAL;
     return deleteTrain(&query) == 0 ? 0 : -1;
 }

@@ -3,9 +3,33 @@
 
 #include "view.h"
 
-#include "controller.h"
+// #include "controller.h"
+extern "C" {
+#include "system_controller.h"
+}
 
 #define TEXT_SEARCH_WINDOW_FILTERS "Filters" // 过滤器
+
+extern bool is_use_filter;
+extern bool is_search_by_id;
+extern bool is_search_by_number_keyword;
+extern bool is_search_by_start_station_keyword;
+extern bool is_search_by_arrive_station_keyword;
+extern bool is_search_by_start_time;
+extern bool is_search_by_arrive_time;
+extern bool is_search_by_ticket_remain;
+extern bool is_search_by_ticket_price;
+extern bool is_search_by_train_status;
+
+extern uint32_t    search_id;
+extern char        search_number[16];
+extern char        search_start[64];
+extern char        search_arrive[64];
+extern Date        search_start_time;
+extern Date        search_arrive_time;
+extern uint32_t    search_ticket_remain;
+extern uint32_t    search_ticket_price;
+extern TrainStatus search_train_status;
 
 bool
 select_comparison_operators(const char* label, int* current_item)
@@ -24,8 +48,13 @@ select_comparison_operators(const char* label, int* current_item)
     return is_update;
 }
 
-static Controller& controller     = Controller::Instance();
-static TrainQuery& search_request = controller.search_request;
+// static Controller& controller     = Controller::Instance();
+// static TrainQuery& search_request = controller.search_request;
+
+extern bool system_is_fresh_data;
+
+extern TrainQuery system_search_request;
+static TrainQuery search_request = system_search_request;
 
 void
 View::show_search_window(bool* p_open)
@@ -46,7 +75,7 @@ View::show_search_window(bool* p_open)
 
     if(ImGui::Checkbox(TEXT_SEARCH_WINDOW_FILTERS, &is_use_filter))
     {
-        controller.is_fresh_data = true;
+        system_is_fresh_data = true;
     }
     if(!is_use_filter)
     {
@@ -80,7 +109,7 @@ View::show_search_window(bool* p_open)
             search_request.id       = search_id;
             search_request.query_id = current_item;
 
-            controller.is_fresh_data = true;
+            system_is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -101,7 +130,7 @@ View::show_search_window(bool* p_open)
             strcpy(search_request.number, search_number);
             search_request.query_number = EQUAL;
 
-            controller.is_fresh_data = true;
+            system_is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -122,7 +151,7 @@ View::show_search_window(bool* p_open)
             strcpy(search_request.start_station, search_start);
             search_request.query_start_station = EQUAL;
 
-            controller.is_fresh_data = true;
+            system_is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -143,7 +172,7 @@ View::show_search_window(bool* p_open)
             strcpy(search_request.arrive_station, search_arrive);
             search_request.query_arrive_station = EQUAL;
 
-            controller.is_fresh_data = true;
+            system_is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -167,7 +196,7 @@ View::show_search_window(bool* p_open)
             search_request.start_time       = date_to_uint64_time(search_start_time);
             search_request.query_start_time = current_item;
 
-            controller.is_fresh_data = true;
+            system_is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -191,7 +220,7 @@ View::show_search_window(bool* p_open)
             search_request.arrive_time       = date_to_uint64_time(search_arrive_time);
             search_request.query_arrive_time = current_item;
 
-            controller.is_fresh_data = true;
+            system_is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -215,7 +244,7 @@ View::show_search_window(bool* p_open)
             search_request.ticket_remain       = search_ticket_remain;
             search_request.query_ticket_remain = current_item;
 
-            controller.is_fresh_data = true;
+            system_is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -240,7 +269,7 @@ View::show_search_window(bool* p_open)
             search_request.ticket_price       = float_to_uint32_price(search_ticket_price);
             search_request.query_ticket_price = current_item;
 
-            controller.is_fresh_data = true;
+            system_is_fresh_data = true;
         }
 
         ImGui::Unindent(10);
@@ -265,7 +294,7 @@ View::show_search_window(bool* p_open)
             search_request.train_status     = search_train_status;
             search_request.query_is_running = EQUAL;
 
-            controller.is_fresh_data = true;
+            system_is_fresh_data = true;
         }
 
         ImGui::Unindent(10);

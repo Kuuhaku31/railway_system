@@ -3,13 +3,21 @@
 
 #include "view.h"
 
-#include "controller.h"
+// #include "controller.h"
 #include "date.h"
+extern "C" {
+#include "system_controller.h"
+}
 
 #define MAX_SIZE 128
 
-static Controller& controller      = Controller::Instance();
-static TrainData&  processing_data = controller.processing_data; // 引用控制器中的数据
+extern bool system_is_insert;
+extern bool system_is_del;
+extern bool system_is_update;
+extern bool system_is_cancel;
+extern bool system_is_fresh_processing_data;
+
+extern TrainData system_processing_data;
 
 void
 View::show_user_input_window(bool* p_open)
@@ -35,9 +43,9 @@ View::show_user_input_window(bool* p_open)
         // 显示帧率
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::SameLine();
-        ImGui::Text("|  is processing data: %s", processing_data.id ? "true" : "false");
+        ImGui::Text("|  is processing data: %s", system_processing_data.id ? "true" : "false");
         ImGui::SameLine();
-        ImGui::Text("%d datas in buffer", controller.ControllerGetPageItemCountCurrent());
+        ImGui::Text("%d datas in buffer", SystemControllerGetPageItemCountCurrent());
     }
 
     ImGui::SetCursorPosY(first_separator_pos); // 调整光标位置
@@ -47,9 +55,9 @@ View::show_user_input_window(bool* p_open)
         // 设置宽度
         ImGui::PushItemWidth(150);
 
-        uint32_t page_page_count = controller.ControllerGetPageCount();     // 总页数
-        uint32_t page_item_count = controller.ControllerGetPageItemCount(); // 每页期望显示的数据数量
-        int      page_idx_curr   = controller.ControllerGetPageIdx();       // 当前页数
+        uint32_t page_page_count = SystemControllerGetPageCount();     // 总页数
+        uint32_t page_item_count = SystemControllerGetPageItemCount(); // 每页期望显示的数据数量
+        int      page_idx_curr   = SystemControllerGetPageIdx();       // 当前页数
 
         if(ImGui::InputInt("Page Index", &page_idx_curr))
         {
@@ -62,7 +70,7 @@ View::show_user_input_window(bool* p_open)
                 page_idx_curr = page_page_count;
             }
 
-            controller.ControllerChangePageIdx(page_idx_curr);
+            SystemControllerChangePageIdx(page_idx_curr);
         }
         ImGui::SameLine();
         ImGui::Text("/ %d", page_page_count);
@@ -71,7 +79,7 @@ View::show_user_input_window(bool* p_open)
         int new_page_item_count = page_item_count;
         if(ImGui::InputInt("Page Item Count", &new_page_item_count))
         {
-            controller.ControllerChangePageItemsCount(new_page_item_count);
+            SystemControllerChangePageItemsCount(new_page_item_count);
         }
 
         ImGui::PopItemWidth();
@@ -85,45 +93,45 @@ View::show_user_input_window(bool* p_open)
         ImGui::InputText("Train ID", text, sizeof(text), ImGuiInputTextFlags_ReadOnly);
         ImGui::EndDisabled();
     }
-    else if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &processing_data.id))
+    else if(ImGui::InputScalar("Train ID", ImGuiDataType_U32, &system_processing_data.id))
     {
-        controller.is_fresh_processing_data = true;
+        system_is_fresh_processing_data = true;
     }
 
     ImGui::SameLine();
     ImGui::Checkbox("Inserting", &is_inserting);
 
     // 如果当前正在编辑的数据不在缓存中，禁用用户输入框
-    ImGui::BeginDisabled(!is_inserting && !controller.ControllerIsDataInBuffer());
+    ImGui::BeginDisabled(!is_inserting && !SystemControllerIsDataInBuffer());
     ImGui::Separator(); // 分割线 //=================================================================================
 
     { // 用户输入框
-        ImGui::InputText("Train Number", processing_data.number, MAX_SIZE);
+        ImGui::InputText("Train Number", system_processing_data.number, MAX_SIZE);
 
-        ImGui::InputText("Start Station", processing_data.start_station, MAX_SIZE);
-        ImGui::InputText("Arrive Station", processing_data.arrive_station, MAX_SIZE);
+        ImGui::InputText("Start Station", system_processing_data.start_station, MAX_SIZE);
+        ImGui::InputText("Arrive Station", system_processing_data.arrive_station, MAX_SIZE);
 
         // 出发时间
-        Date start_time = uint64_time_to_date(processing_data.start_time);
+        Date start_time = uint64_time_to_date(system_processing_data.start_time);
         InputTime("Start Time", &start_time);
-        processing_data.start_time = date_to_uint64_time(start_time);
+        system_processing_data.start_time = date_to_uint64_time(start_time);
         // 到达时间
-        Date arrive_time = uint64_time_to_date(processing_data.arrive_time);
+        Date arrive_time = uint64_time_to_date(system_processing_data.arrive_time);
         InputTime("Arrive Time", &arrive_time);
-        processing_data.arrive_time = date_to_uint64_time(arrive_time);
+        system_processing_data.arrive_time = date_to_uint64_time(arrive_time);
 
         // 票数
-        ImGui::InputScalar("Ticket Count", ImGuiDataType_U32, &processing_data.ticket_remain);
+        ImGui::InputScalar("Ticket Count", ImGuiDataType_U32, &system_processing_data.ticket_remain);
 
         // 票价
-        float ticket_price = uint32_price_to_float(processing_data.ticket_price);
+        float ticket_price = uint32_price_to_float(system_processing_data.ticket_price);
         ImGui::InputScalarN("Ticket Price", ImGuiDataType_Float, &ticket_price, 1, nullptr, nullptr, "%.2f");
-        processing_data.ticket_price = float_to_uint32_price(ticket_price);
+        system_processing_data.ticket_price = float_to_uint32_price(ticket_price);
 
         // 下拉框选择车次状态
         ImGui::Text("Train Status");
         const char* items[] = { "NORMAL", "DELAY", "STOP", "CANCEL", "UNKNOWN" };
-        ImGui::Combo("##Train Status", (int*)&processing_data.train_status, items, IM_ARRAYSIZE(items));
+        ImGui::Combo("##Train Status", (int*)&system_processing_data.train_status, items, IM_ARRAYSIZE(items));
     }
 
     ImGui::Separator(); // 分割线 //=================================================================================
@@ -141,13 +149,13 @@ View::show_user_input_window(bool* p_open)
         }
         else
         {
-            controller.is_insert = ImGui::Button("Insert", ImVec2(100, 0));
+            system_is_insert = ImGui::Button("Insert", ImVec2(100, 0));
         }
 
         // 删除按钮
         ImGui::SameLine();
         // if(controller.ControllerUnableDel())
-        if(is_inserting || !processing_data.id)
+        if(is_inserting || !system_processing_data.id)
         {
             ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);
@@ -157,13 +165,13 @@ View::show_user_input_window(bool* p_open)
         }
         else
         {
-            controller.is_del = ImGui::Button("Delete", ImVec2(100, 0));
+            system_is_del = ImGui::Button("Delete", ImVec2(100, 0));
         }
 
         // 更新按钮
         ImGui::SameLine();
         // if(controller.ControllerUnableUpdate())
-        if(is_inserting || !processing_data.id)
+        if(is_inserting || !system_processing_data.id)
         {
             ImGui::PushStyleColor(ImGuiCol_Button, disable_color);
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, disable_color);
@@ -173,12 +181,12 @@ View::show_user_input_window(bool* p_open)
         }
         else
         {
-            controller.is_update = ImGui::Button("Update", ImVec2(100, 0));
+            system_is_update = ImGui::Button("Update", ImVec2(100, 0));
         }
 
         // 清空按钮
-        ImGui::SameLine();
-        controller.is_clear_processing_data = ImGui::Button("Clear", ImVec2(100, 0));
+        // ImGui::SameLine();
+        // controller.is_clear_processing_data = ImGui::Button("Clear", ImVec2(100, 0));
     }
 
     ImGui::EndDisabled();
@@ -187,7 +195,7 @@ View::show_user_input_window(bool* p_open)
     ImGui::SameLine();
     // 调整元素外边距
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 20);
-    controller.is_cancel = ImGui::Button("Cancel", ImVec2(150, 0));
+    system_is_cancel = ImGui::Button("Cancel", ImVec2(150, 0));
 
     ImGui::End();
     ImGui::PopFont();
