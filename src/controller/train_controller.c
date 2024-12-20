@@ -9,14 +9,38 @@
 SearchResult
 RailwaySystemSearchTrainData(TrainData* train_data, uint32_t num, uint32_t page_idx, const TrainQuery* search_request)
 {
-    SearchResult searchResult;
-    getCount(search_request, &searchResult.data_total_count);
-    getTrainList(search_request, train_data, num, page_idx, &searchResult.data_return_count);
+    static SearchResult searchResult;
+
+    const static TrainQuery search_all_result = { 0, GREATER };
+
+    if(search_request->query_id == IGNORE_THIS &&
+        search_request->query_number == IGNORE_THIS &&
+        search_request->query_start_station == IGNORE_THIS &&
+        search_request->query_arrive_station == IGNORE_THIS &&
+        search_request->query_start_time == IGNORE_THIS &&
+        search_request->query_arrive_time == IGNORE_THIS &&
+        search_request->query_ticket_remain == IGNORE_THIS &&
+        search_request->query_ticket_price == IGNORE_THIS &&
+        ((search_request->query_train_status == IGNORE_THIS) ||
+            search_request->train_status == 0)
+
+    )
+    {
+        getCount(&search_all_result, &searchResult.data_total_count);
+        getTrainList(&search_all_result, train_data, num, page_idx, &searchResult.data_return_count);
+    }
+    else
+    {
+        getCount(search_request, &searchResult.data_total_count);
+        getTrainList(search_request, train_data, num, page_idx, &searchResult.data_return_count);
+    }
+
     searchResult.page_count = searchResult.data_total_count / num;
     if(searchResult.data_total_count % num != 0)
     {
         searchResult.page_count += 1;
     }
+
     return searchResult;
 }
 

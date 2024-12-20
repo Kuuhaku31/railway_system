@@ -133,28 +133,9 @@ delete_data()
 void
 request_data()
 {
-    if(system_search_request.query_id == IGNORE_THIS &&
-        system_search_request.query_number == IGNORE_THIS &&
-        system_search_request.query_start_station == IGNORE_THIS &&
-        system_search_request.query_arrive_station == IGNORE_THIS &&
-        system_search_request.query_start_time == IGNORE_THIS &&
-        system_search_request.query_arrive_time == IGNORE_THIS &&
-        system_search_request.query_ticket_remain == IGNORE_THIS &&
-        system_search_request.query_ticket_price == IGNORE_THIS &&
-        ((system_search_request.query_train_status == IGNORE_THIS) ||
-            system_search_request.train_status == 0)
-
-    )
-    {
-        // 如果没有查询条件，查询所有数据
-        system_search_request.id       = 0;
-        system_search_request.query_id = GREATER;
-    }
-
     SearchResult res = RailwaySystemSearchTrainData(train_data_buffer, page_item_count, page_idx, &system_search_request);
 
-    page_count = res.page_count;
-    if(page_count == 0) page_count = 1;
+    page_count              = res.page_count;
     page_item_count_current = res.data_return_count;
 }
 
