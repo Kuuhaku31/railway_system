@@ -1,6 +1,7 @@
 
 // view.cpp
 
+#include "system_view.h"
 #include "view.h"
 
 // #include "controller.h"
@@ -9,12 +10,61 @@ extern "C" {
 #include "system_controller.h"
 }
 
-static ImGui_setup& imgui_setup = ImGui_setup::Instance();
+extern bool system_is_running;
 
 extern bool view_is_show_train_datas;
 extern bool view_is_show_user_input;
 extern bool view_is_show_console;
 extern bool view_is_show_search_window;
+
+extern uint8_t view_clear_color[4];
+
+static ImGui_setup& imgui_setup = ImGui_setup::Instance();
+
+void
+SystemViewInit()
+{
+    View::Instance().ViewInit();
+}
+
+void
+SystemQuitView()
+{
+    View::Instance().ViewQuit();
+}
+
+void
+SystemViewOnFrameBegin()
+{
+    imgui_setup.On_frame_begin();
+}
+
+void
+SystemViewOnFrameEnd()
+{
+    static Color clear_color = { VIEW_DEFAULT_CLEAR_COLOR };
+    imgui_setup.On_frame_end(&clear_color);
+}
+
+void
+SystemProcessEvent()
+{
+    static Event e;
+    while(SDL_PollEvent(&e))
+    {
+        ImGui_ImplSDL2_ProcessEvent(&e);
+        if(e.type == SDL_QUIT)
+        {
+            system_is_running = false;
+        }
+    }
+}
+
+void
+SystemViewShowWindows()
+{
+    View::Instance().ViewShowWindows();
+}
 
 View* View::instance = nullptr;
 View&
@@ -46,8 +96,6 @@ View::ViewQuit()
 void
 View::ViewShowWindows()
 {
-    SystemUpdateController();
-
     update_view_layout();
 
     show_train_datas_window(&view_is_show_train_datas);

@@ -8,10 +8,10 @@
 #include <stdint.h>
 
 void
-SystemInitControler();
+SystemControlerInit();
 
 void
-SystemUpdateController();
+SystemControllerUpdate();
 
 void
 SystemControllerChangePageIdx(uint32_t new_idx);

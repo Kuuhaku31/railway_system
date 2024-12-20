@@ -4,6 +4,7 @@
 #include "system_controller.h"
 
 #include "date.h"
+#include "text.h"
 #include "train_controller.h"
 
 #include <string.h>
@@ -13,6 +14,7 @@
 
 #define DATA_BUFFER_SIZE 1000
 
+bool system_is_running = true; // 系统是否运行
 
 // 用户操作
 bool system_is_insert                = false; // 插入当前编辑的数据
@@ -44,7 +46,7 @@ bool view_is_show_console       = true;  // 显示控制台
 bool view_is_show_search_window = false; // 显示过滤器
 
 // 背景颜色
-uint8_t view_clear_color[4] = { 0x33, 0x33, 0x33, 0xff };
+uint8_t view_clear_color[4] = { VIEW_DEFAULT_CLEAR_COLOR };
 
 bool is_use_filter                       = false; // 是否使用过滤器
 bool is_search_by_id                     = false; // 是否通过id过滤
@@ -137,7 +139,7 @@ clear_processing_data()
 }
 
 void
-SystemInitControler()
+SystemControlerInit()
 {
     const char unkonw[] = "Unkonw";
 
@@ -169,7 +171,7 @@ SystemInitControler()
 }
 
 void
-SystemUpdateController()
+SystemControllerUpdate()
 {
     // 插入操作
     if(system_is_insert)
