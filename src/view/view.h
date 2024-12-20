@@ -76,6 +76,9 @@ private:
 public:
     bool console_scroll_to_bottom = false;
 
+    bool is_use_filter = false; // 是否使用过滤器
+
+
 public:
     ImFont* font_default = nullptr;
     ImFont* font_chinese = nullptr;

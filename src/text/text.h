@@ -27,3 +27,32 @@
 #define BUTTON_COLOR_ACTIVE_NORMAL BUTTON_COLOR_DEFAULT_HOVERED
 #define BUTTON_COLOR_ACTIVE_HOVERED BUTTON_COLOR_DEFAULT_ACTIVE
 #define BUTTON_COLOR_ACTIVE_ACTIVE BUTTON_COLOR_DEFAULT_ACTIVE
+
+#define TEXT_SEARCH_WINDOW_FILTERS "Filters" // 过滤器
+
+#define FILTER_ID_TITLE "Filter By ID"
+#define FILTER_ID_ITEM "ID"
+
+#define FILTER_NUMBER_TITLE "Filter By Number"
+#define FILTER_NUMBER_ITEM "Number"
+
+#define FILTER_START_STATION_TITLE "Filter By Start Station"
+#define FILTER_START_STATION_ITEM "Start Station"
+
+#define FILTER_ARRIVE_STATION_TITLE "Filter By Arrive Station"
+#define FILTER_ARRIVE_STATION_ITEM "Arrive Station"
+
+#define FILTER_START_TIME_TITLE "Filter By Start Time"
+#define FILTER_START_TIME_ITEM "Start Time"
+
+#define FILTER_ARRIVE_TIME_TITLE "Filter By Arrive Time"
+#define FILTER_ARRIVE_TIME_ITEM "Arrive Time"
+
+#define FILTER_TICKET_REMAIN_TITLE "Filter By Ticket Remain"
+#define FILTER_TICKET_REMAIN_ITEM "Ticket Remain"
+
+#define FILTER_TICKET_PRICE_TITLE "Filter By Ticket Price"
+#define FILTER_TICKET_PRICE_ITEM "Ticket Price"
+
+#define FILTER_TRAIN_STATUS_TITLE "Filter By Train Status"
+#define FILTER_TRAIN_STATUS_ITEM "Train Status"

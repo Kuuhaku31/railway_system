@@ -7,7 +7,9 @@
 #include "text.h"
 #include "train_controller.h"
 
+#include <stdio.h>
 #include <string.h>
+
 
 #define true 1
 #define false 0
@@ -37,7 +39,6 @@ uint32_t page_item_count         = 100; // 每一页期望显示的数据数量
 uint32_t page_item_count_current = 0;   // buffer 中实际的数据数量
 
 TrainData train_data_buffer[DATA_BUFFER_SIZE]; // 从数据库中查询到的数据
-TrainData empty_data;                          // 空数据
 
 // 窗口参数
 bool view_is_show_train_datas   = true;  // 显示车次信息
@@ -48,28 +49,53 @@ bool view_is_show_search_window = false; // 显示过滤器
 // 背景颜色
 uint8_t view_clear_color[4] = { VIEW_DEFAULT_CLEAR_COLOR };
 
-bool is_use_filter                       = false; // 是否使用过滤器
-bool is_search_by_id                     = false; // 是否通过id过滤
-bool is_search_by_number_keyword         = false; // 是否通过车次关键字过滤
-bool is_search_by_start_station_keyword  = false; // 是否通过始发站关键字过滤
-bool is_search_by_arrive_station_keyword = false; // 是否通过到达站关键字过滤
-bool is_search_by_start_time             = false; // 是否通过出发时间过滤
-bool is_search_by_arrive_time            = false; // 是否通过到达时间过滤
-bool is_search_by_ticket_remain          = false; // 是否通过票数过滤
-bool is_search_by_ticket_price           = false; // 是否通过票价过滤
-bool is_search_by_train_status           = false; // 是否通过列车状态过滤
-
-uint32_t         search_id            = 0;
-char             search_number[16]    = { 0 };
-char             search_start[64]     = { 0 };
-char             search_arrive[64]    = { 0 };
-Date             search_start_time    = { 0 };
-Date             search_arrive_time   = { 0 };
-uint32_t         search_ticket_remain = 0;
-uint32_t         search_ticket_price  = 0;
-enum TrainStatus search_train_status  = TRAIN_STATUS_NORMAL;
 
 bool view_table_to_selected = false;
+
+void
+clear_train_data(TrainData* data)
+{
+    data->id = 0;
+    strcpy(data->number, "");
+    strcpy(data->start_station, "");
+    strcpy(data->arrive_station, "");
+    data->start_time    = 0;
+    data->arrive_time   = 0;
+    data->ticket_remain = 0;
+    data->ticket_price  = 0;
+    data->train_status  = TRAIN_STATUS_UNKNOWN;
+}
+
+void
+clear_search_request(TrainQuery* request)
+{
+    request->id       = 0;
+    request->query_id = GREATER;
+
+    request->ticket_remain       = 0;
+    request->query_ticket_remain = IGNORE_THIS;
+
+    request->ticket_price       = 0;
+    request->query_ticket_price = IGNORE_THIS;
+
+    request->start_time       = 0;
+    request->query_start_time = IGNORE_THIS;
+
+    request->arrive_time       = 0;
+    request->query_arrive_time = IGNORE_THIS;
+
+    strcpy(request->number, "");
+    request->query_number = IGNORE_THIS;
+
+    strcpy(request->start_station, "");
+    request->query_start_station = IGNORE_THIS;
+
+    strcpy(request->arrive_station, "");
+    request->query_arrive_station = IGNORE_THIS;
+
+    request->train_status     = TRAIN_STATUS_UNKNOWN;
+    request->query_is_running = IGNORE_THIS;
+}
 
 void
 insert_data()
@@ -105,7 +131,16 @@ delete_data()
 void
 request_data()
 {
-    // printf("Controller Get datas...\n");
+    printf("\nController Get datas...\n");
+    printf("id: %d, query_id: %d\n", system_search_request.id, system_search_request.query_id);
+    printf("number: %s, query_number: %d\n", system_search_request.number, system_search_request.query_number);
+    printf("start_station: %s, query_start_station: %d\n", system_search_request.start_station, system_search_request.query_start_station);
+    printf("arrive_station: %s, query_arrive_station: %d\n", system_search_request.arrive_station, system_search_request.query_arrive_station);
+    printf("start_time: %ld, query_start_time: %d\n", system_search_request.start_time, system_search_request.query_start_time);
+    printf("arrive_time: %ld, query_arrive_time: %d\n", system_search_request.arrive_time, system_search_request.query_arrive_time);
+    printf("ticket_remain: %d, query_ticket_remain: %d\n", system_search_request.ticket_remain, system_search_request.query_ticket_remain);
+    printf("ticket_price: %d, query_ticket_price: %d\n", system_search_request.ticket_price, system_search_request.query_ticket_price);
+    printf("train_status: %d, query_is_running: %d\n", system_search_request.train_status, system_search_request.query_is_running);
 
     SearchResult res = RailwaySystemSearchTrainData(train_data_buffer, page_item_count, page_idx, &system_search_request);
 
@@ -135,33 +170,18 @@ fresh_processing_data_from_buffer()
 void
 clear_processing_data()
 {
-    system_processing_data = empty_data;
+    clear_train_data(&system_processing_data);
 }
 
 void
 SystemControlerInit()
 {
-    const char unkonw[] = "Unkonw";
-
-    // 初始化空数据结构
-    empty_data.id = 0;
-    strcpy(empty_data.number, unkonw);
-    strcpy(empty_data.start_station, unkonw);
-    strcpy(empty_data.arrive_station, unkonw);
-    empty_data.start_time    = 0;
-    empty_data.arrive_time   = 0;
-    empty_data.ticket_remain = 0;
-    empty_data.ticket_price  = 0;
-    empty_data.train_status  = TRAIN_STATUS_UNKNOWN;
-
     for(int i = 0; i < DATA_BUFFER_SIZE; i++)
     {
-        train_data_buffer[i] = empty_data;
+        clear_train_data(&train_data_buffer[i]);
     }
 
-    system_search_request.id       = 0;
-    system_search_request.query_id = GREATER;
-    system_processing_data         = empty_data;
+    clear_search_request(&system_search_request);
 
     request_data();
 
@@ -173,6 +193,12 @@ SystemControlerInit()
 void
 SystemControllerUpdate()
 {
+    // 合法化页数
+    if(page_idx > page_count)
+    {
+        page_idx = page_count;
+    }
+
     // 插入操作
     if(system_is_insert)
     {

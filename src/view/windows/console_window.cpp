@@ -11,7 +11,6 @@ extern "C" {
 extern bool system_is_fresh_data;
 
 extern bool view_is_show_user_input;
-extern bool is_use_filter;
 extern bool view_is_show_search_window;
 
 void
