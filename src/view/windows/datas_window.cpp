@@ -6,7 +6,10 @@
 extern "C" {
 #include "system_controller.h"
 }
+
 #include "view.h"
+
+#include "util_funcs.h"
 
 extern bool system_is_fresh_processing_data;
 

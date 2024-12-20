@@ -12,27 +12,6 @@
 #include <string>
 #include <vector>
 
-std::string
-date_to_string(const Date& date);
-
-std::string
-parse_train_status(int status);
-
-ImVec4
-parse_train_status_color(int status);
-
-bool
-InputTime(const char* label, Date* time);
-
-uint32_t
-float_to_uint32_price(float price);
-
-float
-uint32_price_to_float(uint32_t price);
-
-std::string
-uint32_price_to_string(uint32_t price);
-
 // 单例模式
 class View
 {

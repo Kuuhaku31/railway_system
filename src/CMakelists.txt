@@ -14,11 +14,12 @@ set(CONTROLLER_SRC
 
     controller/system_controller.h
     controller/system_controller.c
+
+    controller/console.cpp
 )
 
 set(ENTITY_SRC
     entity/train.h
-    entity/date.cpp
     entity/date.h
 )
 
@@ -26,7 +27,11 @@ set(UTILS_SRC
     utils/error.h
     utils/utils.h
     utils/utils.c
-    entity/order.h)
+    entity/order.h
+
+    utils/util_funcs.h
+    utils/util_funcs.cpp
+)
 
 set(HEADER_DIR . view model entity controller utils text)
 

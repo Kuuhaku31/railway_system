@@ -13,6 +13,15 @@ SystemControlerInit();
 void
 SystemControllerUpdate();
 
+void // 添加日志
+SystemControllerAddLog(bool is_add_time, const char* fmt, ...);
+
+void // 添加车次日志
+SystemControllerAddLogForTrain(bool is_add_time, const char* label, const TrainData* data);
+
+void // 导出日志
+SystemControllerExportLogs();
+
 void
 SystemControllerChangePageIdx(uint32_t new_idx);
 

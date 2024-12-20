@@ -6,6 +6,7 @@
 #include "system_controller.h"
 
 #include "text.h"
+#include "util_funcs.h"
 
 extern bool       system_is_fresh_data;
 extern TrainQuery system_search_request;

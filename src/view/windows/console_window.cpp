@@ -8,6 +8,8 @@ extern "C" {
 #include "system_controller.h"
 }
 
+extern std::vector<std::string> system_logs;
+
 extern bool system_is_fresh_data;
 
 extern bool view_is_show_user_input;
@@ -38,7 +40,8 @@ View::show_console_window(bool* p_open)
     ImGui::SameLine();
     if(ImGui::Button("Export Logs", button_size_02))
     {
-    } // controller.ControllerExportLogs();
+        SystemControllerExportLogs();
+    }
 
     ImGui::SameLine();
     if(ImGui::Button("Config Data", button_size_02)) view_is_show_user_input = !view_is_show_user_input;
@@ -63,10 +66,10 @@ View::show_console_window(bool* p_open)
 
     ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
 
-    // for(const auto& log : controller.ControllerGetLogs())
-    // {
-    //     ImGui::TextUnformatted(log.c_str());
-    // }
+    for(const auto& log : system_logs)
+    {
+        ImGui::TextUnformatted(log.c_str());
+    }
 
     if(console_scroll_to_bottom) ImGui::SetScrollHereY(1.0f);
     console_scroll_to_bottom = false;

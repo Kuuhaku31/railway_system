@@ -3,11 +3,12 @@
 
 #include "view.h"
 
-// #include "controller.h"
-#include "date.h"
 extern "C" {
 #include "system_controller.h"
 }
+
+#include "date.h"
+#include "util_funcs.h"
 
 #define MAX_SIZE 128
 

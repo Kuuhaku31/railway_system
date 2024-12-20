@@ -100,32 +100,32 @@ clear_search_request(TrainQuery* request)
 void
 insert_data()
 {
-    // printf("Controller Insert data...\n");
-    // printf("ticket price: %d\n", system_processing_data.ticket_price);
-    int res = RailwaySystemInsertTrainData(system_processing_data);
-    // printf("%d\n", res);
+    RailwaySystemInsertTrainData(system_processing_data);
 
-    system_is_fresh_processing_data = true;
-    system_is_fresh_data            = true;
+    system_is_fresh_data = true;
+
+    // SystemControllerAddLogForTrain(true, "Insert: ", &system_processing_data);
+    SystemControllerAddLog(true, "Insert Success");
 }
 
 void
 update_data()
 {
-    // printf("Controller Update data...\n");
-    // printf("ticket price: %d\n", system_processing_data.ticket_price);
     RailwaySystemUpdateTrainData(system_processing_data);
 
     system_is_fresh_data = true;
+
+    SystemControllerAddLogForTrain(true, "Update: ", &system_processing_data);
 }
 
 void
 delete_data()
 {
-    // printf("Controller Delete data...\n");
     RailwaySystemDelTrainData(system_processing_data.id);
 
     system_is_fresh_data = true;
+
+    SystemControllerAddLogForTrain(true, "Delete: ", &system_processing_data);
 }
 
 void
@@ -189,9 +189,9 @@ SystemControlerInit()
 
     request_data();
 
-    // logs.push_back(WELOME_TEXT_0);
-    // logs.push_back(WELOME_TEXT_1);
-    // ControllerAddLog("System Init Success");
+    SystemControllerAddLog(false, WELOME_TEXT_0);
+    SystemControllerAddLog(false, WELOME_TEXT_1);
+    SystemControllerAddLog(true, "System Init Success");
 }
 
 void
