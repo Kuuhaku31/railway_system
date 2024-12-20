@@ -34,7 +34,7 @@ add_executable(test_controller ${MODEL_SRC} ${SRC} ${ENTITY_SRC} ${UTILS_SRC}
 set(HEADER_DIR ../src ../src/imgui_setup ../src/view ../src/model ../src/entity ../src/controller ../src/utils)
 target_link_directories(test_controller PUBLIC ../lib/sqlite3)
 target_include_directories(test_controller PUBLIC
-        ../lib/sqlite3 ../lib/imgui
+        ../lib/sqlite3 ../lib/imgui ../lib/imgui
         ${HEADER_DIR}
 )
 target_link_libraries(test_controller PUBLIC sqlite3 "-lstdc++exp")
