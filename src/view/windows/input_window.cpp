@@ -131,8 +131,18 @@ View::show_user_input_window(bool* p_open)
 
         // 下拉框选择车次状态
         ImGui::Text("Train Status");
-        const char* items[] = { "NORMAL", "DELAY", "STOP", "CANCEL", "UNKNOWN" };
-        ImGui::Combo("##Train Status", (int*)&system_processing_data.train_status, items, IM_ARRAYSIZE(items));
+        static const char* items[]      = { "NORMAL", "DELAY", "STOP", "CANCEL", "UNKNOWN" };
+        static int         item_current = 0;
+        ImGui::Combo("##Train Status", (int*)&item_current, items, IM_ARRAYSIZE(items));
+        switch(item_current)
+        {
+        case 0: system_processing_data.train_status = TRAIN_STATUS_NORMAL; break;
+        case 1: system_processing_data.train_status = TRAIN_STATUS_DELAYED; break;
+        case 2: system_processing_data.train_status = TRAIN_STATUS_STOPPED; break;
+        case 3: system_processing_data.train_status = TRAIN_STATUS_CANCELLED; break;
+        default:
+        case 4: system_processing_data.train_status = TRAIN_STATUS_UNKNOWN; break;
+        }
     }
 
     ImGui::Separator(); // 分割线 //=================================================================================

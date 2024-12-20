@@ -4,6 +4,7 @@
 #pragma once
 
 #include "date.h"
+#include "train.h"
 
 #include <imgui.h>
 #include <string>
@@ -21,10 +22,10 @@ std::string
 date_to_string(const Date& date);
 
 std::string
-parse_train_status(int status);
+parse_train_status(TrainStatus status);
 
 ImVec4
-parse_train_status_color(int status);
+parse_train_status_color(TrainStatus status);
 
 bool
 InputTime(const char* label, Date* time);

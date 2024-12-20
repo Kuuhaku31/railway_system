@@ -81,8 +81,40 @@ void analyzeCondition(const TrainQuery* condition, char* buffer, int bufferSize)
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
     }
-    if(condition->query_is_running!=IGNORE_THIS){
-        sprintf_s(temp, 128, "%s is_running%s%d", first?" ":" and ", operator[condition->query_is_running-1], condition->train_status);
+    if(condition->query_train_status!=IGNORE_THIS){
+        if(condition->train_status)
+        {
+            char status_sql[256]={0};
+            char one[16]={0};
+
+            bool is_unknown=(condition->train_status&TRAIN_STATUS_UNKNOWN) == TRAIN_STATUS_UNKNOWN ? true : false;
+            bool is_normal=(condition->train_status&TRAIN_STATUS_NORMAL) == TRAIN_STATUS_NORMAL ? true : false;
+            bool is_delay=(condition->train_status&TRAIN_STATUS_DELAYED) == TRAIN_STATUS_DELAYED ? true : false;
+            bool is_stopped=(condition->train_status&TRAIN_STATUS_STOPPED) == TRAIN_STATUS_STOPPED ? true : false;
+            bool is_canceled=(condition->train_status&TRAIN_STATUS_CANCELLED) == TRAIN_STATUS_CANCELLED ? true : false;
+
+            bool conditions[5]={is_unknown,is_normal,is_delay,is_stopped,is_canceled};
+            int32_t status[5]={TRAIN_STATUS_UNKNOWN,TRAIN_STATUS_NORMAL,TRAIN_STATUS_DELAYED,TRAIN_STATUS_STOPPED,TRAIN_STATUS_CANCELLED};
+            bool first2=true;
+            for(int i=0;i<5;i++)
+            {
+                if(conditions[i])
+                {
+                    if(first2)
+                    {
+                        sprintf_s(one, 256, "is_running=%d", status[i]);
+                        first2=false;
+                    }
+                    else
+                    {
+                        sprintf_s(one, 256, " or is_running=%d", status[i]);
+                    }
+                    strcat_s(status_sql, 256, one);
+                    memset(one, 0, 16*sizeof(char));
+                }
+            }
+            sprintf_s(temp, 128, "%s (%s)", first?" ":" and ", status_sql);
+        }
         strcat_s(buffer, bufferSize, temp);
     }
     free(temp);

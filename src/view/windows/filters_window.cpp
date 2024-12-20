@@ -319,15 +319,38 @@ View::show_search_window(bool* p_open)
         }
         if(is_search_by_train_status)
         {
-            static const char* items[]   = { "NORMAL", "DELAY", "STOP", "CANCEL", "UNKNOWN" };
-            static bool        is_update = false;
+            // static const char* items[]   = { "NORMAL", "DELAY", "STOP", "CANCEL", "UNKNOWN" };
+            // static bool        is_update = false;
 
             ImGui::Indent(10);
 
-            // 下拉框选择车次状态
-            is_update |= ImGui::Combo(FILTER_TRAIN_STATUS_ITEM, (int*)&system_search_request.train_status, items, IM_ARRAYSIZE(items));
 
-            system_search_request.query_is_running = EQUAL;
+            static bool is_update = false;
+
+            uint32_t status = system_search_request.train_status;
+
+            bool is_query_unknown = status & TRAIN_STATUS_UNKNOWN;
+            bool is_query_normal  = status & TRAIN_STATUS_NORMAL;
+            bool is_query_delayed = status & TRAIN_STATUS_DELAYED;
+            bool is_query_stopped = status & TRAIN_STATUS_STOPPED;
+            bool is_query_cancel  = status & TRAIN_STATUS_CANCELLED;
+
+            is_update |= ImGui::Checkbox("UNKNOWN", &is_query_unknown);
+            is_update |= ImGui::Checkbox("NORMAL", &is_query_normal);
+            is_update |= ImGui::Checkbox("DELAYED", &is_query_delayed);
+            is_update |= ImGui::Checkbox("STOPPED", &is_query_stopped);
+            is_update |= ImGui::Checkbox("CANCEL", &is_query_cancel);
+
+            status = 0;
+
+            status |= is_query_unknown ? TRAIN_STATUS_UNKNOWN : 0;
+            status |= is_query_normal ? TRAIN_STATUS_NORMAL : 0;
+            status |= is_query_delayed ? TRAIN_STATUS_DELAYED : 0;
+            status |= is_query_stopped ? TRAIN_STATUS_STOPPED : 0;
+            status |= is_query_cancel ? TRAIN_STATUS_CANCELLED : 0;
+
+            system_search_request.train_status       = status;
+            system_search_request.query_train_status = EQUAL;
 
             // 如果更新了查询条件，调整请求
             if(is_update)
@@ -341,7 +364,7 @@ View::show_search_window(bool* p_open)
         else
         {
             // 忽略车次状态搜索
-            system_search_request.query_is_running = IGNORE_THIS;
+            system_search_request.query_train_status = IGNORE_THIS;
         }
     }
     else

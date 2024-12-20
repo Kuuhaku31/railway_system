@@ -11,11 +11,11 @@ extern "C"{
 #include <stdint.h>
 
 enum TrainStatus {
-    TRAIN_STATUS_NORMAL = 0,//正常
-    TRAIN_STATUS_DELAYED = 1,//停运
-    TRAIN_STATUS_STOPPED = 2,//延误
-    TRAIN_STATUS_CANCELLED = 3,//取消
-    TRAIN_STATUS_UNKNOWN = 4//未知
+    TRAIN_STATUS_NORMAL = 0x2,//正常
+    TRAIN_STATUS_DELAYED = 0x4,//停运
+    TRAIN_STATUS_STOPPED = 0x8,//延误
+    TRAIN_STATUS_CANCELLED = 0x10,//取消
+    TRAIN_STATUS_UNKNOWN = 0x1//未知
 };
 
 typedef struct {
@@ -69,8 +69,10 @@ typedef struct {
     char arrive_station[64]; // 到达站
     int query_arrive_station;
 
-    int32_t train_status; // 是否运行
-    int query_is_running;
+    int32_t train_status;
+    int32_t query_train_status;
+
+
 } TrainQuery;
 
 typedef struct {

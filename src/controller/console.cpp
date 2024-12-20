@@ -57,7 +57,7 @@ SystemControllerAddLogForTrain(bool is_add_time, const char* label, const TrainD
             date_to_string(uint64_time_to_date(data->arrive_time)) + " " +
             std::to_string(data->ticket_remain) + " " +
             std::to_string(data->ticket_price) + "（分） " +
-            parse_train_status(data->train_status))
+            parse_train_status((TrainStatus)data->train_status))
             .c_str());
     // 添加日志
 }

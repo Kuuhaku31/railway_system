@@ -123,7 +123,7 @@ View::show_train_datas_window(bool* p_open)
             ImGui::Text("%s", uint32_price_to_string(train_data.ticket_price).c_str());
             // 是否有效
             ImGui::TableNextColumn();
-            ImGui::TextColored(parse_train_status_color(train_data.train_status), "%s", parse_train_status(train_data.train_status).c_str());
+            ImGui::TextColored(parse_train_status_color((TrainStatus)train_data.train_status), "%s", parse_train_status((TrainStatus)train_data.train_status).c_str());
         }
 
         ImGui::EndTable();

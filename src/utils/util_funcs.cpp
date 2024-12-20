@@ -4,7 +4,6 @@
 #include "util_funcs.h"
 
 #include "text.h"
-#include "train.h"
 
 // 每月天数（非闰年）
 static const uint8_t days_in_month[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
@@ -103,7 +102,7 @@ date_to_string(const Date& date)
 }
 
 std::string
-parse_train_status(int status)
+parse_train_status(TrainStatus status)
 {
     switch(status)
     {
@@ -117,7 +116,7 @@ parse_train_status(int status)
 }
 
 ImVec4
-parse_train_status_color(int status)
+parse_train_status_color(TrainStatus status)
 {
     switch(status)
     {

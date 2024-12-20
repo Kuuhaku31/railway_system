@@ -93,14 +93,16 @@ clear_search_request(TrainQuery* request)
     strcpy(request->arrive_station, "");
     request->query_arrive_station = IGNORE_THIS;
 
-    request->train_status     = TRAIN_STATUS_UNKNOWN;
-    request->query_is_running = IGNORE_THIS;
+    request->train_status       = 0;
+    request->query_train_status = IGNORE_THIS;
 }
 
 void
 insert_data()
 {
-    RailwaySystemInsertTrainData(system_processing_data);
+    printf("Insert data id: %d\n", system_processing_data.id);
+    uint32_t res = RailwaySystemInsertTrainData(system_processing_data);
+    printf("Insert data res: %d\n", res);
 
     system_is_fresh_data = true;
 
@@ -139,7 +141,10 @@ request_data()
         system_search_request.query_arrive_time == IGNORE_THIS &&
         system_search_request.query_ticket_remain == IGNORE_THIS &&
         system_search_request.query_ticket_price == IGNORE_THIS &&
-        system_search_request.query_is_running == IGNORE_THIS)
+        ((system_search_request.query_train_status == IGNORE_THIS) ||
+            system_search_request.train_status == 0)
+
+    )
     {
         // 如果没有查询条件，查询所有数据
         system_search_request.id       = 0;

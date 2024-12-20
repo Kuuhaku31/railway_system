@@ -4,7 +4,6 @@
 #include <format>
 #include <iostream>
 #include "train_model.h"
-#include <print>
 #include "train.h"
 #include <utils.h>
 #include <cstring>
@@ -74,18 +73,17 @@ void test_analyse(){
     memset(&query,0,sizeof(TrainChange));
     query.ticket_remain=5;
     query.query_ticket_remain=IGNORE_THIS;
-    query.query_is_running=EQUAL;
-    query.train_status= TRAIN_STATUS_NORMAL;
+    query.query_train_status=EQUAL;
+    query.train_status= TRAIN_STATUS_NORMAL | TRAIN_STATUS_CANCELLED;
     query.query_ticket_remain=GREATER;
     query.ticket_remain=500;
     analyzeCondition(&query, buffer, 1024);
     time_t time2;
     time2=std::time(NULL);
-    std::println("{}",buffer);
-    std::println("Spent {} seconds.", time2-time1);
+    std::printf("%s",buffer);
 }
 
-void test_db(){
+/*void test_db(){
 
     //添加
     TrainData *data=(TrainData*) calloc(10,sizeof(TrainData));
@@ -171,31 +169,12 @@ void test_db(){
         std::println("\033[31mDelete Successfully.\033[0m");
     }
     free(deleted);
-}
+}*/
 int main(){
     setlocale(LC_CTYPE, "");
     initConfig();
     initDb();
-    char *sql=(char *) calloc(1024, sizeof(char));
-    char *buffer=(char *) calloc(1024, sizeof(char));
-    sprintf_s(sql,1024, "select count(*) from trains;");
-    char** resultp=NULL;
-    int row=0;
-    int col=0;
-    char *errMsg=NULL;
-    int ret=sqlite3_get_table(db,sql,&resultp,&row, &col, &errMsg);
-    free(sql);
-    sql=NULL;
-    free(buffer);
-    buffer=NULL;
-    if(ret!=SQLITE_OK){
-        printf("\033[31m%s",errMsg);
-        sqlite3_free(errMsg);
-        errMsg=NULL;
-        return ret;
-    }
-    printf("row=%d, col=%d, result=%s", row, col, resultp[1*1]);
-    sqlite3_free(errMsg);
+    test_analyse();
     finalizeDb();
     return 0;
 }
