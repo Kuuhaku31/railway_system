@@ -38,7 +38,7 @@ int initDb() {
                                "ticket_price integer,"
                                "start_time integer,"
                                "arrive_time integer,"
-                               "number text,"
+                               "number text unique,"
                                "start_station text,"
                                "arrive_station text,"
                                "is_running integer);",
