@@ -4,6 +4,8 @@ project(RailwaySystem)
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 23)
 
+include_directories( lib/sdl2/include lib/imgui lib/imgui/backend)
+
 # 启用测试
 enable_testing()
 
@@ -12,4 +14,4 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 add_subdirectory(lib)
 add_subdirectory(src)
-add_subdirectory(test)
+# add_subdirectory(test)

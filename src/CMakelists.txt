@@ -7,10 +7,6 @@ set(IMGUI_SETUP_SRC
 set(MODEL_SRC
     model/train_model.c
     model/train_model.h
-    model/train_model.c
-    model/train_model.h
-    model/order_model.c
-    model/order_model.h
 )
 
 set(VIEW_SRC
@@ -57,7 +53,12 @@ message(STATUS "Entity Source files: ${ENTITY_SRC}")
 add_executable(${PROJECT_NAME} ${CONTROLLER_SRC} ${MODEL_SRC} ${VIEW_SRC} ${ENTITY_SRC} ${IMGUI_SETUP_SRC} ${UTILS_SRC} main.cpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
-    ../lib/sqlite3 ../lib/imgui ../lib/imgui/backends
+    ../lib/sqlite3 ../lib/imgui ../lib/imgui/backends ../lib/sdl2/include
     ${HEADER_DIR}
 )
+
+file(COPY ../lib/sdl2/bin/SDL2.dll ../lib/sqlite3/sqlite3.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+target_link_directories(${PROJECT_NAME} PUBLIC
+../lib/sqlite3)
 target_link_libraries(${PROJECT_NAME} PUBLIC imgui sqlite3)
