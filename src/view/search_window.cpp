@@ -10,6 +10,27 @@ extern "C" {
 
 #define TEXT_SEARCH_WINDOW_FILTERS "Filters" // 过滤器
 
+extern bool is_use_filter;
+extern bool is_search_by_id;
+extern bool is_search_by_number_keyword;
+extern bool is_search_by_start_station_keyword;
+extern bool is_search_by_arrive_station_keyword;
+extern bool is_search_by_start_time;
+extern bool is_search_by_arrive_time;
+extern bool is_search_by_ticket_remain;
+extern bool is_search_by_ticket_price;
+extern bool is_search_by_train_status;
+
+extern uint32_t    search_id;
+extern char        search_number[16];
+extern char        search_start[64];
+extern char        search_arrive[64];
+extern Date        search_start_time;
+extern Date        search_arrive_time;
+extern uint32_t    search_ticket_remain;
+extern uint32_t    search_ticket_price;
+extern TrainStatus search_train_status;
+
 bool
 select_comparison_operators(const char* label, int* current_item)
 {

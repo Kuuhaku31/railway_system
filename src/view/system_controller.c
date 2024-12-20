@@ -44,7 +44,7 @@ bool view_is_show_console       = true;  // 显示控制台
 bool view_is_show_search_window = false; // 显示过滤器
 
 // 背景颜色
-float view_clear_color[4] = { 0x33, 0x33, 0x33, 0xff };
+uint8_t view_clear_color[4] = { 0x33, 0x33, 0x33, 0xff };
 
 bool is_use_filter                       = false; // 是否使用过滤器
 bool is_search_by_id                     = false; // 是否通过id过滤
@@ -64,7 +64,7 @@ char             search_arrive[64]    = { 0 };
 Date             search_start_time    = { 0 };
 Date             search_arrive_time   = { 0 };
 uint32_t         search_ticket_remain = 0;
-float            search_ticket_price  = 0;
+uint32_t         search_ticket_price  = 0;
 enum TrainStatus search_train_status  = TRAIN_STATUS_NORMAL;
 
 void

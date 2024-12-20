@@ -14,7 +14,8 @@ extern "C" {
 
 static ImGui_setup& imgui_setup = ImGui_setup::Instance();
 static View&        view        = View::Instance();
-// static Controller&  controller  = Controller::Instance();
+
+extern float view_clear_color[4];
 
 int
 main()
@@ -45,7 +46,8 @@ main()
 
         view.ViewShowWindows();
 
-        imgui_setup.On_frame_end(&view.clear_color);
+        Color clear_color = { view_clear_color[0], view_clear_color[1], view_clear_color[2], view_clear_color[3] };
+        imgui_setup.On_frame_end(&clear_color);
     }
 
     view.ViewQuit();

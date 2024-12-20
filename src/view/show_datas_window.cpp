@@ -12,6 +12,8 @@ extern bool system_is_fresh_processing_data;
 
 extern TrainData system_processing_data;
 
+extern bool view_is_show_user_input;
+
 void
 View::show_train_datas_window(bool* p_open)
 {
@@ -86,7 +88,7 @@ View::show_train_datas_window(bool* p_open)
             if(ImGui::TableNextColumn() && ImGui::Selectable(std::to_string(index + 1).c_str(), is_selected, ImGuiSelectableFlags_SpanAllColumns))
             {
                 table_to_selected               = true;
-                is_show_user_input              = true;
+                view_is_show_user_input         = true;
                 system_processing_data.id       = train_data.id;
                 system_is_fresh_processing_data = true;
             }

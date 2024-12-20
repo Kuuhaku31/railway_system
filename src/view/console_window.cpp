@@ -10,6 +10,10 @@ extern "C" {
 
 extern bool system_is_fresh_data;
 
+extern bool view_is_show_user_input;
+extern bool is_use_filter;
+extern bool view_is_show_search_window;
+
 void
 View::show_console_window(bool* p_open)
 {
@@ -38,7 +42,7 @@ View::show_console_window(bool* p_open)
     } // controller.ControllerExportLogs();
 
     ImGui::SameLine();
-    if(ImGui::Button("Config Data", button_size_02)) is_show_user_input = !is_show_user_input;
+    if(ImGui::Button("Config Data", button_size_02)) view_is_show_user_input = !view_is_show_user_input;
 
     ImGui::SameLine();
     // 如果活动，设置按钮样式
@@ -47,12 +51,12 @@ View::show_console_window(bool* p_open)
         ImGui::PushStyleColor(ImGuiCol_Button, active_normal_color);
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, active_hovered_color);
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, active_active_color);
-        if(ImGui::Button("Filters ON", button_size_02)) is_show_search_window = !is_show_search_window;
+        if(ImGui::Button("Filters ON", button_size_02)) view_is_show_search_window = !view_is_show_search_window;
         ImGui::PopStyleColor(3);
     }
     else
     {
-        if(ImGui::Button("Filters OFF", button_size_02)) is_show_search_window = !is_show_search_window;
+        if(ImGui::Button("Filters OFF", button_size_02)) view_is_show_search_window = !view_is_show_search_window;
     }
 
     ImGui::SetCursorPosY(first_separator_pos); // 调整光标位置
