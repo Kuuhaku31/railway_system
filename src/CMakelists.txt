@@ -6,10 +6,6 @@ add_subdirectory(view)
 set(MODEL_SRC
     model/train_model.c
     model/train_model.h
-    model/train_model.c
-    model/train_model.h
-    model/order_model.c
-    model/order_model.h
 )
 
 set(CONTROLLER_SRC

@@ -7,6 +7,8 @@ include_directories(../../src/view)
 include_directories(../../src/entity)
 include_directories(../../src/controller)
 include_directories(../../src/imgui_setup)
+include_directories(../../lib/imgui)
+include_directories(../../lib/imgui/backend)
 include_directories(./train_controller_test)
 
 # 添加源文件
@@ -22,7 +24,7 @@ add_executable(${PROJECT_NAME} ${DIR_SRCS})
 
 # 添加imgui_setup库
 include_directories(${IMGUISETUP_INCLUDE_DIRS} ../../src/imgui_setup)
-target_link_libraries(${PROJECT_NAME} imgui_setup)
+target_link_libraries(${PROJECT_NAME} imgui_setup ../../lib/imgui ../../lib/imgui/backend)
 
 # test_table
 project(test_table)
