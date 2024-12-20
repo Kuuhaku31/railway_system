@@ -67,6 +67,8 @@ uint32_t         search_ticket_remain = 0;
 uint32_t         search_ticket_price  = 0;
 enum TrainStatus search_train_status  = TRAIN_STATUS_NORMAL;
 
+bool view_table_to_selected = false;
+
 void
 insert_data()
 {
@@ -135,7 +137,7 @@ clear_processing_data()
 }
 
 void
-SystemControlerInit()
+SystemInitControler()
 {
     const char unkonw[] = "Unkonw";
 
@@ -167,7 +169,7 @@ SystemControlerInit()
 }
 
 void
-SystemControllerUpdate()
+SystemUpdateController()
 {
     // 插入操作
     if(system_is_insert)
@@ -214,7 +216,7 @@ SystemControllerUpdate()
     if(system_is_cancel)
     {
         system_processing_data.id = 0;
-        // *View_is_show_user_input() = false;
+        view_is_show_user_input   = false;
     }
 
     // 请求数据
@@ -229,7 +231,7 @@ SystemControllerUpdate()
         // 从数据缓存中获取数据
         if(fresh_processing_data_from_buffer())
         {
-            // *View_table_to_selected() = !*View_table_to_selected();
+            view_table_to_selected = !view_table_to_selected;
         }
     }
 
@@ -241,6 +243,11 @@ SystemControllerUpdate()
     system_is_cancel                = false;
     system_is_fresh_processing_data = false;
     system_is_fresh_data            = false;
+}
+
+void
+SystemUpdateViewLayout()
+{
 }
 
 void

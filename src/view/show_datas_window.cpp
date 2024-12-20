@@ -13,6 +13,7 @@ extern bool system_is_fresh_processing_data;
 extern TrainData system_processing_data;
 
 extern bool view_is_show_user_input;
+extern bool view_table_to_selected;
 
 void
 View::show_train_datas_window(bool* p_open)
@@ -77,17 +78,17 @@ View::show_train_datas_window(bool* p_open)
             ImGui::TableNextRow();
 
             // 如果是选中的行
-            if(system_processing_data.id && system_processing_data.id == train_data.id && table_to_selected)
+            if(system_processing_data.id && system_processing_data.id == train_data.id && view_table_to_selected)
             {
                 ImGui::SetScrollHereY();
-                table_to_selected = false;
+                view_table_to_selected = false;
             }
 
             // 检测鼠标点击事件
             bool is_selected = system_processing_data.id && (system_processing_data.id == train_data.id);
             if(ImGui::TableNextColumn() && ImGui::Selectable(std::to_string(index + 1).c_str(), is_selected, ImGuiSelectableFlags_SpanAllColumns))
             {
-                table_to_selected               = true;
+                view_table_to_selected          = true;
                 view_is_show_user_input         = true;
                 system_processing_data.id       = train_data.id;
                 system_is_fresh_processing_data = true;

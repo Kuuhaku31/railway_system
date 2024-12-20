@@ -15,7 +15,7 @@ extern "C" {
 static ImGui_setup& imgui_setup = ImGui_setup::Instance();
 static View&        view        = View::Instance();
 
-extern float view_clear_color[4];
+extern uint8_t view_clear_color[4];
 
 int
 main()
@@ -24,7 +24,7 @@ main()
     initDb();
     printf("Hello, main!\n");
 
-    SystemControlerInit();
+    SystemInitControler();
     view.ViewInit();
 
     printf("Showing view...\n");

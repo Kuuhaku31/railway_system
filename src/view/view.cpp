@@ -46,7 +46,7 @@ View::ViewQuit()
 void
 View::ViewShowWindows()
 {
-    SystemControllerUpdate();
+    SystemUpdateController();
 
     update_view_layout();
 

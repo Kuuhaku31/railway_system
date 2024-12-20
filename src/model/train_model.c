@@ -105,7 +105,7 @@ void analyzeChange(TrainChange* change, char* buffer, int bufferSize){
         memset(temp, 0, 128*sizeof(char));
     }
     if(change->change_ticket_price){
-        sprintf_s(temp, 128, "%s ticket_price=%d", first?" ":", ",  (int)(change->ticket_price*100));
+        sprintf_s(temp, 128, "%s ticket_price=%d", first?" ":", ",  (int)(change->ticket_price));
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
