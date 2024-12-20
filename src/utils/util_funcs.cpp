@@ -140,9 +140,9 @@ InputTime(const char* label, Date* time)
 
     // 输入年
     is_update |= ImGui::InputScalar((std::string("年##") + label).c_str(), ImGuiDataType_U16, &time->year);
-    if(time->year < 0)
+    if(time->year < 1970)
     {
-        time->year = 0;
+        time->year = 1970;
     }
 
     // 输入月

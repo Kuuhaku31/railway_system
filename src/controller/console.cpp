@@ -69,7 +69,7 @@ SystemControllerExportLogs()
     FILE* file = fopen(PATH_LOGS_EXPORT, "w");
     if(file == nullptr)
     {
-        SystemControllerAddLog("Export logs failed: %s", PATH_LOGS_EXPORT);
+        SystemControllerAddLog(true, "Export logs failed: %s", PATH_LOGS_EXPORT);
         return;
     }
 
@@ -79,5 +79,5 @@ SystemControllerExportLogs()
     }
 
     fclose(file);
-    SystemControllerAddLog("Export logs success: %s", PATH_LOGS_EXPORT);
+    SystemControllerAddLog(true, "Export logs to %s", PATH_LOGS_EXPORT);
 }

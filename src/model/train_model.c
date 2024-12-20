@@ -46,7 +46,7 @@ void analyzeCondition(const TrainQuery* condition, char* buffer, int bufferSize)
         memset(temp, 0, 128*sizeof(char));
     }
     if(condition->query_ticket_price!=IGNORE_THIS){
-        sprintf_s(temp, 128, "%s ticket_price%s%d", first?" ":" and ", operator[condition->query_ticket_price-1], (int)(condition->ticket_price*100));
+        sprintf_s(temp, 128, "%s ticket_price%s%d", first?" ":" and ", operator[condition->query_ticket_price-1], (int)(condition->ticket_price));
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));

@@ -211,8 +211,6 @@ SystemControllerUpdate()
 
         system_is_fresh_processing_data = true;
         system_is_fresh_data            = true;
-
-        // add_train_data_log("Insert: "); // 日志
     }
 
     // 删除操作
@@ -223,8 +221,6 @@ SystemControllerUpdate()
 
         system_is_fresh_processing_data = true;
         system_is_fresh_data            = true;
-
-        // add_train_data_log("Delete: "); // 日志
     }
 
     // 更新操作
@@ -234,8 +230,6 @@ SystemControllerUpdate()
 
         system_is_fresh_processing_data = true; // 刷新处理数据
         system_is_fresh_data            = true;
-
-        // add_train_data_log("Update: "); // 日志
     }
 
     // 清除操作
