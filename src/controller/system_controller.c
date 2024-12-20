@@ -131,16 +131,20 @@ delete_data()
 void
 request_data()
 {
-    printf("\nController Get datas...\n");
-    printf("id: %d, query_id: %d\n", system_search_request.id, system_search_request.query_id);
-    printf("number: %s, query_number: %d\n", system_search_request.number, system_search_request.query_number);
-    printf("start_station: %s, query_start_station: %d\n", system_search_request.start_station, system_search_request.query_start_station);
-    printf("arrive_station: %s, query_arrive_station: %d\n", system_search_request.arrive_station, system_search_request.query_arrive_station);
-    printf("start_time: %ld, query_start_time: %d\n", system_search_request.start_time, system_search_request.query_start_time);
-    printf("arrive_time: %ld, query_arrive_time: %d\n", system_search_request.arrive_time, system_search_request.query_arrive_time);
-    printf("ticket_remain: %d, query_ticket_remain: %d\n", system_search_request.ticket_remain, system_search_request.query_ticket_remain);
-    printf("ticket_price: %d, query_ticket_price: %d\n", system_search_request.ticket_price, system_search_request.query_ticket_price);
-    printf("train_status: %d, query_is_running: %d\n", system_search_request.train_status, system_search_request.query_is_running);
+    if(system_search_request.query_id == IGNORE_THIS &&
+        system_search_request.query_number == IGNORE_THIS &&
+        system_search_request.query_start_station == IGNORE_THIS &&
+        system_search_request.query_arrive_station == IGNORE_THIS &&
+        system_search_request.query_start_time == IGNORE_THIS &&
+        system_search_request.query_arrive_time == IGNORE_THIS &&
+        system_search_request.query_ticket_remain == IGNORE_THIS &&
+        system_search_request.query_ticket_price == IGNORE_THIS &&
+        system_search_request.query_is_running == IGNORE_THIS)
+    {
+        // 如果没有查询条件，查询所有数据
+        system_search_request.id       = 0;
+        system_search_request.query_id = GREATER;
+    }
 
     SearchResult res = RailwaySystemSearchTrainData(train_data_buffer, page_item_count, page_idx, &system_search_request);
 
