@@ -3,10 +3,12 @@
 
 #include "view.h"
 
-// #include "controller.h"
 extern "C" {
 #include "system_controller.h"
 }
+
+#include "util_funcs.h"
+#include "window_rect.h"
 
 extern std::vector<std::string> system_logs;
 
@@ -14,6 +16,8 @@ extern bool system_is_fresh_data;
 
 extern bool view_is_show_user_input;
 extern bool view_is_show_search_window;
+
+extern const WindowRect view_console_window_rect;
 
 void
 View::show_console_window(bool* p_open)
@@ -30,8 +34,8 @@ View::show_console_window(bool* p_open)
 
     // 中文显示
     ImGui::PushFont(font_chinese);
-    ImGui::SetNextWindowPos(console_window_pos);
-    ImGui::SetNextWindowSize(console_window_size);
+    ImGui::SetNextWindowPos(get_rect_pos(view_console_window_rect));
+    ImGui::SetNextWindowSize(get_rect_size(view_console_window_rect));
     ImGui::Begin("log window", p_open, window_flags);
 
     ImGui::SameLine();

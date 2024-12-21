@@ -29,7 +29,7 @@ select_comparison_operators(const char* label, int* current_item)
 }
 
 void
-View::show_search_window(bool* p_open)
+View::show_filters_window(bool* p_open)
 {
     static bool is_search_by_id                     = false; // 是否通过id过滤
     static bool is_search_by_number_keyword         = false; // 是否通过车次关键字过滤
@@ -90,13 +90,15 @@ View::show_search_window(bool* p_open)
         }
         if(is_search_by_number_keyword)
         {
-            static bool is_update = false;
+            static bool is_update  = false;
+            static char number[16] = { 0 };
 
             ImGui::Indent(10);
 
             // 用户编辑车次关键词过滤器
-            is_update |= ImGui::InputText(FILTER_NUMBER_ITEM, system_search_request.number, IM_ARRAYSIZE(system_search_request.number));
+            is_update |= ImGui::InputText(FILTER_NUMBER_ITEM, number, IM_ARRAYSIZE(system_search_request.number));
 
+            strcpy(system_search_request.number, number);
             system_search_request.query_number = EQUAL;
 
             // 如果更新了查询条件，调整请求
@@ -121,13 +123,15 @@ View::show_search_window(bool* p_open)
         }
         if(is_search_by_start_station_keyword)
         {
-            static bool is_update = false;
+            static bool is_update         = false;
+            static char start_station[16] = { 0 };
 
             ImGui::Indent(10);
 
             // 用户编辑始发站关键词过滤器
-            is_update |= ImGui::InputText(FILTER_START_STATION_ITEM, system_search_request.start_station, IM_ARRAYSIZE(system_search_request.start_station));
+            is_update |= ImGui::InputText(FILTER_START_STATION_ITEM, start_station, IM_ARRAYSIZE(system_search_request.start_station));
 
+            strcpy(system_search_request.start_station, start_station);
             system_search_request.query_start_station = EQUAL;
 
             // 如果更新了查询条件，调整请求
@@ -152,13 +156,15 @@ View::show_search_window(bool* p_open)
         }
         if(is_search_by_arrive_station_keyword)
         {
-            static bool is_update = false;
+            static bool is_update          = false;
+            static char arrive_station[16] = { 0 };
 
             ImGui::Indent(10);
 
             // 用户编辑到达站关键词过滤器
-            is_update |= ImGui::InputText(FILTER_ARRIVE_STATION_ITEM, system_search_request.arrive_station, IM_ARRAYSIZE(system_search_request.arrive_station));
+            is_update |= ImGui::InputText(FILTER_ARRIVE_STATION_ITEM, arrive_station, IM_ARRAYSIZE(system_search_request.arrive_station));
 
+            strcpy(system_search_request.arrive_station, arrive_station);
             system_search_request.query_arrive_station = EQUAL;
 
             // 如果更新了查询条件，调整请求

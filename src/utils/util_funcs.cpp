@@ -134,8 +134,7 @@ InputTime(const char* label, Date* time)
 {
     bool is_update = false;
 
-    ImGui::Text(label);
-    ImGui::PushItemWidth(100);
+    ImGui::PushItemWidth(50);
 
     // 输入年
     is_update |= ImGui::InputScalar((std::string("年##") + label).c_str(), ImGuiDataType_U16, &time->year);
@@ -169,6 +168,7 @@ InputTime(const char* label, Date* time)
     }
 
     // 输入小时
+    ImGui::SameLine();
     is_update |= ImGui::InputScalar((std::string("时##") + label).c_str(), ImGuiDataType_U8, &time->hour);
     if(time->hour < 0)
     {
@@ -204,6 +204,8 @@ InputTime(const char* label, Date* time)
     }
 
     ImGui::PopItemWidth();
+    ImGui::SameLine();
+    ImGui::Text(label);
 
     return is_update;
 }
@@ -226,4 +228,16 @@ uint32_price_to_string(uint32_t price)
     char buf[64];
     snprintf(buf, sizeof(buf), "%u.%02u", price / 100, price % 100);
     return std::string(buf);
+}
+
+ImVec2
+get_rect_pos(const WindowRect& rect)
+{
+    return ImVec2(rect.x, rect.y);
+}
+
+ImVec2
+get_rect_size(const WindowRect& rect)
+{
+    return ImVec2(rect.w, rect.h);
 }

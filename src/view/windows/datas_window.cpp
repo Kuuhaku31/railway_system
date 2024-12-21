@@ -1,13 +1,11 @@
 
 // datas_window.cpp
 
-// #include "train_controller.h"
-// #include "controller.h"
+#include "view.h"
+
 extern "C" {
 #include "system_controller.h"
 }
-
-#include "view.h"
 
 #include "util_funcs.h"
 
@@ -17,6 +15,8 @@ extern TrainData system_processing_data;
 
 extern bool view_is_show_user_input;
 extern bool view_table_to_selected;
+
+extern const WindowRect view_data_window_rect;
 
 void
 View::show_train_datas_window(bool* p_open)
@@ -32,8 +32,8 @@ View::show_train_datas_window(bool* p_open)
     window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus; // 保持在最后
 
     ImGui::PushFont(font_chinese); // 中文显示
-    ImGui::SetNextWindowPos(data_window_pos);
-    ImGui::SetNextWindowSize(data_window_size);
+    ImGui::SetNextWindowPos(get_rect_pos(view_data_window_rect));
+    ImGui::SetNextWindowSize(get_rect_size(view_data_window_rect));
     ImGui::Begin("Train Datas", p_open, window_flags);
 
     // 临时修改样式变量，取消表格和窗口的间距

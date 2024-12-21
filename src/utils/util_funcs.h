@@ -5,6 +5,7 @@
 
 #include "date.h"
 #include "train.h"
+#include "window_rect.h"
 
 #include <imgui.h>
 #include <string>
@@ -38,3 +39,9 @@ uint32_price_to_float(uint32_t price);
 
 std::string
 uint32_price_to_string(uint32_t price);
+
+ImVec2
+get_rect_pos(const WindowRect& rect);
+
+ImVec2
+get_rect_size(const WindowRect& rect);

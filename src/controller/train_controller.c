@@ -6,6 +6,9 @@
 #include "train_model.h"
 #include <string.h>
 
+#define true 1
+#define false 0
+
 SearchResult
 RailwaySystemSearchTrainData(TrainData* train_data, uint32_t num, uint32_t page_idx, const TrainQuery* search_request)
 {
@@ -92,3 +95,6 @@ RailwaySystemDelTrainData(int32_t train_data_id)
     query.query_id = EQUAL;
     return deleteTrain(&query) == 0 ? 0 : -1;
 }
+
+#undef true
+#undef false

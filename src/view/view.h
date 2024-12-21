@@ -28,29 +28,11 @@ private:
     void show_train_datas_window(bool* p_open = nullptr); // 显示车次信息
     void show_user_input_window(bool* p_open = nullptr);  // 获取用户输入的字符串
     void show_console_window(bool* p_open = nullptr);     // 显示日志
-    void show_search_window(bool* p_open = nullptr);      // 显示搜索窗口
+    void show_filters_window(bool* p_open = nullptr);     // 显示搜索窗口
 
 private:
     // 第一个分割线位置
     int first_separator_pos = 50;
-
-    // 布局比例
-    float data_window_height  = 0.65f;
-    float inuput_window_width = 0.65f;
-
-    // 车次数据窗口位置和大小
-    ImVec2 data_window_pos;
-    ImVec2 data_window_size;
-
-    // 用户输入窗口位置和大小
-    ImVec2 input_window_pos;
-    ImVec2 input_window_size;
-
-    // 控制台窗口位置和大小
-    ImVec2 console_window_pos;
-    ImVec2 console_window_size;
-
-    void update_view_layout(); // 更新窗口布局
 
 public:
     bool console_scroll_to_bottom = false;

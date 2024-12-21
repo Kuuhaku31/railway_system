@@ -21,6 +21,7 @@ set(CONTROLLER_SRC
 set(ENTITY_SRC
     entity/train.h
     entity/date.h
+    entity/window_rect.h
 )
 
 set(UTILS_SRC
