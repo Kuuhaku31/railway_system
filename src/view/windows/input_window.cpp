@@ -129,12 +129,14 @@ View::show_user_input_window(bool* p_open)
         ImGui::InputText(INPUT_WINDOW_TITLE_ARRIVE_STATION, system_processing_data.arrive_station, MAX_SIZE);
 
         // 出发时间
-        static Date start_time = uint64_time_to_date(system_processing_data.start_time);
+        static Date start_time;
+        start_time = uint64_time_to_date(system_processing_data.start_time);
         InputTime(INPUT_WINDOW_TITLE_START_TIME, &start_time);
         system_processing_data.start_time = date_to_uint64_time(start_time);
 
         // 到达时间
-        static Date arrive_time = uint64_time_to_date(system_processing_data.arrive_time);
+        static Date arrive_time;
+        arrive_time = uint64_time_to_date(system_processing_data.arrive_time);
         InputTime(INPUT_WINDOW_TITLE_ARRIVE_TIME, &arrive_time);
         system_processing_data.arrive_time = date_to_uint64_time(arrive_time);
 
