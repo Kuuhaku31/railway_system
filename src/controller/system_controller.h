@@ -14,7 +14,7 @@ void // 更新系统控制器
 SystemControllerUpdate();
 
 void // 添加日志
-SystemControllerAddLog(bool is_add_time, const char* fmt, ...);
+SystemControllerAddLog(bool is_add_time, const char* log);
 
 void // 添加车次日志
 SystemControllerAddLogForTrain(bool is_add_time, const char* label, const TrainData* data);

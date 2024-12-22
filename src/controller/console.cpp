@@ -4,6 +4,7 @@
 extern "C" {
 #include "system_controller.h"
 }
+#include "view.h"
 
 #include "util_funcs.h"
 
@@ -12,21 +13,16 @@ extern "C" {
 #include <string>
 #include <vector>
 
+static View& view = View::Instance();
+
 std::vector<std::string> system_logs; // 日志
 
 #define PATH_LOGS_EXPORT "system_logs.txt"
 
 void
-SystemControllerAddLog(bool is_add_time, const char* fmt, ...)
+SystemControllerAddLog(bool is_add_time, const char* log)
 {
     static char time_str[32];
-
-    va_list args;
-    va_start(args, fmt);
-    char buf[1024];
-    vsnprintf(buf, sizeof(buf), fmt, args);
-    buf[sizeof(buf) - 1] = 0;
-    va_end(args);
 
     if(is_add_time)
     { // 获取当前时间
@@ -35,12 +31,14 @@ SystemControllerAddLog(bool is_add_time, const char* fmt, ...)
 
         strftime(time_str, sizeof(time_str), "[%Y-%m-%d %H:%M:%S] ", t);
 
-        system_logs.push_back(std::string(time_str) + std::string(buf));
+        system_logs.push_back(std::string(time_str) + std::string(log));
     }
     else
     {
-        system_logs.push_back(std::string(buf));
+        system_logs.push_back(std::string(log));
     }
+
+    view.console_scroll_to_bottom = true;
 }
 
 void
@@ -48,15 +46,15 @@ SystemControllerAddLogForTrain(bool is_add_time, const char* label, const TrainD
 {
     SystemControllerAddLog(
         true,
-        (label +
-            std::to_string(data->id) + " " +
-            std::string(data->number) + " " +
+        (
+            std::string(label) +
+            std::string(data->number) + " | " +
             std::string(data->start_station) + "->" +
-            std::string(data->arrive_station) + " " +
-            date_to_string(uint64_time_to_date(data->start_time)) + " " +
-            date_to_string(uint64_time_to_date(data->arrive_time)) + " " +
-            std::to_string(data->ticket_remain) + " " +
-            std::to_string(data->ticket_price) + "（分） " +
+            std::string(data->arrive_station) + " | " +
+            date_to_string(uint64_time_to_date(data->start_time)) + " | " +
+            date_to_string(uint64_time_to_date(data->arrive_time)) + " | " +
+            std::to_string(data->ticket_remain) + " | " +
+            uint32_price_to_string(data->ticket_price) + " | " +
             parse_train_status((TrainStatus)data->train_status))
             .c_str());
     // 添加日志
@@ -69,7 +67,7 @@ SystemControllerExportLogs()
     FILE* file = fopen(PATH_LOGS_EXPORT, "w");
     if(file == nullptr)
     {
-        SystemControllerAddLog(true, "Export logs failed: %s", PATH_LOGS_EXPORT);
+        SystemControllerAddLog(true, (std::string("Export logs failed: ") + PATH_LOGS_EXPORT).c_str());
         return;
     }
 
@@ -79,5 +77,5 @@ SystemControllerExportLogs()
     }
 
     fclose(file);
-    SystemControllerAddLog(true, "Export logs to %s", PATH_LOGS_EXPORT);
+    SystemControllerAddLog(true, (std::string("Export logs to ") + PATH_LOGS_EXPORT).c_str());
 }

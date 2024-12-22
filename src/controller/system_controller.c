@@ -136,49 +136,6 @@ clear_search_request(TrainQuery* request)
     request->query_train_status = IGNORE_THIS;
 }
 
-void
-insert_data()
-{
-    printf("Insert data id: %d\n", system_processing_data.id);
-    uint32_t res = RailwaySystemInsertTrainData(system_processing_data);
-    printf("Insert data res: %d\n", res);
-
-    system_is_fresh_data = true;
-
-    // SystemControllerAddLogForTrain(true, "Insert: ", &system_processing_data);
-    SystemControllerAddLog(true, "Insert Success");
-}
-
-void
-update_data()
-{
-    RailwaySystemUpdateTrainData(system_processing_data);
-
-    system_is_fresh_data = true;
-
-    SystemControllerAddLogForTrain(true, "Update: ", &system_processing_data);
-}
-
-void
-delete_data()
-{
-    RailwaySystemDelTrainData(system_processing_data.id);
-
-    system_is_fresh_data = true;
-
-    SystemControllerAddLogForTrain(true, "Delete: ", &system_processing_data);
-}
-
-void
-request_data()
-{
-    SearchResult res = RailwaySystemSearchTrainData(train_data_buffer, page_item_count, page_idx, &system_search_request);
-
-    result_data_count_total   = res.data_total_count;
-    result_data_count_current = res.data_return_count;
-    result_page_count         = res.page_count;
-}
-
 bool
 fresh_processing_data_from_buffer()
 {
@@ -194,6 +151,57 @@ fresh_processing_data_from_buffer()
     }
 
     return false;
+}
+
+void
+insert_data()
+{
+    static const char* STR_SUCCESS = "Insert Success: ";
+    static const char* STR_FAILED  = "Insert Failed: ";
+
+    int32_t res = RailwaySystemInsertTrainData(system_processing_data);
+
+    SystemControllerAddLogForTrain(true, res >= 0 ? STR_SUCCESS : STR_FAILED, &system_processing_data);
+
+    system_is_fresh_data = true;
+}
+
+void
+update_data()
+{
+    static const char* STR_SUCCESS = "Update Success: ";
+    static const char* STR_FAILED  = "Update Failed: ";
+
+    int32_t res = RailwaySystemUpdateTrainData(system_processing_data);
+
+    SystemControllerAddLogForTrain(true, res >= 0 ? STR_SUCCESS : STR_FAILED, &system_processing_data);
+
+    system_is_fresh_data = true;
+}
+
+void
+delete_data()
+{
+    static const char* STR_SUCCESS = "Delete Success: ";
+    static const char* STR_FAILED  = "Delete Failed: ";
+
+    fresh_processing_data_from_buffer();
+
+    int32_t res = RailwaySystemDelTrainData(system_processing_data.id);
+
+    SystemControllerAddLogForTrain(true, res >= 0 ? STR_SUCCESS : STR_FAILED, &system_processing_data);
+
+    system_is_fresh_data = true;
+}
+
+void
+request_data()
+{
+    SearchResult res = RailwaySystemSearchTrainData(train_data_buffer, page_item_count, page_idx, &system_search_request);
+
+    result_data_count_total   = res.data_total_count;
+    result_data_count_current = res.data_return_count;
+    result_page_count         = res.page_count;
 }
 
 void
