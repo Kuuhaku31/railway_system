@@ -52,8 +52,6 @@ View::show_user_input_window(bool* p_open)
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::SameLine();
         ImGui::Text("|  is processing data: %s", system_processing_data.id ? "true" : "false");
-        ImGui::SameLine();
-        ImGui::Text("%d datas in buffer", SystemControllerGetPageItemCountCurrent());
     }
 
     ImGui::Unindent(10); // 取消缩进
@@ -67,32 +65,29 @@ View::show_user_input_window(bool* p_open)
         // 设置宽度
         ImGui::PushItemWidth(100);
 
-        uint32_t page_page_count = SystemControllerGetPageCount();     // 总页数
-        uint32_t page_item_count = SystemControllerGetPageItemCount(); // 每页期望显示的数据数量
-        int      page_idx_curr   = SystemControllerGetPageIdx();       // 当前页数
+        ImGui::Text("Total Data: %d  | ", SystemControllerGetDataCountTotal());
 
+        int page_page_count = SystemControllerGetPageCount();     // 总页数
+        int page_item_count = SystemControllerGetPageItemCount(); // 每页期望显示的数据数量
+        int page_idx_curr   = SystemControllerGetPageIdx();       // 当前页数
+
+        ImGui::SameLine();
         if(ImGui::InputInt("##Page Index", &page_idx_curr))
         {
-            if(page_idx_curr < 1)
-            {
-                page_idx_curr = 1;
-            }
-            else if(page_idx_curr > page_page_count)
-            {
-                page_idx_curr = page_page_count;
-            }
-
             SystemControllerChangePageIdx(page_idx_curr);
         }
+
         ImGui::SameLine();
         ImGui::Text("/ %d Page", page_page_count);
 
         ImGui::SameLine();
-        int new_page_item_count = page_item_count;
-        if(ImGui::InputInt("Page Item Count", &new_page_item_count))
+        if(ImGui::InputInt("Page Item Count", &page_item_count))
         {
-            SystemControllerChangePageItemsCount(new_page_item_count);
+            SystemControllerChangePageItemsCount(page_item_count);
         }
+
+        ImGui::SameLine();
+        ImGui::Checkbox("Insert Data", &is_inserting);
 
         ImGui::PopItemWidth();
     }
@@ -102,16 +97,13 @@ View::show_user_input_window(bool* p_open)
     {
         static char text[] = "You Are Inserting Data";
         ImGui::BeginDisabled(true);
-        ImGui::InputText(INPUT_WINDOW_LABEL_TRAIN_ID, text, sizeof(text), ImGuiInputTextFlags_ReadOnly);
+        ImGui::InputText(INPUT_WINDOW_TITLE_TRAIN_ID, text, sizeof(text), ImGuiInputTextFlags_ReadOnly);
         ImGui::EndDisabled();
     }
-    else if(ImGui::InputScalar(INPUT_WINDOW_LABEL_TRAIN_ID, ImGuiDataType_U32, &system_processing_data.id))
+    else if(ImGui::InputScalar(INPUT_WINDOW_TITLE_TRAIN_ID, ImGuiDataType_U32, &system_processing_data.id))
     {
         system_is_fresh_processing_data = true;
     }
-
-    ImGui::SameLine();
-    ImGui::Checkbox("Inserting", &is_inserting);
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
     ImGui::Unindent(10);
@@ -129,12 +121,14 @@ View::show_user_input_window(bool* p_open)
         ImGui::InputText(INPUT_WINDOW_TITLE_ARRIVE_STATION, system_processing_data.arrive_station, MAX_SIZE);
 
         // 出发时间
-        static Date start_time = uint64_time_to_date(system_processing_data.start_time);
+        static Date start_time;
+        start_time = uint64_time_to_date(system_processing_data.start_time);
         InputTime(INPUT_WINDOW_TITLE_START_TIME, &start_time);
         system_processing_data.start_time = date_to_uint64_time(start_time);
 
         // 到达时间
-        static Date arrive_time = uint64_time_to_date(system_processing_data.arrive_time);
+        static Date arrive_time;
+        arrive_time = uint64_time_to_date(system_processing_data.arrive_time);
         InputTime(INPUT_WINDOW_TITLE_ARRIVE_TIME, &arrive_time);
         system_processing_data.arrive_time = date_to_uint64_time(arrive_time);
 

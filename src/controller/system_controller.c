@@ -35,12 +35,15 @@ TrainData  system_processing_data; // 用户正在编辑的数据，特别的，
 
 
 // 从数据库中查询到的数据参数
-uint32_t page_count              = 0;   // 总页数
-uint32_t page_idx                = 1;   // 当前页数
-uint32_t page_item_count         = 100; // 每一页期望显示的数据数量
-uint32_t page_item_count_current = 0;   // buffer 中实际的数据数量
+uint32_t result_data_count_total   = 0; // 数据库中查询到的数据总数
+uint32_t result_data_count_current = 0; // buffer 中实际的数据数量
+uint32_t result_page_count         = 0; // 总页数
+
+uint32_t page_idx        = 1;   // 当前页数
+uint32_t page_item_count = 100; // 每一页期望显示的数据数量
 
 TrainData train_data_buffer[DATA_BUFFER_SIZE]; // 从数据库中查询到的数据
+
 
 // 窗口参数
 bool view_is_show_train_datas   = true;  // 显示车次信息
@@ -171,8 +174,9 @@ request_data()
 {
     SearchResult res = RailwaySystemSearchTrainData(train_data_buffer, page_item_count, page_idx, &system_search_request);
 
-    page_count              = res.page_count;
-    page_item_count_current = res.data_return_count;
+    result_data_count_total   = res.data_total_count;
+    result_data_count_current = res.data_return_count;
+    result_page_count         = res.page_count;
 }
 
 bool
@@ -299,9 +303,9 @@ SystemControllerChangePageIdx(uint32_t new_idx)
     {
         page_idx = 1;
     }
-    else if(page_idx > page_count)
+    else if(page_idx > result_page_count)
     {
-        page_idx = page_count;
+        page_idx = result_page_count;
     }
 
     system_is_fresh_data = true;
@@ -340,32 +344,39 @@ SystemControllerIsDataInBuffer()
     return false;
 }
 
-uint32_t
-SystemControllerGetPageIdx() // 获取当前页数
+uint32_t // 获取数据总数
+SystemControllerGetDataCountTotal()
+{
+    return result_data_count_total;
+}
+
+uint32_t // 获取buffer中实际的数据数量
+SystemControllerGetPageItemCountCurrent()
+{
+    return result_data_count_current;
+}
+
+uint32_t // 获取总页数
+SystemControllerGetPageCount()
+{
+    return result_page_count;
+}
+
+uint32_t // 获取当前页数
+SystemControllerGetPageIdx()
 {
     return page_idx;
 }
 
-uint32_t
-SystemControllerGetPageItemCountCurrent() // 获取buffer中实际的数据数量
-{
-    return page_item_count_current;
-}
-
-uint32_t
-SystemControllerGetPageItemCount() // 获取每页显示的数据数量
+uint32_t // 获取每页显示的数据数量
+SystemControllerGetPageItemCount()
 {
     return page_item_count;
 }
 
-uint32_t
-SystemControllerGetPageCount() // 获取总页数
-{
-    return page_count;
-}
 
-TrainData*
-SystemControllerGetTrainDatas() // 获取数据缓存
+const TrainData* // 获取数据缓存
+SystemControllerGetTrainDatas()
 {
     return train_data_buffer;
 }

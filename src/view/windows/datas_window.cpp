@@ -88,6 +88,7 @@ View::show_train_datas_window(bool* p_open)
             }
 
             // 检测鼠标点击事件
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0xcc, 0xcc, 0xcc, 0xcc));
             bool is_selected = system_processing_data.id && (system_processing_data.id == train_data.id);
             if(ImGui::TableNextColumn() && ImGui::Selectable(std::to_string(index + 1).c_str(), is_selected, ImGuiSelectableFlags_SpanAllColumns))
             {
@@ -96,6 +97,7 @@ View::show_train_datas_window(bool* p_open)
                 system_processing_data.id       = train_data.id;
                 system_is_fresh_processing_data = true;
             }
+            ImGui::PopStyleColor();
 
             // 车次 ID
             ImGui::TableNextColumn();

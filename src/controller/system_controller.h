@@ -31,17 +31,20 @@ SystemControllerChangePageItemsCount(int new_count);
 bool // 判断数据是否在缓冲区中
 SystemControllerIsDataInBuffer();
 
-uint32_t // 获取当前页数
-SystemControllerGetPageIdx();
+uint32_t // 获取数据总数
+SystemControllerGetDataCountTotal();
 
-uint32_t // 获取当前页数据数量
+uint32_t // 获取buffer中实际的数据数量
 SystemControllerGetPageItemCountCurrent();
 
 uint32_t // 获取总页数
 SystemControllerGetPageItemCount();
 
+uint32_t // 获取当前页数
+SystemControllerGetPageIdx();
+
 uint32_t // 获取每页数据数量
 SystemControllerGetPageCount();
 
-TrainData* // 获取车次数据
+const TrainData* // 获取车次数据
 SystemControllerGetTrainDatas();
