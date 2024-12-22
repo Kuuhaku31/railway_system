@@ -202,6 +202,16 @@ request_data()
     result_data_count_total   = res.data_total_count;
     result_data_count_current = res.data_return_count;
     result_page_count         = res.page_count;
+
+    // 合法化页数
+    if(page_idx < 1)
+    {
+        page_idx = 1;
+    }
+    else if(page_idx > result_page_count)
+    {
+        page_idx = result_page_count;
+    }
 }
 
 void
