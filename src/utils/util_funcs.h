@@ -45,3 +45,6 @@ get_rect_pos(const WindowRect& rect);
 
 ImVec2
 get_rect_size(const WindowRect& rect);
+
+// Kuuhaku-kazari
+// 2024.12.21

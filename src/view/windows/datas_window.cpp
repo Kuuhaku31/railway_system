@@ -137,3 +137,6 @@ View::show_train_datas_window(bool* p_open)
     ImGui::End();
     ImGui::PopFont();
 }
+
+// Kuuhaku-kazari
+// 2024.12.21

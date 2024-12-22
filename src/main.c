@@ -26,3 +26,6 @@ main()
     finalizeDb();
     return 0;
 }
+
+// Kuuhaku-kazari
+// 2024.12.21

@@ -29,3 +29,6 @@ SystemViewShowWindows();
 #ifdef __cplusplus
 }
 #endif
+
+// Kuuhaku-kazari
+// 2024.12.21

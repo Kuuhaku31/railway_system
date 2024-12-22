@@ -240,3 +240,6 @@ View::show_user_input_window(bool* p_open)
     ImGui::End();
     ImGui::PopFont();
 }
+
+// Kuuhaku-kazari
+// 2024.12.21

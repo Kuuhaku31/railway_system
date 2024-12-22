@@ -48,3 +48,6 @@ SystemControllerGetPageCount();
 
 const TrainData* // 获取车次数据
 SystemControllerGetTrainDatas();
+
+// Kuuhaku-kazari
+// 2024.12.21

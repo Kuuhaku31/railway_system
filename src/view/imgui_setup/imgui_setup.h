@@ -1,4 +1,6 @@
 
+// imgui_setup.h
+
 #pragma once
 
 #define SDL_MAIN_HANDLED
@@ -8,10 +10,6 @@
 #include "imgui_impl_sdlrenderer2.h"
 
 #include <SDL2/SDL.h>
-//#include <SDL2/SDL_image.h>
-//#include <SDL2/SDL_mixer.h>
-//#include <SDL2/SDL_ttf.h>
-// #include <SDL2_gfxPrimitives.h>
 
 #include <string>
 #include <windows.h>
@@ -68,3 +66,6 @@ private:
 
     static ImGui_setup* instance;
 };
+
+// Kuuhaku-kazari
+// 2024.12.21

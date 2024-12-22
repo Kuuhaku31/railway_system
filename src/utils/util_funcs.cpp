@@ -241,3 +241,6 @@ get_rect_size(const WindowRect& rect)
 {
     return ImVec2(rect.w, rect.h);
 }
+
+// Kuuhaku-kazari
+// 2024.12.21

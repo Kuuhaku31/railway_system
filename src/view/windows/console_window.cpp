@@ -84,3 +84,6 @@ View::show_console_window(bool* p_open)
 
     ImGui::PopFont();
 }
+
+// Kuuhaku-kazari
+// 2024.12.21

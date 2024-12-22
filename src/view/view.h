@@ -67,3 +67,6 @@ private:
 
     static View* instance;
 };
+
+// Kuuhaku-kazari
+// 2024.12.21

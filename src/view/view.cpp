@@ -108,3 +108,6 @@ View::ViewShowWindows()
     show_console_window(&view_is_show_console);
     show_filters_window(&view_is_show_search_window);
 }
+
+// Kuuhaku-kazari
+// 2024.12.21
