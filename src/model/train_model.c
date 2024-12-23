@@ -27,20 +27,32 @@ uint64_t str2u64(char *str){
     sscanf_s(str, "%llu", &i);
     return i;
 }
+
+/**
+ * 分析查询条件，构造SQL查询字符串
+ * @param condition [in] 结构体，查询条件
+ * @param buffer [out] 用于写入SQL查询字符串的缓冲区
+ * @param bufferSize [in] 缓冲区大小
+ */
 void analyzeCondition(const TrainQuery* condition, char* buffer, int bufferSize){
     buffer[0]=' ';
     char *temp=(char *) calloc(128, sizeof(char ));
+    //用来判断这是不是第一个条件，决定加不加and
     bool first = true;
+    //符号列表，用于对应枚举值和运算符
     char operator[6][3]={">", "<", "<=", ">=", "=", "!="};
-    //printf("%d\n", condition->query_ticket_remain);
     if(condition->query_id!=IGNORE_THIS){
+        //将这个条件写入临时变量。这肯定是第一个条件，所以前面肯定没有and
         sprintf_s(temp,128, "id%s%d", operator[condition->query_id-1],condition->id);
+        //肯定不是第一个条件了，下一个就要加and了
         first = false;
+        //将这个条件写入总的条件
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
     }
     if(condition->query_ticket_remain!=IGNORE_THIS){
-        sprintf_s(temp, 128, "%s ticket_remain%s%d", first?" ":" and ", operator[condition->query_ticket_remain-1],condition->ticket_remain);
+        sprintf_s(temp, 128, "%s ticket_remain%s%d", first?" ":" and ", //如果不是第一个，则前面加上and
+            operator[condition->query_ticket_remain-1],condition->ticket_remain);
         first = false;
         strcat_s(buffer, bufferSize, temp);
         memset(temp, 0, 128*sizeof(char));
@@ -82,11 +94,16 @@ void analyzeCondition(const TrainQuery* condition, char* buffer, int bufferSize)
         memset(temp, 0, 128*sizeof(char));
     }
     if(condition->query_train_status!=IGNORE_THIS){
+        //这里有点特殊
+        //可能需要查询多种状态的列车，取并集
+        //所以train_status是由一系列枚举按位或构成的。
+        //这些枚举值各有一位是1，其他是0，按位或得到一个整数，判断该位上是否为1即可判断需不需要查询该条件
         if(condition->train_status)
         {
             char status_sql[256]={0};
             char one[16]={0};
 
+            //把train_status和各个枚举按位与，如果结果仍为该枚举则说明该状态需要被设置
             bool is_unknown=(condition->train_status&TRAIN_STATUS_UNKNOWN) == TRAIN_STATUS_UNKNOWN ? true : false;
             bool is_normal=(condition->train_status&TRAIN_STATUS_NORMAL) == TRAIN_STATUS_NORMAL ? true : false;
             bool is_delay=(condition->train_status&TRAIN_STATUS_DELAYED) == TRAIN_STATUS_DELAYED ? true : false;
@@ -95,9 +112,11 @@ void analyzeCondition(const TrainQuery* condition, char* buffer, int bufferSize)
 
             bool conditions[5]={is_unknown,is_normal,is_delay,is_stopped,is_canceled};
             int32_t status[5]={TRAIN_STATUS_UNKNOWN,TRAIN_STATUS_NORMAL,TRAIN_STATUS_DELAYED,TRAIN_STATUS_STOPPED,TRAIN_STATUS_CANCELLED};
+            //判断是不是第一个条件，是的话前面加or
             bool first2=true;
             for(int i=0;i<5;i++)
             {
+                //如果condition[i]==true则该需要查询该状态
                 if(conditions[i])
                 {
                     if(first2)
@@ -119,7 +138,13 @@ void analyzeCondition(const TrainQuery* condition, char* buffer, int bufferSize)
     }
     free(temp);
 }
-
+/**
+ * 分析替换条件，构造SQL字符串
+ * 这个函数和上面的analyzeCondition很像
+ * @param change [in] 结构体，替换条件
+ * @param buffer [out] 用于写入SQL字符串的缓冲区
+ * @param bufferSize [in] 缓冲区大小
+ */
 void analyzeChange(TrainChange* change, char* buffer, int bufferSize){
     buffer[0]=' ';
     char *temp=(char *) calloc(128, sizeof(char));

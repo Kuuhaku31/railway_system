@@ -66,9 +66,9 @@ void test_analyse(){
     change.train_status=TRAIN_STATUS_NORMAL;
     change.change_is_running=true;
     analyzeChange(&change, buffer, 1024);
-    memset(buffer, 0, 1024);
     std::string str(buffer);
     std::cout<<str<<std::endl;
+    memset(buffer, 0, 1024);
     TrainQuery query;
     memset(&query,0,sizeof(TrainChange));
     query.ticket_remain=5;
@@ -82,7 +82,6 @@ void test_analyse(){
     time2=std::time(NULL);
     std::printf("%s",buffer);
 }
-
 /*void test_db(){
 
     //添加
