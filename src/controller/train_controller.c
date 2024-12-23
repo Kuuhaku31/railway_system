@@ -50,7 +50,9 @@ RailwaySystemSearchTrainData(TrainData* train_data, uint32_t num, uint32_t page_
 int32_t
 RailwaySystemInsertTrainData(TrainData train_data)
 {
-    return addTrain(&train_data) == 0 ? 0 : -1;
+    int ret=addTrain(&train_data);
+    getTrainByNumber(train_data.number,&train_data);
+    return ret==0?train_data.id:-1;
 }
 
 int32_t
@@ -83,7 +85,8 @@ RailwaySystemUpdateTrainData(TrainData train_data)
     change.change_ticket_price   = true;
     change.change_ticket_remain  = true;
 
-    return editTrain(&query, &change) == 0 ? 0 : -1;
+    return editTrain(&query, &change)==0?train_data.id:-1;
+
 }
 
 int32_t
@@ -93,7 +96,7 @@ RailwaySystemDelTrainData(int32_t train_data_id)
     memset(&query, 0, sizeof(TrainQuery));
     query.id       = train_data_id;
     query.query_id = EQUAL;
-    return deleteTrain(&query) == 0 ? 0 : -1;
+    return deleteTrain(&query) == 0 ? train_data_id : -1;
 }
 
 #undef true
